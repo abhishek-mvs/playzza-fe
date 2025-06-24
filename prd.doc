@@ -1,0 +1,40 @@
+Lets create a simple prediction market app which is deployed in Base
+A decentralized prediction market smart contract built on Ethereum that enables users to create and participate in binary prediction contests with ERC20 token stakes.
+
+The Key functionality of smart contract 
+
+## Key Features
+
+### 🎯 **Binary Prediction Contests**
+- Create contests with binary outcomes (true/false)
+- Stake ERC20 tokens (e.g., USDC) on predictions
+- One-on-one contests between a creator and an opponent
+
+### 🔒 **Secure Staking System**
+- ERC20 token-based staking using OpenZeppelin's SafeERC20
+- Automatic token transfer and balance tracking
+- Reentrancy protection for secure token operations
+
+### ⚖️ **AVS Manager Settlement**
+- Centralized settlement authority for contest resolution
+- Only designated AVS Manager can settle contests
+- Transparent winner determination and prize distribution
+
+### 📊 **Comprehensive Contest Management**
+- Contest creation with title, details, and prediction statement
+- Real-time contest status tracking (active, settled, verdict)
+- View functions for contest details and balance information
+
+
+This ABIs of smart contract are provided data/predictionContestAbi.json and data/usdcERC20.json
+
+We need to create a simple DApp
+User will connect his metamask wallet
+For which user can create a new contest -> using his same wallet 
+Users can see the list of contests for which he can join -> we can fetch using public client  
+User can join the contest -> using his same wallet
+
+Lets use viem for all contract interactions
+
+Give the smartContractTestFile as well, use the same structure for interacting with the contract, also it will help with the functions which need to be used
+

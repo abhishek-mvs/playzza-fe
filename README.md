@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Prediction Market DApp
+
+A decentralized prediction market built on Base that enables users to create and participate in binary prediction contests with ERC20 token stakes.
+
+## Features
+
+- 🎯 **Binary Prediction Contests**: Create contests with binary outcomes (true/false)
+- 🔒 **Secure Staking**: ERC20 token-based staking using USDC
+- ⚖️ **AVS Manager Settlement**: Centralized settlement authority for contest resolution
+- 📊 **Contest Management**: View and manage all available contests
+- 🦊 **MetaMask Integration**: Seamless wallet connection
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Blockchain**: Viem, Wagmi
+- **Styling**: Tailwind CSS
+- **Network**: Base (Ethereum L2)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- MetaMask wallet
+- Base network configured in MetaMask
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd prediction-market-fe
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configure contract addresses:
+   - Open `src/app/constants.ts`
+   - Update `CONTRACT_ADDRESSES` with your deployed contract addresses:
+     - `PREDICTION_CONTEST`: Your deployed PredictionContest contract address
+     - `USDC`: Your deployed USDC token contract address
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Start the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Connect Wallet**: Click "Connect MetaMask" to connect your wallet
+2. **Create Contest**: Fill out the contest form with title, details, statement, and stake amount
+3. **Join Contest**: Browse available contests and join ones you want to participate in
+4. **Settlement**: Contests are settled by the designated AVS Manager
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Smart Contract Functions
 
-## Deploy on Vercel
+Based on the test file, the main functions used are:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `createContest(title, details, statement, stakeAmount)`: Create a new prediction contest
+- `joinContest(id, stakeAmount)`: Join an existing contest
+- `getContests()`: Get all available contests
+- `getContest(id)`: Get specific contest details
+- `settle(id, verdict)`: Settle a contest (AVS Manager only)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── components/
+│   │   ├── ConnectButton.tsx
+│   │   ├── CreateContest.tsx
+│   │   └── ContestList.tsx
+│   ├── hooks/
+│   │   ├── useContests.ts
+│   │   └── useApproveToken.ts
+│   ├── constants.ts
+│   ├── providers.tsx
+│   ├── wagmi-config.ts
+│   └── page.tsx
+└── data/
+    ├── predictionContestAbi.json
+    └── usdcERC20.json
+```
+
+## Configuration
+
+### Base Network Setup
+
+Add Base network to MetaMask:
+- Network Name: Base
+- RPC URL: https://mainnet.base.org
+- Chain ID: 8453
+- Currency Symbol: ETH
+- Block Explorer: https://basescan.org
+
+## Development
+
+### Available Scripts
+
+- `npm run dev`: Start development server
+- `npm run build`: Build for production
+- `npm run start`: Start production server
+- `npm run lint`: Run ESLint
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
