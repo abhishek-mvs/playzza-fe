@@ -37,10 +37,21 @@ export default function Navbar() {
           <div className="flex items-center">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">PM</span>
-              </div>
               <span className="ml-2 text-xl font-bold text-gray-900">Prediction Market</span>
+            </Link>
+          </div>
+
+          <div className="flex items-center">
+            {/* Logo */}
+            <Link href="/contests" className="flex-shrink-0 flex items-center">
+              <span className="ml-2 text-xl font-bold text-gray-900">Contests</span>
+            </Link>
+          </div>
+
+          <div className="flex items-center">
+            {/* Logo */}
+            <Link href="/matches" className="flex-shrink-0 flex items-center">
+              <span className="ml-2 text-xl font-bold text-gray-900">Matches</span>
             </Link>
           </div>
 

@@ -1,60 +1,100 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { ConnectButton } from '../components/ConnectButton';
-import { CreateContest } from '../components/CreateContest';
-import { ContestList } from '../components/ContestList';
-import { useContests } from '../hooks/useContests';
-
 export default function Home() {
-  const { isConnected } = useAccount();
-  const { contests, isLoading, refetch } = useContests();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🎯 Prediction Market
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            🎯 Prediction Market DApp
           </h1>
-          <p className="text-lg text-gray-600 mb-6">
-            Create and participate in binary prediction contests on Base
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            A decentralized prediction market built on Base blockchain where you can create and participate in binary prediction contests.
           </p>
-          <ConnectButton />
         </div>
 
-        {isConnected ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Create Contest Section */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Create New Contest
-              </h2>
-              <CreateContest onContestCreated={refetch} />
-            </div>
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-4xl mb-4">🏆</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Create Contests</h3>
+            <p className="text-gray-600">
+              Create your own prediction contests with custom questions and betting parameters.
+            </p>
+          </div>
 
-            {/* Contest List Section */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Available Contests
-              </h2>
-              <ContestList contests={contests} isLoading={isLoading} onContestJoined={refetch} />
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-4xl mb-4">💰</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Place Bets</h3>
+            <p className="text-gray-600">
+              Participate in contests by placing bets on binary outcomes using ETH.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-4xl mb-4">🏏</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Sports Matches</h3>
+            <p className="text-gray-600">
+              View live cricket matches and their details for informed predictions.
+            </p>
+          </div>
+        </div>
+
+        {/* How It Works */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-blue-600">1</span>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Connect Wallet</h3>
+              <p className="text-gray-600">Connect your MetaMask wallet to the Base network</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-blue-600">2</span>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Create or Join</h3>
+              <p className="text-gray-600">Create new contests or join existing ones</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-blue-600">3</span>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Win Rewards</h3>
+              <p className="text-gray-600">Earn ETH rewards for correct predictions</p>
             </div>
           </div>
-        ) : (
-          <div className="text-center">
-            <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Connect Your Wallet
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Connect your MetaMask wallet to start creating and participating in prediction contests.
-              </p>
+        </div>
+
+        {/* Tech Stack */}
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Built With</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-2xl mb-2">⚡</div>
+              <h4 className="font-semibold">Next.js</h4>
+              <p className="text-sm text-gray-600">React Framework</p>
+            </div>
+            <div>
+              <div className="text-2xl mb-2">🔗</div>
+              <h4 className="font-semibold">Base</h4>
+              <p className="text-sm text-gray-600">L2 Blockchain</p>
+            </div>
+            <div>
+              <div className="text-2xl mb-2">📱</div>
+              <h4 className="font-semibold">Wagmi</h4>
+              <p className="text-sm text-gray-600">Web3 React Hooks</p>
+            </div>
+            <div>
+              <div className="text-2xl mb-2">🎨</div>
+              <h4 className="font-semibold">Tailwind</h4>
+              <p className="text-sm text-gray-600">CSS Framework</p>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
