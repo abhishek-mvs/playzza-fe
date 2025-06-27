@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import MatchCard from '../../components/MatchCard'
+import Scorecard from '../../components/Scorecard'
 
 type MatchInfo = {
   matchId: number
@@ -15,6 +17,7 @@ type MatchInfo = {
 export default function LiveMatches() {
   const [matches, setMatches] = useState<MatchInfo[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null)
 
   const fetchMatches = async () => {
     try {
@@ -42,6 +45,29 @@ export default function LiveMatches() {
     return () => clearInterval(interval) // cleanup on unmount
   }, [])
 
+  const handleMatchClick = (matchId: number) => {
+    setSelectedMatchId(matchId)
+  }
+
+  const handleBackToMatches = () => {
+    setSelectedMatchId(null)
+  }
+
+  // Show scorecard if a match is selected
+  if (selectedMatchId) {
+    return (
+      <div className="p-4">
+        <button 
+          onClick={handleBackToMatches}
+          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          ← Back to Live Matches
+        </button>
+        <Scorecard matchId={selectedMatchId.toString()} />
+      </div>
+    )
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Live Matches</h1>
@@ -52,14 +78,7 @@ export default function LiveMatches() {
       ) : (
         <ul className="space-y-4">
           {matches.map((match) => (
-            <li key={match.matchId} className="border p-4 rounded shadow">
-              <h2 className="text-xl font-semibold text-center">{match.matchDesc} ({match.matchFormat})</h2>
-              <p className="text-gray-700 text-center">
-                {match.team1.teamName} vs {match.team2.teamName}
-              </p>
-              <p className="text-sm text-blue-600 text-center">{match.status}</p>
-              <p className="text-sm text-green-600 text-center">{match.state}</p>
-            </li>
+            <MatchCard key={match.matchId} match={match} onClick={handleMatchClick} />
           ))}
         </ul>
       )}
