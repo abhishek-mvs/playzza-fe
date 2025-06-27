@@ -1,16 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-
-type MatchInfo = {
-  matchId: number
-  matchDesc: string
-  matchFormat: string
-  state: string
-  status: string
-  team1: { teamName: string }
-  team2: { teamName: string }
-}
+import { MatchInfo } from '../types/match'
 
 interface MatchCardProps {
   match: MatchInfo

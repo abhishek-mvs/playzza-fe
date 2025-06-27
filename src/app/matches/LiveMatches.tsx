@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import MatchCard from '../../components/MatchCard'
-
-type MatchInfo = {
-  matchId: number
-  matchDesc: string
-  matchFormat: string
-  state: string
-  status: string
-  team1: { teamName: string }
-  team2: { teamName: string }
-}
+import { MatchInfo } from '../../types/match'
 
 export default function LiveMatches() {
   const [matches, setMatches] = useState<MatchInfo[]>([])
