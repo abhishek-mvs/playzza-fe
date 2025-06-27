@@ -66,30 +66,48 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   const [scorecardData, setScorecardData] = useState<ScorecardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+
+  const fetchScorecard = async () => {
+    console.log('fetching scorecard')
+    try {
+      setLoading(true)
+      setError(null) // Clear any previous errors
+      const response = await fetch(`http://localhost:8080/v1/scorecard/${matchId}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch scorecard')
+      }
+      const data = await response.json()
+      setScorecardData(data)
+      setLastUpdated(new Date())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchScorecard = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`http://localhost:8080/v1/scorecard/${matchId}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch scorecard')
-        }
-        const data = await response.json()
-        setScorecardData(data)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
-      } finally {
-        setLoading(false)
-      }
-    }
-
     if (matchId) {
-      fetchScorecard()
+      console.log('matchId', matchId)
+      fetchScorecard() // Initial fetch
+      
+      // Set up interval for auto-refresh every 5 minutes (300000ms)
+      const interval = setInterval(fetchScorecard, 300000)
+      
+      // Cleanup function to clear interval when component unmounts or matchId changes
+      return () => clearInterval(interval)
     }
   }, [matchId])
 
   const getTeamsPlaying = (data: ScorecardData): string => {
+    if (!data.scorecard) {
+      // Extract teams from the title when scorecard is null
+      const title = data.appIndex.seoTitle
+      const matchPart = title.split(' - ')[1]?.split(',')[0] || ''
+      return matchPart.replace(' vs ', ' and ')
+    }
+    
     const teams = new Set<string>()
     data.scorecard.forEach(innings => {
       teams.add(innings.batTeamName)
@@ -98,6 +116,8 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   }
 
   const getBowlingTeam = (battingTeam: string, data: ScorecardData): string => {
+    if (!data.scorecard) return 'Unknown'
+    
     const teams = new Set<string>()
     data.scorecard.forEach(innings => {
       teams.add(innings.batTeamName)
@@ -130,6 +150,50 @@ export default function Scorecard({ matchId }: ScorecardProps) {
     )
   }
 
+  // Handle case where scorecard is null (match hasn't started)
+  if (!scorecardData.scorecard) {
+    const teams = getTeamsPlaying(scorecardData)
+    return (
+      <div className="p-4 max-w-6xl mx-auto">
+        {/* Match Header */}
+        <div className="bg-gray-100 p-4 rounded-lg mb-6">
+          <div className="flex justify-between items-start mb-2">
+            <h1 className="text-xl font-bold">{scorecardData.appIndex.seoTitle}</h1>
+            <button 
+              onClick={fetchScorecard}
+              disabled={loading}
+              className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
+          <p className="text-gray-700 mb-1"><strong>Teams Playing:</strong> {teams}</p>
+          <p className="text-gray-700 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
+          <p className="text-gray-700 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
+          {lastUpdated && (
+            <p className="text-gray-600 text-sm mt-2">
+              <strong>Last Updated:</strong> {lastUpdated.toLocaleTimeString()} (Auto-refreshes every 5 minutes)
+            </p>
+          )}
+        </div>
+
+        {/* Match Not Started Message */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+          <div className="text-yellow-800">
+            <h2 className="text-lg font-semibold mb-2">Match Not Started Yet</h2>
+            <p className="text-sm">
+              The match between {teams} is yet to begin. 
+              {scorecardData.status && ` ${scorecardData.status}`}
+            </p>
+            <p className="text-sm mt-2">
+              Scorecard will be available once the match starts.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const teams = getTeamsPlaying(scorecardData)
   const teamInningsCount: { [key: string]: number } = {}
 
@@ -137,10 +201,24 @@ export default function Scorecard({ matchId }: ScorecardProps) {
     <div className="p-4 max-w-6xl mx-auto">
       {/* Match Header */}
       <div className="bg-gray-100 p-4 rounded-lg mb-6">
-        <h1 className="text-xl font-bold mb-2">{scorecardData.appIndex.seoTitle}</h1>
+        <div className="flex justify-between items-start mb-2">
+          <h1 className="text-xl font-bold">{scorecardData.appIndex.seoTitle}</h1>
+          <button 
+            onClick={fetchScorecard}
+            disabled={loading}
+            className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
         <p className="text-gray-700 mb-1"><strong>Teams Playing:</strong> {teams}</p>
         <p className="text-gray-700 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
-        <p className="text-gray-700"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
+        <p className="text-gray-700 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
+        {lastUpdated && (
+          <p className="text-gray-600 text-sm mt-2">
+            <strong>Last Updated:</strong> {lastUpdated.toLocaleTimeString()} (Auto-refreshes every 5 minutes)
+          </p>
+        )}
       </div>
 
       {/* Innings */}
