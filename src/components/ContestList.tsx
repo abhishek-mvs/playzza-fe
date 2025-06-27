@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseUnits, formatUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
-import { CONTRACT_ADDRESSES } from '../constants';
+import { CONTRACT_ADDRESSES } from '../app/constants';
 
 interface Contest {
   creator: string;

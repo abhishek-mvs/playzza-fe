@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { ConnectButton } from './components/ConnectButton';
-import { CreateContest } from './components/CreateContest';
-import { ContestList } from './components/ContestList';
-import { useContests } from './hooks/useContests';
+import { ConnectButton } from '../components/ConnectButton';
+import { CreateContest } from '../components/CreateContest';
+import { ContestList } from '../components/ContestList';
+import { useContests } from '../hooks/useContests';
 
 export default function Home() {
   const { isConnected } = useAccount();

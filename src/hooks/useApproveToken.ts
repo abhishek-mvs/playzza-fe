@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { CONTRACT_ADDRESSES, ABIS } from '../constants';
+import { CONTRACT_ADDRESSES, ABIS } from '../app/constants';
 
 export function useApproveToken() {
   const [isApproved, setIsApproved] = useState(false);

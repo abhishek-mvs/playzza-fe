@@ -1,7 +1,7 @@
 'use client';
 
 import { useReadContract } from 'wagmi';
-import { CONTRACT_ADDRESSES, ABIS } from '../constants';
+import { CONTRACT_ADDRESSES, ABIS } from '../app/constants';
 
 interface Contest {
   creator: string;

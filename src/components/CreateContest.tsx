@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
-import { CONTRACT_ADDRESSES } from '../constants';
+import { CONTRACT_ADDRESSES } from '../app/constants';
 
 export function CreateContest({ onContestCreated }: { onContestCreated: () => void }) {
   const { address } = useAccount();
