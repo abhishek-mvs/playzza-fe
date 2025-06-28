@@ -6,7 +6,13 @@ import { parseUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 
-export function CreateContest({ onContestCreated }: { onContestCreated: () => void }) {
+export function CreateContest({ 
+  onContestCreated, 
+  matchId 
+}: { 
+  onContestCreated: () => void;
+  matchId: string;
+}) {
   const { address } = useAccount();
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
@@ -21,7 +27,7 @@ export function CreateContest({ onContestCreated }: { onContestCreated: () => vo
   const { approve, isApproving, isApproved } = useApproveToken();
 
   const handleCreateContest = async () => {
-    if (!address || !title || !details || !statement || !stakeAmount) {
+    if (!address || !title || !details || !statement || !stakeAmount || !matchId) {
       alert('Please fill in all fields');
       return;
     }
@@ -32,7 +38,7 @@ export function CreateContest({ onContestCreated }: { onContestCreated: () => vo
       // First approve tokens
       await approve(stakeInWei);
       
-      // Then create contest
+      // Then create contest with matchId
       writeContest({
         address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
         abi: [
@@ -43,6 +49,7 @@ export function CreateContest({ onContestCreated }: { onContestCreated: () => vo
               { name: 'title', type: 'string' },
               { name: 'details', type: 'string' },
               { name: 'stmt', type: 'string' },
+              { name: 'matchId', type: 'string' },
               { name: 'stakeAmount', type: 'uint256' }
             ],
             outputs: [],
@@ -50,7 +57,7 @@ export function CreateContest({ onContestCreated }: { onContestCreated: () => vo
           }
         ],
         functionName: 'createContest',
-        args: [title, details, statement, stakeInWei],
+        args: [title, details, statement, matchId, stakeInWei],
       });
     } catch (error) {
       console.error('Error creating contest:', error);
@@ -80,6 +87,12 @@ export function CreateContest({ onContestCreated }: { onContestCreated: () => vo
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleCreateContest(); }} className="space-y-4">
+      <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
+        <p className="text-sm text-blue-800">
+          <strong>Creating contest for Match ID:</strong> {matchId}
+        </p>
+      </div>
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Contest Title

@@ -5,19 +5,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { parseUnits, formatUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
 import { CONTRACT_ADDRESSES } from '../app/constants';
-
-interface Contest {
-  creator: string;
-  title: string;
-  details: string;
-  statement: string;
-  stake: bigint;
-  opponent: string;
-  settled: boolean;
-  verdict: boolean;
-  active: boolean;
-}
-
+import { Contest } from '../types/contest';
 interface ContestListProps {
   contests: Contest[];
   isLoading: boolean;
