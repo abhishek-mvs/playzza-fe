@@ -34,38 +34,37 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and Navigation Links */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-6">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center group">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300">
                 <span className="text-white text-sm font-bold">🎯</span>
               </div>
-              <span className="text-xl font-bold gradient-text">Prediction Market</span>
+              <span className="text-xl font-bold gradient-text mr-8">Prediction Market</span>
+            </Link>
+            
+            <Link 
+            href="/matches" 
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                isActive('/matches') 
+                ? 'bg-white bg-opacity-10 text-white' 
+                : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-5'
+            }`}
+            >
+            🏏 Matches
             </Link>
 
-            {/* Navigation Links */}
-            <div className="md:flex items-center space-x-6">
-              <Link 
-                href="/matches" 
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
-                  isActive('/matches') 
-                    ? 'bg-white bg-opacity-10 text-white' 
-                    : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-5'
-                }`}
-              >
-                🏏 Matches
-              </Link>
-              <Link 
-                href="/contests" 
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
-                  isActive('/contests') 
-                    ? 'bg-white bg-opacity-10 text-white' 
-                    : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-5'
-                }`}
-              >
-                🏆 Contests
-              </Link>
-            </div>
+            <Link 
+            href="/contests" 
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                isActive('/contests') 
+                ? 'bg-white bg-opacity-10 text-white' 
+                : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-5'
+            }`}
+            >
+            🏆 Contests
+            </Link>
+            
           </div>
 
           {/* Wallet Connect Button */}
