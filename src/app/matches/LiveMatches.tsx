@@ -13,11 +13,13 @@ export default function LiveMatches() {
       const res = await fetch('http://localhost:8080/v1/live-matches')
       const data = await res.json()
       const matchList: MatchInfo[] = []
-
       data.typeMatches?.forEach((typeMatch: any) => {
         typeMatch.seriesMatches?.forEach((seriesMatch: any) => {
-          const match = seriesMatch?.seriesAdWrapper?.matches?.[0]?.matchInfo
-          if (match) matchList.push(match)
+          seriesMatch?.seriesAdWrapper?.matches?.forEach((match: any) => {
+            if (match?.matchInfo) {
+              matchList.push(match.matchInfo)
+            }
+          })
         })
       })
 

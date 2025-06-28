@@ -43,13 +43,6 @@ export default function Navbar() {
 
           <div className="flex items-center">
             {/* Logo */}
-            <Link href="/contests" className="flex-shrink-0 flex items-center">
-              <span className="ml-2 text-xl font-bold text-gray-900">Contests</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center">
-            {/* Logo */}
             <Link href="/matches" className="flex-shrink-0 flex items-center">
               <span className="ml-2 text-xl font-bold text-gray-900">Matches</span>
             </Link>
