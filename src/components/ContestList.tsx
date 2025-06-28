@@ -6,6 +6,7 @@ import { parseUnits, formatUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Contest } from '../types/contest';
+
 interface ContestListProps {
   contests: Contest[];
   isLoading: boolean;
@@ -67,23 +68,28 @@ export function ContestList({ contests, isLoading, onContestJoined }: ContestLis
 
   if (isLoading) {
     return (
-      <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-        <p className="mt-2 text-gray-600">Loading contests...</p>
+      <div className="text-center py-12">
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+        </div>
+        <p className="text-gray-400 text-lg">Loading contests...</p>
       </div>
     );
   }
 
   if (!contests || contests.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-600">No contests available. Create one to get started!</p>
+      <div className="text-center py-12">
+        <div className="w-16 h-16 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="text-2xl">📝</span>
+        </div>
+        <p className="text-gray-400 text-lg">No contests available. Create one to get started!</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 max-h-96 overflow-y-auto">
+    <div className="space-y-6 max-h-96 overflow-y-auto">
       {contests.map((contest, index) => {
         const isCreator = contest.creator.toLowerCase() === address?.toLowerCase();
         const isOpponent = contest.opponent.toLowerCase() === address?.toLowerCase();
@@ -91,37 +97,39 @@ export function ContestList({ contests, isLoading, onContestJoined }: ContestLis
         const isJoining = joiningContestId === index;
 
         return (
-          <div key={index} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold text-gray-900">{contest.title}</h3>
-              <span className={`px-2 py-1 text-xs rounded-full ${
+          <div key={index} className="glass rounded-xl p-6 hover:bg-white hover:bg-opacity-10 transition-all duration-300 group">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors duration-300">
+                {contest.title}
+              </h3>
+              <span className={`px-3 py-1 text-xs rounded-full font-semibold ${
                 contest.settled 
-                  ? 'bg-gray-200 text-gray-700' 
+                  ? 'bg-gray-600 text-gray-200' 
                   : contest.active 
-                    ? 'bg-green-200 text-green-700' 
-                    : 'bg-red-200 text-red-700'
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' 
+                    : 'bg-gradient-to-r from-red-500 to-red-600 text-white'
               }`}>
                 {contest.settled ? 'Settled' : contest.active ? 'Active' : 'Inactive'}
               </span>
             </div>
             
-            <p className="text-sm text-gray-600 mb-2">{contest.details}</p>
-            <p className="text-sm font-medium text-gray-700 mb-2">
+            <p className="text-gray-400 mb-3 leading-relaxed">{contest.details}</p>
+            <p className="text-sm font-semibold text-blue-300 mb-4 bg-blue-900 bg-opacity-20 p-3 rounded-lg">
               Statement: {contest.statement}
             </p>
             
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-sm text-gray-600">
-                Stake: {formatUnits(contest.stake, 6)} USDC
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-sm text-gray-300 font-medium">
+                Stake: <span className="text-green-400">{formatUnits(contest.stake, 6)} USDC</span>
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
                 Creator: {contest.creator.slice(0, 6)}...{contest.creator.slice(-4)}
               </span>
             </div>
 
             {contest.settled && (
-              <div className="mb-3 p-2 bg-blue-100 rounded">
-                <span className="text-sm font-medium">
+              <div className="mb-4 p-3 bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg border border-blue-500 border-opacity-30">
+                <span className="text-sm font-semibold text-white">
                   Result: {contest.verdict ? '✅ True' : '❌ False'}
                 </span>
               </div>
@@ -131,15 +139,15 @@ export function ContestList({ contests, isLoading, onContestJoined }: ContestLis
               <button
                 onClick={() => handleJoinContest(index, contest.stake)}
                 disabled={isJoining || isJoinLoading || isApproving}
-                className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-semibold py-2 px-4 rounded transition-colors"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none"
               >
                 {isJoining ? 'Joining...' : isJoinLoading ? 'Processing...' : isApproving ? 'Approving...' : 'Join Contest'}
               </button>
             )}
 
             {(isCreator || isOpponent) && !contest.settled && (
-              <div className="text-sm text-gray-600">
-                {isCreator ? 'You created this contest' : 'You joined this contest'}
+              <div className="text-sm text-gray-400 bg-gray-800 bg-opacity-50 p-3 rounded-lg">
+                {isCreator ? '🎯 You created this contest' : '👤 You joined this contest'}
               </div>
             )}
           </div>

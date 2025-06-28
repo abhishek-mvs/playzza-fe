@@ -52,13 +52,13 @@ export default function MatchPage() {
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
           style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
         >
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="glass rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-500 border-opacity-30">
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-xl font-semibold">Create Prediction Contest</h2>
+            <div className="flex justify-between items-center p-6 border-b border-gray-500 border-opacity-30">
+              <h2 className="text-xl font-semibold text-white">Create Prediction Contest</h2>
               <button
                 onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold transition-colors"
+                className="text-gray-400 hover:text-white text-2xl font-bold transition-colors"
               >
                 ×
               </button>

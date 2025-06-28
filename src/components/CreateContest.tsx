@@ -68,8 +68,11 @@ export function CreateContest({
   if (isContestSuccess) {
     onContestCreated();
     return (
-      <div className="text-center p-4">
-        <div className="text-green-600 font-semibold mb-2">✅ Contest created successfully!</div>
+      <div className="text-center p-8">
+        <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-2xl">✅</span>
+        </div>
+        <div className="text-green-400 font-bold text-xl mb-4">Contest created successfully!</div>
         <button
           onClick={() => {
             setTitle('');
@@ -77,7 +80,7 @@ export function CreateContest({
             setStatement('');
             setStakeAmount('');
           }}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition-colors"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
         >
           Create Another Contest
         </button>
@@ -86,64 +89,65 @@ export function CreateContest({
   }
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); handleCreateContest(); }} className="space-y-4">
-      <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
-        <p className="text-sm text-blue-800">
+    <form onSubmit={(e) => { e.preventDefault(); handleCreateContest(); }} className="space-y-6">
+      <div className="glass p-4 rounded-xl border border-blue-500 border-opacity-30">
+        <p className="text-sm text-blue-300 font-medium">
+          <span className="mr-2">🏏</span>
           <strong>Creating contest for Match ID:</strong> {matchId}
         </p>
       </div>
       
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
+        <label className="block text-sm font-semibold text-white mb-2">
           Contest Title
         </label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
           placeholder="e.g., Bitcoin Price Prediction"
           required
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
+        <label className="block text-sm font-semibold text-white mb-2">
           Contest Details
         </label>
         <textarea
           value={details}
           onChange={(e) => setDetails(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300 resize-none"
           placeholder="Describe the prediction contest..."
           rows={3}
           required
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
+        <label className="block text-sm font-semibold text-white mb-2">
           Prediction Statement
         </label>
         <input
           type="text"
           value={statement}
           onChange={(e) => setStatement(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
           placeholder="e.g., BTC > $100k by end of year?"
           required
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
+        <label className="block text-sm font-semibold text-white mb-2">
           Stake Amount (USDC)
         </label>
         <input
           type="number"
           value={stakeAmount}
           onChange={(e) => setStakeAmount(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
           placeholder="1000"
           min="0"
           step="0.01"
@@ -151,13 +155,30 @@ export function CreateContest({
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={isContestLoading || isApproving}
-        className="w-full bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white font-semibold py-2 px-4 rounded-md transition-colors"
-      >
-        {isContestLoading ? 'Creating Contest...' : isApproving ? 'Approving Tokens...' : 'Create Contest'}
-      </button>
+      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
+        <button
+          type="submit"
+          disabled={isContestLoading || isApproving}
+          className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none flex items-center justify-center space-x-2"
+        >
+          {isContestLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <span>Creating Contest...</span>
+            </>
+          ) : isApproving ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <span>Approving Tokens...</span>
+            </>
+          ) : (
+            <>
+              <span>🏆</span>
+              <span>Create Contest</span>
+            </>
+          )}
+        </button>
+      </div>
     </form>
   );
 } 

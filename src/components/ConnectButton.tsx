@@ -18,9 +18,10 @@ export function ConnectButton() {
     return (
       <button
         onClick={() => disconnect()}
-        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center space-x-2"
       >
-        Disconnect Wallet
+        <span>🔌</span>
+        <span>Disconnect Wallet</span>
       </button>
     );
   }
@@ -29,9 +30,19 @@ export function ConnectButton() {
     <button
       onClick={handleConnect}
       disabled={isPending}
-      className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none flex items-center space-x-2"
     >
-      {isPending ? 'Connecting...' : 'Connect MetaMask'}
+      {isPending ? (
+        <>
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          <span>Connecting...</span>
+        </>
+      ) : (
+        <>
+          <span>🔗</span>
+          <span>Connect MetaMask</span>
+        </>
+      )}
     </button>
   );
 } 
