@@ -15,6 +15,17 @@ interface ContestListProps {
 type FilterType = 'active' | 'pending' | 'completed';
 
 export function ContestList({ contests, isLoading, onContestCancelled }: ContestListProps) {
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+        </div>
+        <p className="text-gray-400 text-lg">Loading contests...</p>
+      </div>
+    );
+  }
+
   const { address } = useAccount();
   const [cancellingContestId, setCancellingContestId] = useState<number | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('active');
