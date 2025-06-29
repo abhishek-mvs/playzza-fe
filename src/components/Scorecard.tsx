@@ -102,7 +102,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
         {/* Match Header */}
         <div className="bg-gray-100 p-4 rounded-lg mb-6">
           <div className="flex justify-between items-start mb-2">
-            <h1 className="text-xl font-bold">{scorecardData.appIndex.seoTitle}</h1>
+            <h1 className="text-xl font-bold text-blue-900">{scorecardData.appIndex.seoTitle}</h1>
             <Button 
               onClick={fetchScorecard}
               disabled={loading}
@@ -113,11 +113,11 @@ export default function Scorecard({ matchId }: ScorecardProps) {
               {loading ? 'Refreshing...' : 'Refresh'}
             </Button>
           </div>
-          <p className="text-gray-700 mb-1"><strong>Teams Playing:</strong> {teams}</p>
-          <p className="text-gray-700 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
-          <p className="text-gray-700 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
+          <p className="text-gray-900 mb-1"><strong>Teams Playing:</strong> {teams}</p>
+          <p className="text-gray-900 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
+          <p className="text-gray-900 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
           {lastUpdated && (
-            <p className="text-gray-600 text-sm mt-2">
+            <p className="text-gray-700 text-sm mt-2">
               <strong>Last Updated:</strong> {lastUpdated.toLocaleTimeString()} (Auto-refreshes every 5 minutes)
             </p>
           )}
@@ -148,7 +148,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
       {/* Match Header */}
       <div className="bg-gray-100 p-4 rounded-lg mb-6">
         <div className="flex justify-between items-start mb-2">
-          <h1 className="text-xl font-bold">{scorecardData.appIndex.seoTitle}</h1>
+          <h1 className="text-xl font-bold text-blue-900">{scorecardData.appIndex.seoTitle}</h1>
           <Button 
             onClick={fetchScorecard}
             disabled={loading}
@@ -159,11 +159,11 @@ export default function Scorecard({ matchId }: ScorecardProps) {
             {loading ? 'Refreshing...' : 'Refresh'}
           </Button>
         </div>
-        <p className="text-gray-700 mb-1"><strong>Teams Playing:</strong> {teams}</p>
-        <p className="text-gray-700 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
-        <p className="text-gray-700 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
+        <p className="text-gray-900 mb-1"><strong>Teams Playing:</strong> {teams}</p>
+        <p className="text-gray-900 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
+        <p className="text-gray-900 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
         {lastUpdated && (
-          <p className="text-gray-600 text-sm mt-2">
+          <p className="text-gray-700 text-sm mt-2">
             <strong>Last Updated:</strong> {lastUpdated.toLocaleTimeString()} (Auto-refreshes every 5 minutes)
           </p>
         )}
@@ -177,11 +177,11 @@ export default function Scorecard({ matchId }: ScorecardProps) {
         return (
           <div key={innings.inningsId} className="mb-8 bg-white border rounded-lg shadow-sm">
             {/* Innings Header */}
-            <div className="bg-blue-50 p-4 border-b">
-              <h2 className="text-lg font-bold text-blue-800">
+            <div className="bg-blue-200 p-4 border-b">
+              <h2 className="text-lg font-bold text-blue-900">
                 {innings.batTeamName} INNINGS {teamInningsCount[innings.batTeamName]}
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm text-gray-900">
                 <div><strong>Batting:</strong> {innings.batTeamName}</div>
                 <div><strong>Bowling:</strong> {bowlingTeam}</div>
                 <div><strong>Score:</strong> {innings.score}/{innings.wickets} ({innings.overs} overs)</div>
@@ -194,9 +194,9 @@ export default function Scorecard({ matchId }: ScorecardProps) {
               <div className="p-4">
                 <h3 className="text-md font-semibold mb-3 text-gray-800">BATTING ({innings.batTeamName})</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse">
+                  <table className="w-full text-sm border-collapse text-gray-800">
                     <thead>
-                      <tr className="bg-gray-50">
+                      <tr className="bg-gray-200 text-gray-900">
                         <th className="border px-2 py-1 text-left">Name</th>
                         <th className="border px-2 py-1 text-center">Runs</th>
                         <th className="border px-2 py-1 text-center">Balls</th>
@@ -207,17 +207,15 @@ export default function Scorecard({ matchId }: ScorecardProps) {
                       </tr>
                     </thead>
                     <tbody>
-                      {innings.batsman.map((batsman) => (
-                        <tr key={batsman.id} className="hover:bg-gray-50">
+                      {innings.batsman.map((batsman, i) => (
+                        <tr key={batsman.id} className={"hover:bg-blue-50 " + (i % 2 === 0 ? "bg-white" : "bg-gray-50") + " text-gray-800"}>
                           <td className="border px-2 py-1 font-medium">{batsman.name}</td>
                           <td className="border px-2 py-1 text-center">{batsman.runs}</td>
                           <td className="border px-2 py-1 text-center">{batsman.balls}</td>
                           <td className="border px-2 py-1 text-center">{batsman.fours}</td>
                           <td className="border px-2 py-1 text-center">{batsman.sixes}</td>
                           <td className="border px-2 py-1 text-center">{batsman.strkRate}</td>
-                          <td className="border px-2 py-1 text-sm">
-                            {batsman.outDec || 'not out'}
-                          </td>
+                          <td className="border px-2 py-1 text-sm">{batsman.outDec || 'not out'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -231,9 +229,9 @@ export default function Scorecard({ matchId }: ScorecardProps) {
               <div className="p-4 border-t">
                 <h3 className="text-md font-semibold mb-3 text-gray-800">BOWLING ({bowlingTeam})</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse">
+                  <table className="w-full text-sm border-collapse text-gray-800">
                     <thead>
-                      <tr className="bg-gray-50">
+                      <tr className="bg-gray-200 text-gray-900">
                         <th className="border px-2 py-1 text-left">Name</th>
                         <th className="border px-2 py-1 text-center">Overs</th>
                         <th className="border px-2 py-1 text-center">Wickets</th>
@@ -244,8 +242,8 @@ export default function Scorecard({ matchId }: ScorecardProps) {
                       </tr>
                     </thead>
                     <tbody>
-                      {innings.bowler.map((bowler) => (
-                        <tr key={bowler.id} className="hover:bg-gray-50">
+                      {innings.bowler.map((bowler, i) => (
+                        <tr key={bowler.id} className={"hover:bg-blue-50 " + (i % 2 === 0 ? "bg-white" : "bg-gray-50") + " text-gray-800"}>
                           <td className="border px-2 py-1 font-medium">{bowler.name}</td>
                           <td className="border px-2 py-1 text-center">{bowler.overs}</td>
                           <td className="border px-2 py-1 text-center">{bowler.wickets}</td>

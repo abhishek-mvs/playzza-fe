@@ -32,7 +32,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="glass border-b border-white border-opacity-10 backdrop-blur-lg sticky top-0 z-50">
+    <nav className="w-full h-16 glass border-b border-white border-opacity-10 backdrop-blur-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and Navigation Links */}
@@ -49,8 +49,8 @@ export default function Navbar() {
             href="/matches" 
             className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                 isActive('/matches') 
-                ? 'bg-white bg-opacity-10 text-white' 
-                : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-5'
+                ? 'bg-purple-500 bg-opacity-10 text-white' 
+                : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
             }`}
             >
             🏏 Matches
@@ -60,8 +60,8 @@ export default function Navbar() {
             href="/contests" 
             className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                 isActive('/contests') 
-                ? 'bg-white bg-opacity-10 text-white' 
-                : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-5'
+                ? 'bg-purple-500 bg-opacity-10 text-white' 
+                : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
             }`}
             >
             🏆 Contests

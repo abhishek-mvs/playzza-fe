@@ -92,64 +92,64 @@ export function CreateContest({
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleCreateContest(); }} className="space-y-6">
-      <div className="glass p-4 rounded-xl border border-blue-500 border-opacity-30">
-        <p className="text-sm text-blue-300 font-medium">
+      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+        <p className="text-sm text-blue-200 font-medium">
           <span className="mr-2">🏏</span>
           <strong>Creating contest for Match ID:</strong> {matchId}
         </p>
       </div>
       
-      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
-        <label className="block text-sm font-semibold text-white mb-2">
+      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+        <label className="block text-sm font-semibold text-gray-100 mb-2">
           Contest Title
         </label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+          className="w-full px-4 py-3 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300"
           placeholder="e.g., Virat kohli will hit 100 runs in this match"
           required
         />
       </div>
 
-      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
-        <label className="block text-sm font-semibold text-white mb-2">
+      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+        <label className="block text-sm font-semibold text-gray-100 mb-2">
           Contest Details
         </label>
         <textarea
           value={details}
           onChange={(e) => setDetails(e.target.value)}
-          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300 resize-none"
+          className="w-full px-4 py-3 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 resize-none"
           placeholder="Describe the prediction contest..."
           rows={3}
           required
         />
       </div>
 
-      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
-        <label className="block text-sm font-semibold text-white mb-2">
+      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+        <label className="block text-sm font-semibold text-gray-100 mb-2">
           Prediction Statement
         </label>
         <input
           type="text"
           value={statement}
           onChange={(e) => setStatement(e.target.value)}
-          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+          className="w-full px-4 py-3 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300"
           placeholder="e.g., Virat kohli will hit 100 runs in this match"
           required
         />
       </div>
 
-      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
-        <label className="block text-sm font-semibold text-white mb-2">
+      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+        <label className="block text-sm font-semibold text-gray-100 mb-2">
           Stake Amount (USDC)
         </label>
         <input
           type="number"
           value={stakeAmount}
           onChange={(e) => setStakeAmount(e.target.value)}
-          className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+          className="w-full px-4 py-3 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300"
           placeholder="1000"
           min="0"
           step="0.01"
@@ -157,7 +157,7 @@ export function CreateContest({
         />
       </div>
 
-      <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
+      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
         <Button
           type="submit"
           disabled={isContestLoading || isApproving}
