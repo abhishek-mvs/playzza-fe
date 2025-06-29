@@ -5,6 +5,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Contest } from '../types/contest';
+import { Button } from './ui/Button';
 
 interface ContestListProps {
   contests: Contest[];
@@ -132,13 +133,15 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
           { key: 'pending' as FilterType, label: 'Pending', icon: '🟡' },
           { key: 'completed' as FilterType, label: 'Completed', icon: '✅' }
         ].map((filter) => (
-          <button
+          <Button
             key={filter.key}
             onClick={() => setActiveFilter(filter.key)}
-            className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md font-medium text-sm transition-all duration-200 ${
+            variant={activeFilter === filter.key ? "primary" : "ghost"}
+            size="sm"
+            className={`flex-1 ${
               activeFilter === filter.key
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                ? 'shadow-lg'
+                : ''
             }`}
           >
             <span>{filter.icon}</span>
@@ -146,7 +149,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
             <span className="bg-white bg-opacity-20 px-2 py-0.5 rounded-full text-xs">
               {getFilterCount(filter.key)}
             </span>
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -215,13 +218,15 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
                       {isCreator ? '🎯 You created this contest' : '👤 You joined this contest'}
                     </span>
                     {canCancel && (
-                      <button
+                      <Button
                         onClick={() => handleCancelContest(index)}
                         disabled={isCancelling || isCancelLoading}
-                        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none text-xs"
+                        variant="danger"
+                        size="sm"
+                        loading={isCancelling || isCancelLoading}
                       >
                         {isCancelling ? 'Cancelling...' : isCancelLoading ? 'Processing...' : 'Cancel Contest'}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 )}

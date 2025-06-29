@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors';
+import { ConnectButton } from '../components/ConnectButton';
+import { Button } from '../components/ui/Button';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -77,31 +79,31 @@ export default function Navbar() {
                     {formatAddress(address!)}
                   </div>
                 </div>
-                <button
+                <Button
                   onClick={handleDisconnect}
-                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  variant="danger"
+                  size="sm"
                 >
                   Disconnect
-                </button>
+                </Button>
               </div>
             ) : (
-              <button
+              <Button
                 onClick={handleConnect}
                 disabled={isPending}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center space-x-2"
+                variant="primary"
+                size="sm"
+                loading={isPending}
               >
                 {isPending ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Connecting...</span>
-                  </>
+                  'Connecting...'
                 ) : (
                   <>
                     <span>🔗</span>
                     <span>Connect Wallet</span>
                   </>
                 )}
-              </button>
+              </Button>
             )}
           </div>
         </div>

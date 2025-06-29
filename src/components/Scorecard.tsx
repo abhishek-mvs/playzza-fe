@@ -1,5 +1,6 @@
 import { ScorecardData } from '@/types/match'
 import { useState, useEffect } from 'react'
+import { Button } from './ui/Button'
 
 interface ScorecardProps {
   matchId: string
@@ -102,13 +103,15 @@ export default function Scorecard({ matchId }: ScorecardProps) {
         <div className="bg-gray-100 p-4 rounded-lg mb-6">
           <div className="flex justify-between items-start mb-2">
             <h1 className="text-xl font-bold">{scorecardData.appIndex.seoTitle}</h1>
-            <button 
+            <Button 
               onClick={fetchScorecard}
               disabled={loading}
-              className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              variant="primary"
+              size="sm"
+              loading={loading}
             >
               {loading ? 'Refreshing...' : 'Refresh'}
-            </button>
+            </Button>
           </div>
           <p className="text-gray-700 mb-1"><strong>Teams Playing:</strong> {teams}</p>
           <p className="text-gray-700 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
@@ -146,13 +149,15 @@ export default function Scorecard({ matchId }: ScorecardProps) {
       <div className="bg-gray-100 p-4 rounded-lg mb-6">
         <div className="flex justify-between items-start mb-2">
           <h1 className="text-xl font-bold">{scorecardData.appIndex.seoTitle}</h1>
-          <button 
+          <Button 
             onClick={fetchScorecard}
             disabled={loading}
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            variant="primary"
+            size="sm"
+            loading={loading}
           >
             {loading ? 'Refreshing...' : 'Refresh'}
-          </button>
+          </Button>
         </div>
         <p className="text-gray-700 mb-1"><strong>Teams Playing:</strong> {teams}</p>
         <p className="text-gray-700 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>

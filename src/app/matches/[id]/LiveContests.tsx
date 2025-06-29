@@ -8,6 +8,7 @@ import { useContestsByMatchId } from '../../../hooks/useContests'
 import { useApproveToken } from '../../../hooks/useApproveToken'
 import { CONTRACT_ADDRESSES } from '../../../app/constants'
 import { CreateContest } from '../../../components/CreateContest'
+import { Button } from '../../../components/ui/Button'
 
 export default function LiveContests() {
   const params = useParams()
@@ -75,12 +76,13 @@ export default function LiveContests() {
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-white">Live Contests</h1>
-        <button
+        <Button
           onClick={() => setShowCreateForm(true)}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+          variant="success"
+          size="md"
         >
           Create Contest
-        </button>
+        </Button>
       </div>
 
       {isLoading ? (
@@ -96,12 +98,13 @@ export default function LiveContests() {
             <span className="text-2xl">📝</span>
           </div>
           <p className="text-gray-400 text-lg mb-4">No active contests for this match.</p>
-          <button
+          <Button
             onClick={() => setShowCreateForm(true)}
-            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300"
+            variant="success"
+            size="md"
           >
             Create First Contest
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="space-y-4">
@@ -128,13 +131,16 @@ export default function LiveContests() {
 
               {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
                 <div className="mt-4">
-                  <button
+                  <Button
                     onClick={() => handleJoinContest(index, contest.stake)}
                     disabled={isJoinLoading || isApproving || joiningContestId === index}
-                    className="w-full px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-600 text-sm transition-colors font-semibold"
+                    variant="primary"
+                    size="lg"
+                    loading={joiningContestId === index}
+                    className="w-full"
                   >
                     {joiningContestId === index ? 'Joining...' : `Join Contest - ${formatUnits(contest.stake, 6)} USDC`}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -148,12 +154,14 @@ export default function LiveContests() {
           <div className="glass rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-500 border-opacity-30">
             <div className="flex justify-between items-center p-6 border-b border-gray-500 border-opacity-30">
               <h2 className="text-xl font-semibold text-white">Create Prediction Contest</h2>
-              <button
+              <Button
                 onClick={() => setShowCreateForm(false)}
-                className="text-gray-400 hover:text-white text-2xl font-bold transition-colors"
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-white text-2xl font-bold"
               >
                 ×
-              </button>
+              </Button>
             </div>
             
             <div className="p-6">

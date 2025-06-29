@@ -5,6 +5,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { parseUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
 import { CONTRACT_ADDRESSES } from '../app/constants';
+import { Button } from './ui/Button';
 
 export function CreateContest({ 
   onContestCreated, 
@@ -73,17 +74,18 @@ export function CreateContest({
           <span className="text-2xl">✅</span>
         </div>
         <div className="text-green-400 font-bold text-xl mb-4">Contest created successfully!</div>
-        <button
+        <Button
           onClick={() => {
             setTitle('');
             setDetails('');
             setStatement('');
             setStakeAmount('');
           }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          variant="primary"
+          size="lg"
         >
           Create Another Contest
-        </button>
+        </Button>
       </div>
     );
   }
@@ -156,28 +158,25 @@ export function CreateContest({
       </div>
 
       <div className="glass p-4 rounded-xl border border-gray-500 border-opacity-30">
-        <button
+        <Button
           type="submit"
           disabled={isContestLoading || isApproving}
-          className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none flex items-center justify-center space-x-2"
+          variant="success"
+          size="lg"
+          loading={isContestLoading || isApproving}
+          className="w-full"
         >
           {isContestLoading ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>Creating Contest...</span>
-            </>
+            'Creating Contest...'
           ) : isApproving ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>Approving Tokens...</span>
-            </>
+            'Approving Tokens...'
           ) : (
             <>
               <span>🏆</span>
               <span>Create Contest</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   );
