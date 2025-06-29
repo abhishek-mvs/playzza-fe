@@ -36,7 +36,7 @@ export function useContestsByMatchId(matchId: string) {
 }
 
 export function useContestsByUser(user: string) {
-  const { data: contest, isLoading, refetch } = useReadContract({
+  const { data: contests, isLoading, refetch } = useReadContract({
     address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
     abi: ABIS.PREDICTION_CONTEST,
     functionName: 'getUserContests',
@@ -44,7 +44,7 @@ export function useContestsByUser(user: string) {
   });
 
   return {
-    contest: contest as Contest[] | null,
+    contests: contests as Contest[] | null,
     isLoading,
     refetch,
   };

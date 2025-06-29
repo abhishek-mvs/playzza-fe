@@ -1,15 +1,16 @@
 "use client";
 
-import { ContestList } from "@/components/ContestList";
+import { ContestList } from "@/components/UserContestList";
 import { useAccount } from "wagmi";
-import { useContestsByUser } from "@/hooks/useContests";
+import { useContests, useContestsByUser } from "@/hooks/useContests";
 import { ConnectButton } from "@/components/ConnectButton";
-import { CreateContest } from "@/components/CreateContest";
 import { Contest } from "@/types/contest";
 
 export default function Contests() {
   const { isConnected, address } = useAccount();
-  const { contest: contests, isLoading, refetch } = useContestsByUser(address || "");
+  console.log(address);
+  const { contests: contests, isLoading, refetch } = useContestsByUser(address || "");
+  console.log(contests);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 relative overflow-hidden">
@@ -41,7 +42,7 @@ export default function Contests() {
                 <span className="mr-3">📋</span>
                 My Contests
               </h2>
-              <ContestList contests={contests as Contest[]} isLoading={isLoading} onContestJoined={refetch} />
+              <ContestList contests={contests as Contest[]} isLoading={isLoading} onContestCancelled={refetch} />
             </div>
           </div>
         ) : (

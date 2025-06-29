@@ -106,7 +106,7 @@ export function CreateContest({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
-          placeholder="e.g., Bitcoin Price Prediction"
+          placeholder="e.g., Virat kohli will hit 100 runs in this match"
           required
         />
       </div>
@@ -134,7 +134,7 @@ export function CreateContest({
           value={statement}
           onChange={(e) => setStatement(e.target.value)}
           className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
-          placeholder="e.g., BTC > $100k by end of year?"
+          placeholder="e.g., Virat kohli will hit 100 runs in this match"
           required
         />
       </div>
