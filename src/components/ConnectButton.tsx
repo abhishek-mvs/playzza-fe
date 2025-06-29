@@ -1,6 +1,7 @@
 'use client';
 
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { Button } from './ui/Button';
 
 export function ConnectButton() {
   const { isConnected } = useAccount();
@@ -16,33 +17,25 @@ export function ConnectButton() {
 
   if (isConnected) {
     return (
-      <button
+      <Button
         onClick={() => disconnect()}
-        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center space-x-2"
+        variant="danger"
+        icon="🔌"
+        className="btn-hover-lift"
       >
-        <span>🔌</span>
-        <span>Disconnect Wallet</span>
-      </button>
+        Disconnect Wallet
+      </Button>
     );
   }
 
   return (
-    <button
+    <Button
       onClick={handleConnect}
-      disabled={isPending}
-      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none flex items-center space-x-2"
+      loading={isPending}
+      icon="🔗"
+      className="btn-hover-lift"
     >
-      {isPending ? (
-        <>
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-          <span>Connecting...</span>
-        </>
-      ) : (
-        <>
-          <span>🔗</span>
-          <span>Connect MetaMask</span>
-        </>
-      )}
-    </button>
+      {isPending ? 'Connecting...' : 'Connect MetaMask'}
+    </Button>
   );
 } 
