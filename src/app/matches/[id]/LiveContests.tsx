@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits, formatUnits } from 'viem'
@@ -64,10 +64,12 @@ export default function LiveContests() {
     refetch()
   }
 
-  if (isJoinSuccess) {
-    refetch()
-    setJoiningContestId(null)
-  }
+  useEffect(() => {
+    if (isJoinSuccess) {
+      refetch()
+      setJoiningContestId(null)
+    }
+  }, [isJoinSuccess, refetch])
 
   return (
     <div className="p-4">

@@ -42,7 +42,6 @@ export default function MatchCard({ match }: MatchCardProps) {
       </div>
       
       <div className="border-t border-gray-700 pt-4">
-        <h4 className="text-sm font-semibold text-gray-400 mb-3 text-center">Contest Stats</h4>
         {isLoading ? (
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
