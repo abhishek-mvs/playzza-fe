@@ -269,19 +269,26 @@
     "name": "getContestStatsByMatchId",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "active",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "decisionPending",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "completed",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "active",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "decisionPending",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "completed",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PredictionContest.ContestStats",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",

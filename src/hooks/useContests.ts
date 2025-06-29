@@ -57,9 +57,9 @@ export function useContestStatsByMatchId(matchId: string) {
     functionName: 'getContestStatsByMatchId',
     args: [matchId],
   });
-
+  console.log("stats", stats);
   return {
-    stats: stats as ContestStats[] | null,
+    stats: stats as ContestStats | null,
     isLoading,
     refetch,
   };
