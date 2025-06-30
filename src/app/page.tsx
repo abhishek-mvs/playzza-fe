@@ -1,10 +1,25 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleGetStarted = () => {
+    router.push('/matches');
+  };
+
+  const handleLearnMore = () => {
+    // Scroll to the "How It Works" section
+    const howItWorksSection = document.getElementById('how-it-works');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 relative overflow-hidden">
       {/* Enhanced Background Pattern */}
@@ -36,6 +51,7 @@ export default function Home() {
               size="lg" 
               icon="🚀"
               className="btn-hover-lift"
+              onClick={handleGetStarted}
             >
               Get Started
             </Button>
@@ -44,6 +60,7 @@ export default function Home() {
               size="lg"
               icon="📚"
               className="btn-hover-lift"
+              onClick={handleLearnMore}
             >
               Learn More
             </Button>
@@ -84,7 +101,7 @@ export default function Home() {
         </div>
 
         {/* Enhanced How It Works */}
-        <Card variant="glass" className="mb-16">
+        <Card variant="glass" className="mb-16" id="how-it-works">
           <CardContent className="p-10">
             <h2 className="text-4xl font-bold text-white mb-10 text-center">
               How It <span className="gradient-text">Works</span>
