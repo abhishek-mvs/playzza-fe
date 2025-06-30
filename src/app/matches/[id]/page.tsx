@@ -16,12 +16,12 @@ export default function MatchPage() {
 
   return (
     <div className="relative">
-      <div className="p-4">
+      <div className="p-4 max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-4">
           <Button 
             onClick={handleBack}
             variant="secondary"
-            size="md"
+            size="sm"
           >
             ← Back
           </Button>
