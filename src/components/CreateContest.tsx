@@ -61,9 +61,11 @@ export function CreateContest({
     }
 
     const stakeInWei = parseUSDC(stakeAmount);
-    const oddsInWei = parseUnits(odds.toString(), 6);
+    const oddsInWei = parseUnits(odds.toString(), 1);
+    
 
     try {
+      console.log('Creating contest with stake:', stakeInWei, 'and odds:', oddsInWei);
       // First approve tokens
       await approve(stakeInWei);
       
@@ -189,9 +191,10 @@ export function CreateContest({
         </div>
       </div>
 
-      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+      
         {/* Real-time profit calculation display */}
         {stakeAmount && oddsNumerator && oddsDenominator && (
+          <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
           <div className="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 rounded-lg">
             <div className="text-sm text-blue-200 font-medium mb-2">💰 Profit Calculation:</div>
             <div className="space-y-1 text-xs text-blue-100">
@@ -201,8 +204,9 @@ export function CreateContest({
               <div>• Total pot: <span className="font-semibold text-purple-400">{totalPot.toFixed(2)} USDC</span></div>
             </div>
           </div>
+          </div>
         )}
-      </div>
+      
 
       <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
         <Button
