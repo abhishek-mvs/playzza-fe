@@ -6,7 +6,7 @@ import { parseUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Button } from './ui/Button';
-
+import { parseUSDC } from '@/utils/formatters';
 export function CreateContest({ 
   onContestCreated, 
   matchId 
@@ -33,7 +33,7 @@ export function CreateContest({
       return;
     }
 
-    const stakeInWei = parseUnits(stakeAmount, 6); // USDC has 6 decimals
+    const stakeInWei = parseUSDC(stakeAmount);
 
     try {
       // First approve tokens

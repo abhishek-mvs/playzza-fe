@@ -6,7 +6,7 @@ import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Contest } from '../types/contest';
 import { Button } from './ui/Button';
-
+import { formatUSDC } from '@/utils/formatters';
 interface ContestListProps {
   contests: Contest[];
   isLoading: boolean;
@@ -197,7 +197,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
                 
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm text-gray-300 font-medium">
-                    Stake: <span className="text-green-400">{formatUnits(contest.stake, 6)} USDC</span>
+                    Stake: <span className="text-green-400">{formatUSDC(contest.stake)} USDC</span>
                   </span>
                   <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
                     Creator: {contest.creator.slice(0, 6)}...{contest.creator.slice(-4)}

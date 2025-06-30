@@ -9,6 +9,7 @@ import { useApproveToken } from '../../../hooks/useApproveToken'
 import { CONTRACT_ADDRESSES } from '../../../app/constants'
 import { CreateContest } from '../../../components/CreateContest'
 import { Button } from '../../../components/ui/Button'
+import { formatUSDC } from '@/utils/formatters'
 
 export default function LiveContests() {
   const params = useParams()
@@ -121,7 +122,7 @@ export default function LiveContests() {
                 </div>
                 <div className="text-right">
                   <div className="text-lg font-bold text-green-400 mb-2">
-                    {formatUnits(contest.stake, 6)} USDC
+                    {formatUSDC(contest.stake)} USDC
                   </div>
                   <div className="bg-green-500 bg-opacity-20 text-green-400 text-sm px-2 py-1 rounded-full">
                     Active
@@ -139,7 +140,7 @@ export default function LiveContests() {
                     loading={joiningContestId === index}
                     className="w-full"
                   >
-                    {joiningContestId === index ? 'Joining...' : `Join Contest - ${formatUnits(contest.stake, 6)} USDC`}
+                    {joiningContestId === index ? 'Joining...' : `Join Contest - ${formatUSDC(contest.stake)} USDC`}
                   </Button>
                 </div>
               )}

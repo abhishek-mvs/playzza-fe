@@ -5,6 +5,7 @@ interface Contest {
     statement: string;
     matchId: string;
     stake: bigint;
+    odds: bigint;
     opponent: string;
     settled: boolean;
     verdict: boolean;
