@@ -6,7 +6,8 @@ import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Contest } from '../types/contest';
 import { Button } from './ui/Button';
-import { formatUSDC } from '@/utils/formatters';
+import { formatUSDC, calculateJoinAmount } from '@/utils/formatters';
+
 interface ContestListProps {
   contests: Contest[];
   isLoading: boolean;
@@ -26,7 +27,8 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
       </div>
     );
   }
-
+  console.log("contests", contests);
+  console.log("isLoading", isLoading);
   const { address } = useAccount();
   const [cancellingContestId, setCancellingContestId] = useState<number | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('active');
@@ -173,6 +175,22 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
             const canCancel = contest.active && !contest.settled && isCreator;
             const isCancelling = cancellingContestId === index;
 
+            // Calculate invested and will receive amounts
+            let invested = 0;
+            let willReceive = 0;
+            if (isCreator) {
+              invested = formatUSDC(contest.stake);
+              if (contest.opponent !== '0x0000000000000000000000000000000000000000') {
+                willReceive = formatUSDC(contest.opponentStake);
+              } else {
+                // No opponent yet, show potential opponent stake
+                willReceive = formatUSDC(calculateJoinAmount(contest.stake, contest.odds));
+              }
+            } else if (isOpponent) {
+              invested = formatUSDC(contest.opponentStake);
+              willReceive = formatUSDC(contest.stake);
+            }
+
             return (
               <div key={index} className="glass rounded-xl p-6 hover:bg-white hover:bg-opacity-10 transition-all duration-300 group">
                 <div className="flex justify-between items-start mb-4">
@@ -203,6 +221,18 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
                     Creator: {contest.creator.slice(0, 6)}...{contest.creator.slice(-4)}
                   </span>
                 </div>
+
+                {/* Invested & Will Receive Info */}
+                {(isCreator || isOpponent) && (
+                  <div className="flex flex-col md:flex-row md:space-x-6 mb-4">
+                    <div className="text-sm text-blue-200 bg-blue-900/40 rounded-lg px-3 py-2 mb-2 md:mb-0">
+                      Invested: <span className="font-bold text-blue-400">{invested} USDC</span>
+                    </div>
+                    <div className="text-sm text-purple-200 bg-purple-900/40 rounded-lg px-3 py-2">
+                      Will Receive: <span className="font-bold text-purple-400">{willReceive} USDC</span>
+                    </div>
+                  </div>
+                )}
 
                 {contest.settled && (
                   <div className="mb-4 p-3 bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg border border-blue-500 border-opacity-30">

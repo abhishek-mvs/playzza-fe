@@ -42,7 +42,7 @@ export function useContestsByUser(user: string) {
     functionName: 'getUserContests',
     args: [user],
   });
-
+  console.log("contests", contests);
   return {
     contests: contests as Contest[] | null,
     isLoading,

@@ -17,6 +17,8 @@ export default function LiveContests() {
   const { address } = useAccount()
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [joiningContestId, setJoiningContestId] = useState<number | null>(null)
+  const [visibleCount, setVisibleCount] = useState(6); // Show 6 contests by default
+  const CONTESTS_PER_ROW = 3;
 
   const { contests, isLoading, refetch } = useContestsByMatchId(matchId)
 
@@ -108,67 +110,86 @@ export default function LiveContests() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-4">
-          {contests.map((contest, index) => {
-            // Calculate amounts for display
-            const joinAmount = calculateJoinAmount(contest.stake, contest.odds);
-            const potentialProfit = calculatePotentialProfit(contest.stake);
-            const oddsDisplay = formatOdds(contest.odds);
-            
-            return (
-              <div key={index} className="glass p-6 rounded-xl border border-gray-500 border-opacity-30">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-blue-300 mb-2">"{contest.statement}"</h3>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Creator: {contest.creator === address ? "You" : `${contest.creator.slice(0, 6)}...${contest.creator.slice(-4)}`}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-green-400 mb-2">
-                      {formatUSDC(contest.stake)} USDC
+        <div>
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {contests.slice(0, visibleCount).map((contest, index) => {
+              // Calculate amounts for display
+              const joinAmount = calculateJoinAmount(contest.stake, contest.odds);
+              const potentialProfit = calculatePotentialProfit(contest.stake);
+              const oddsDisplay = formatOdds(contest.odds);
+              
+              return (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-blue-950/80 to-purple-900/80 p-6 rounded-2xl border border-gray-700 border-opacity-40 shadow-xl transition-transform hover:scale-[1.025] hover:shadow-2xl flex flex-col justify-between min-h-[320px]"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-blue-300 mb-2">"{contest.statement}"</h3>
+                      <p className="text-sm text-gray-400 mt-2">
+                        Creator: {contest.creator === address ? "You" : `${contest.creator.slice(0, 6)}...${contest.creator.slice(-4)}`}
+                      </p>
                     </div>
-                    <div className="bg-green-500 bg-opacity-20 text-green-400 text-sm px-2 py-1 rounded-full">
-                      Active
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-green-400 mb-2">
+                        {formatUSDC(contest.stake)} USDC
+                      </div>
+                      <div className="bg-green-500 bg-opacity-20 text-green-400 text-sm px-2 py-1 rounded-full">
+                        Active
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Contest Details Section */}
-                <div className="mb-4 p-4 bg-blue-900/20 border border-blue-700/30 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div className="text-center">
-                      <div className="text-gray-400 mb-1">Odds Ratio</div>
-                      <div className="text-yellow-400 font-semibold">{oddsDisplay}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-gray-400 mb-1">To Join</div>
-                      <div className="text-orange-400 font-semibold">{formatUSDC(joinAmount)} USDC</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-gray-400 mb-1">Potential Profit</div>
-                      <div className="text-green-400 font-semibold">{formatUSDC(potentialProfit)} USDC</div>
+                  {/* Contest Details Section */}
+                  <div className="mb-4 p-4 bg-blue-900/30 border border-blue-700/30 rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="text-center">
+                        <div className="text-gray-400 mb-1">Odds Ratio</div>
+                        <div className="text-yellow-400 font-semibold">{oddsDisplay}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-gray-400 mb-1">To Join</div>
+                        <div className="text-orange-400 font-semibold">{formatUSDC(joinAmount)} USDC</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-gray-400 mb-1">Potential Profit</div>
+                        <div className="text-green-400 font-semibold">{formatUSDC(potentialProfit)} USDC</div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
-                  <div className="mt-4">
-                    <Button
-                      onClick={() => handleJoinContest(index, joinAmount)}
-                      disabled={isJoinLoading || isApproving || joiningContestId === index}
-                      variant="primary"
-                      size="lg"
-                      loading={joiningContestId === index}
-                      className="w-full"
-                    >
-                      {joiningContestId === index ? 'Joining...' : `Join Contest - ${formatUSDC(joinAmount)} USDC`}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
+                    <div className="mt-auto">
+                      <Button
+                        onClick={() => handleJoinContest(index, joinAmount)}
+                        disabled={isJoinLoading || isApproving || joiningContestId === index}
+                        variant="primary"
+                        size="lg"
+                        loading={joiningContestId === index}
+                        className="w-full"
+                      >
+                        {joiningContestId === index ? 'Joining...' : `Join Contest - ${formatUSDC(joinAmount)} USDC`}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {contests.length > visibleCount && (
+            <div className="flex justify-center mt-8">
+              <Button
+                onClick={() => setVisibleCount((prev) => prev + 6)}
+                variant="secondary"
+                size="md"
+                className="px-8 py-2 rounded-full shadow-lg bg-gradient-to-r from-blue-700 to-purple-700 text-white hover:from-blue-600 hover:to-purple-600"
+              >
+                Show More
+              </Button>
+            </div>
+          )}
         </div>
       )}
 

@@ -135,6 +135,11 @@
         "type": "address"
       },
       {
+        "internalType": "uint256",
+        "name": "opponentStake",
+        "type": "uint256"
+      },
+      {
         "internalType": "bool",
         "name": "settled",
         "type": "bool"
@@ -251,6 +256,11 @@
             "type": "address"
           },
           {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
             "internalType": "bool",
             "name": "settled",
             "type": "bool"
@@ -325,6 +335,11 @@
             "internalType": "address",
             "name": "opponent",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -452,6 +467,11 @@
             "type": "address"
           },
           {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
             "internalType": "bool",
             "name": "settled",
             "type": "bool"
@@ -526,6 +546,11 @@
             "internalType": "address",
             "name": "opponent",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -621,6 +646,11 @@
             "internalType": "address",
             "name": "opponent",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
           },
           {
             "internalType": "bool",

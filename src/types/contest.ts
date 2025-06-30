@@ -7,6 +7,7 @@ interface Contest {
     stake: bigint;
     odds: bigint;
     opponent: string;
+    opponentStake: bigint;
     settled: boolean;
     verdict: boolean;
     active: boolean;
