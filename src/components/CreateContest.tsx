@@ -61,7 +61,8 @@ export function CreateContest({
     }
 
     const stakeInWei = parseUSDC(stakeAmount);
-    const oddsInWei = parseUnits(odds.toString(), 1);
+    console.log("Odds:", odds.toString())
+    const oddsInWei = parseUnits(odds.toString(), 0);
     
 
     try {

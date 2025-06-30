@@ -9,7 +9,7 @@ import { useApproveToken } from '../../../hooks/useApproveToken'
 import { CONTRACT_ADDRESSES } from '../../../app/constants'
 import { CreateContest } from '../../../components/CreateContest'
 import { Button } from '../../../components/ui/Button'
-import { formatUSDC } from '@/utils/formatters'
+import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds } from '@/utils/formatters'
 
 export default function LiveContests() {
   const params = useParams()
@@ -109,43 +109,66 @@ export default function LiveContests() {
         </div>
       ) : (
         <div className="space-y-4">
-          {contests.map((contest, index) => (
-            <div key={index} className="glass p-6 rounded-xl border border-gray-500 border-opacity-30">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2">{contest.title}</h3>
-                  <p className="text-gray-300 text-sm mb-2">{contest.details}</p>
-                  <p className="text-blue-300 text-sm font-medium">"{contest.statement}"</p>
-                  <p className="text-sm text-gray-400 mt-2">
-                    Creator: {contest.creator.slice(0, 6)}...{contest.creator.slice(-4)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-green-400 mb-2">
-                    {formatUSDC(contest.stake)} USDC
+          {contests.map((contest, index) => {
+            // Calculate amounts for display
+            const joinAmount = calculateJoinAmount(contest.stake, contest.odds);
+            const potentialProfit = calculatePotentialProfit(contest.stake);
+            const oddsDisplay = formatOdds(contest.odds);
+            
+            return (
+              <div key={index} className="glass p-6 rounded-xl border border-gray-500 border-opacity-30">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-blue-300 mb-2">"{contest.statement}"</h3>
+                    <p className="text-sm text-gray-400 mt-2">
+                      Creator: {contest.creator === address ? "You" : `${contest.creator.slice(0, 6)}...${contest.creator.slice(-4)}`}
+                    </p>
                   </div>
-                  <div className="bg-green-500 bg-opacity-20 text-green-400 text-sm px-2 py-1 rounded-full">
-                    Active
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-green-400 mb-2">
+                      {formatUSDC(contest.stake)} USDC
+                    </div>
+                    <div className="bg-green-500 bg-opacity-20 text-green-400 text-sm px-2 py-1 rounded-full">
+                      Active
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
-                <div className="mt-4">
-                  <Button
-                    onClick={() => handleJoinContest(index, contest.stake)}
-                    disabled={isJoinLoading || isApproving || joiningContestId === index}
-                    variant="primary"
-                    size="lg"
-                    loading={joiningContestId === index}
-                    className="w-full"
-                  >
-                    {joiningContestId === index ? 'Joining...' : `Join Contest - ${formatUSDC(contest.stake)} USDC`}
-                  </Button>
+                {/* Contest Details Section */}
+                <div className="mb-4 p-4 bg-blue-900/20 border border-blue-700/30 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="text-center">
+                      <div className="text-gray-400 mb-1">Odds Ratio</div>
+                      <div className="text-yellow-400 font-semibold">{oddsDisplay}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-400 mb-1">To Join</div>
+                      <div className="text-orange-400 font-semibold">{formatUSDC(joinAmount)} USDC</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-400 mb-1">Potential Profit</div>
+                      <div className="text-green-400 font-semibold">{formatUSDC(potentialProfit)} USDC</div>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
+                  <div className="mt-4">
+                    <Button
+                      onClick={() => handleJoinContest(index, joinAmount)}
+                      disabled={isJoinLoading || isApproving || joiningContestId === index}
+                      variant="primary"
+                      size="lg"
+                      loading={joiningContestId === index}
+                      className="w-full"
+                    >
+                      {joiningContestId === index ? 'Joining...' : `Join Contest - ${formatUSDC(joinAmount)} USDC`}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
