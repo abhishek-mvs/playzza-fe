@@ -3,6 +3,7 @@
 import { useReadContract } from 'wagmi';
 import { CONTRACT_ADDRESSES, ABIS } from '../app/constants';
 import { Contest, ContestStats } from '../types/contest';
+import { filterLiveContests } from '@/utils/filters';
 
 
 
@@ -27,9 +28,16 @@ export function useContestsByMatchId(matchId: string) {
     functionName: 'getActiveContestsByMatchId',
     args: [matchId],
   });
+  
+  if (!contests) return {
+    contests: null,
+    isLoading,
+    refetch,
+  };
 
+  const filteredContests = filterLiveContests(contests as Contest[]);
   return {
-    contests: contests as Contest[] | null,
+    contests: filteredContests,
     isLoading,
     refetch,
   };
