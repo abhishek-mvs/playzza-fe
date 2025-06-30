@@ -20,6 +20,8 @@ export function CreateContest({
   const [stakeAmount, setStakeAmount] = useState('');
   const [oddsNumerator, setOddsNumerator] = useState('1');
   const [oddsDenominator, setOddsDenominator] = useState('1');
+  const [contestExpiryValue, setContestExpiryValue] = useState('2');
+  const [contestExpiryUnit, setContestExpiryUnit] = useState('hours');
 
   const { writeContract: writeContest, data: contestHash } = useWriteContract();
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useWaitForTransactionReceipt({
@@ -67,9 +69,13 @@ export function CreateContest({
 
     try {
       console.log('Creating contest with stake:', stakeInWei, 'and odds:', oddsInWei);
+      const now = BigInt(Math.floor(Date.now() / 1000));
+      const expiryValue = parseInt(contestExpiryValue) || 2;
+      const expiryInMinutes = contestExpiryUnit === 'hours' ? expiryValue * 60 : expiryValue;
+      const contestExpiry = now + BigInt(expiryInMinutes * 60); // Convert minutes to seconds
+      const settleTime = contestExpiry + BigInt(30 * 60); // 30 minutes from now
       // First approve tokens
       await approve(stakeInWei);
-      
       // Then create contest with matchId and odds
       writeContest({
         address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
@@ -83,14 +89,16 @@ export function CreateContest({
               { name: 'stmt', type: 'string' },
               { name: 'matchId', type: 'string' },
               { name: 'stakeAmount', type: 'uint256' },
-              { name: 'odds', type: 'uint256' }
+              { name: 'odds', type: 'uint256' },
+              { name: 'contestExpiry', type: 'uint256' },
+              { name: 'settleTime', type: 'uint256' }
             ],
             outputs: [],
             stateMutability: 'nonpayable'
           }
         ],
         functionName: 'createContest',
-        args: [statement, "", statement, matchId, stakeInWei, oddsInWei],
+        args: [statement, "", statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime],
       });
     } catch (error) {
       console.error('Error creating contest:', error);
@@ -112,6 +120,8 @@ export function CreateContest({
             setStakeAmount('');
             setOddsNumerator('1');
             setOddsDenominator('1');
+            setContestExpiryValue('2');
+            setContestExpiryUnit('hours');
           }}
           variant="primary"
           size="lg"
@@ -146,7 +156,7 @@ export function CreateContest({
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
           <label className="block text-sm font-semibold text-gray-100 mb-2">
             Stake Amount (USDC)
@@ -155,8 +165,8 @@ export function CreateContest({
             type="number"
             value={stakeAmount}
             onChange={(e) => setStakeAmount(e.target.value)}
-            className="w-full px-4 py-3 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300"
-            placeholder="1000"
+            className="w-full px-3 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300"
+            placeholder="10"
             min="0"
             step="0.01"
             required
@@ -164,30 +174,64 @@ export function CreateContest({
         </div>
         <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
           <label className="block text-sm font-semibold text-gray-100 mb-2">
-            Odds Ratio (Creator:Contestant)
+            Odds Ratio
           </label>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <input
               type="number"
               value={oddsNumerator}
               onChange={(e) => setOddsNumerator(e.target.value)}
-              className="flex-1 px-4 py-3 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-center"
+              className="flex-1 px-2 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-center"
               placeholder="1"
               min="1"
               max="100"
               required
             />
-            <span className="text-gray-300 font-bold text-lg">:</span>
+            <span className="text-gray-300 font-bold">:</span>
             <input
               type="number"
               value={oddsDenominator}
               onChange={(e) => setOddsDenominator(e.target.value)}
-              className="flex-1 px-4 py-3 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-center"
+              className="flex-1 px-2 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-center"
               placeholder="1"
               min="1"
               max="100"
               required
             />
+          </div>
+        </div>
+        <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+          <label className="block text-sm font-semibold text-gray-100 mb-2">
+            Contest Expiry Time
+          </label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="number"
+              value={contestExpiryValue}
+              onChange={(e) => setContestExpiryValue(e.target.value)}
+              className="flex-1 px-3 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300"
+              placeholder="2"
+              min={contestExpiryUnit === 'hours' ? "0.5" : "5"}
+              max={contestExpiryUnit === 'hours' ? "24" : "1440"}
+              step={contestExpiryUnit === 'hours' ? "0.5" : "5"}
+              required
+            />
+            <select
+              value={contestExpiryUnit}
+              onChange={(e) => {
+                setContestExpiryUnit(e.target.value);
+                // Reset value when switching units to prevent invalid values
+                if (e.target.value === 'hours') {
+                  setContestExpiryValue('2');
+                } else {
+                  setContestExpiryValue('120');
+                }
+              }}
+              className="px-3 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 transition-all duration-300"
+            >
+              <option value="hours">hrs</option>
+              <option value="minutes">min</option>
+            </select>
           </div>
         </div>
       </div>
@@ -196,7 +240,7 @@ export function CreateContest({
         {/* Real-time profit calculation display */}
         {stakeAmount && oddsNumerator && oddsDenominator && (
           <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
-          <div className="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 rounded-lg">
+          <div className="p-3 bg-blue-900/30 border border-blue-700/50 rounded-lg">
             <div className="text-sm text-blue-200 font-medium mb-2">💰 Profit Calculation:</div>
             <div className="space-y-1 text-xs text-blue-100">
               <div>• Your stake: <span className="font-semibold">{stakeAmount} USDC</span></div>

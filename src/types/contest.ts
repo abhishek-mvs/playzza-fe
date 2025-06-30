@@ -8,6 +8,10 @@ interface Contest {
     odds: bigint;
     opponent: string;
     opponentStake: bigint;
+    contestExpiry: bigint;
+    settleTime: bigint;
+    createdAt: bigint;
+    updatedAt: bigint;
     settled: boolean;
     verdict: boolean;
     active: boolean;
