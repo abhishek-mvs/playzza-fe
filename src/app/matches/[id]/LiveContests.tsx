@@ -153,7 +153,7 @@ export default function LiveContests() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
           <div className="glass rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-500 border-opacity-30">
-            <div className="flex justify-between items-center p-6 border-b border-gray-500 border-opacity-30">
+            <div className="flex justify-between items-center p-4 border-b border-gray-500 border-opacity-30">
               <h2 className="text-xl font-semibold text-white">Create Prediction Contest</h2>
               <Button
                 onClick={() => setShowCreateForm(false)}
