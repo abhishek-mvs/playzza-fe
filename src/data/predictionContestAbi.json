@@ -28,6 +28,51 @@
   },
   {
     "inputs": [],
+    "name": "ODDS_PRECISION",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "activeContestIds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "admin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "avsManager",
     "outputs": [
       {
@@ -48,6 +93,26 @@
       }
     ],
     "name": "cancelContest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "closeExpiredContest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "closeExpiredContests",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -112,9 +177,39 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "odds",
+        "type": "uint256"
+      },
+      {
         "internalType": "address",
         "name": "opponent",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "opponentStake",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "contestExpiry",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "settleTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "createdAt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "updatedAt",
+        "type": "uint256"
       },
       {
         "internalType": "bool",
@@ -161,6 +256,21 @@
         "internalType": "uint256",
         "name": "stakeAmount",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "odds",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "contestExpiry",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "settleTime",
+        "type": "uint256"
       }
     ],
     "name": "createContest",
@@ -169,10 +279,29 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "emergencyWithdraw",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "emergencyCloseContest",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getActiveContestIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -218,9 +347,39 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "odds",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "contestExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "settleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "updatedAt",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -257,54 +416,91 @@
     "name": "getContest",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "title",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "details",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "statement",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "matchId",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "stake",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "opponent",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "settled",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "verdict",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "active",
-        "type": "bool"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "details",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "statement",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "matchId",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "stake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "odds",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "opponent",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "contestExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "settleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "updatedAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "settled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "verdict",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct PredictionContest.Contest",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -402,9 +598,39 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "odds",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "contestExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "settleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "updatedAt",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -473,9 +699,39 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "odds",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "contestExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "settleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "updatedAt",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -496,6 +752,25 @@
         "internalType": "struct PredictionContest.Contest[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRequiredOpponentStake",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -544,9 +819,39 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "odds",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "contestExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "settleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "updatedAt",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -567,6 +872,25 @@
         "internalType": "struct PredictionContest.Contest[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "isActiveContest",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

@@ -10,7 +10,7 @@ export default function LiveMatches() {
 
   const fetchMatches = async () => {
     try {
-      const res = await fetch('http://localhost:8080/v1/live-matches')
+      const res = await fetch('https://pm-backend-production.up.railway.app/v1/live-matches')
       const data = await res.json()
       const matchList: MatchInfo[] = []
       data.typeMatches?.forEach((typeMatch: any) => {
@@ -39,7 +39,7 @@ export default function LiveMatches() {
 
   return (
     <div className="glass rounded-2xl p-8">
-      <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
+      <h2 className="text-3xl font-bold text-white mb-6 text-center">
         <span className="mr-3">🔥</span>
         Live Matches
       </h2>

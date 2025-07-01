@@ -3,11 +3,11 @@ import { base, baseSepolia, hardhat } from 'wagmi/chains';
 import { injected } from 'wagmi/connectors';
 
 export const config = createConfig({
-  chains: [hardhat],
+  chains: [baseSepolia],
   connectors: [
     injected(),
   ],
   transports: {
-    [hardhat.id]: http(),
+    [baseSepolia.id]: http(),
   },
 }); 

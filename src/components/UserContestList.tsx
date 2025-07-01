@@ -5,6 +5,8 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Contest } from '../types/contest';
+import { Button } from './ui/Button';
+import { formatUSDC, calculateJoinAmount } from '@/utils/formatters';
 
 interface ContestListProps {
   contests: Contest[];
@@ -25,7 +27,8 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
       </div>
     );
   }
-
+  console.log("contests", contests);
+  console.log("isLoading", isLoading);
   const { address } = useAccount();
   const [cancellingContestId, setCancellingContestId] = useState<number | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('active');
@@ -132,13 +135,15 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
           { key: 'pending' as FilterType, label: 'Pending', icon: '🟡' },
           { key: 'completed' as FilterType, label: 'Completed', icon: '✅' }
         ].map((filter) => (
-          <button
+          <Button
             key={filter.key}
             onClick={() => setActiveFilter(filter.key)}
-            className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md font-medium text-sm transition-all duration-200 ${
+            variant={activeFilter === filter.key ? "primary" : "ghost"}
+            size="sm"
+            className={`flex-1 ${
               activeFilter === filter.key
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                ? 'shadow-lg'
+                : ''
             }`}
           >
             <span>{filter.icon}</span>
@@ -146,7 +151,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
             <span className="bg-white bg-opacity-20 px-2 py-0.5 rounded-full text-xs">
               {getFilterCount(filter.key)}
             </span>
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -169,6 +174,22 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
             const isOpponent = contest.opponent.toLowerCase() === address?.toLowerCase();
             const canCancel = contest.active && !contest.settled && isCreator;
             const isCancelling = cancellingContestId === index;
+
+            // Calculate invested and will receive amounts
+            let invested = 0;
+            let willReceive = 0;
+            if (isCreator) {
+              invested = formatUSDC(contest.stake);
+              if (contest.opponent !== '0x0000000000000000000000000000000000000000') {
+                willReceive = formatUSDC(contest.opponentStake);
+              } else {
+                // No opponent yet, show potential opponent stake
+                willReceive = formatUSDC(calculateJoinAmount(contest.stake, contest.odds));
+              }
+            } else if (isOpponent) {
+              invested = formatUSDC(contest.opponentStake);
+              willReceive = formatUSDC(contest.stake);
+            }
 
             return (
               <div key={index} className="glass rounded-xl p-6 hover:bg-white hover:bg-opacity-10 transition-all duration-300 group">
@@ -194,12 +215,24 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
                 
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm text-gray-300 font-medium">
-                    Stake: <span className="text-green-400">{formatUnits(contest.stake, 6)} USDC</span>
+                    Stake: <span className="text-green-400">{formatUSDC(contest.stake)} USDC</span>
                   </span>
                   <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
                     Creator: {contest.creator.slice(0, 6)}...{contest.creator.slice(-4)}
                   </span>
                 </div>
+
+                {/* Invested & Will Receive Info */}
+                {(isCreator || isOpponent) && (
+                  <div className="flex flex-col md:flex-row md:space-x-6 mb-4">
+                    <div className="text-sm text-blue-200 bg-blue-900/40 rounded-lg px-3 py-2 mb-2 md:mb-0">
+                      Invested: <span className="font-bold text-blue-400">{invested} USDC</span>
+                    </div>
+                    <div className="text-sm text-purple-200 bg-purple-900/40 rounded-lg px-3 py-2">
+                      Will Receive: <span className="font-bold text-purple-400">{willReceive} USDC</span>
+                    </div>
+                  </div>
+                )}
 
                 {contest.settled && (
                   <div className="mb-4 p-3 bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg border border-blue-500 border-opacity-30">
@@ -215,13 +248,15 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
                       {isCreator ? '🎯 You created this contest' : '👤 You joined this contest'}
                     </span>
                     {canCancel && (
-                      <button
+                      <Button
                         onClick={() => handleCancelContest(index)}
                         disabled={isCancelling || isCancelLoading}
-                        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none text-xs"
+                        variant="danger"
+                        size="sm"
+                        loading={isCancelling || isCancelLoading}
                       >
                         {isCancelling ? 'Cancelling...' : isCancelLoading ? 'Processing...' : 'Cancel Contest'}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 )}
