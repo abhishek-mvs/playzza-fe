@@ -60,10 +60,10 @@ const CountdownTimer = ({ expiryTimestamp }: { expiryTimestamp: bigint }) => {
       isExpired 
         ? 'bg-red-500 bg-opacity-20 text-red-400' 
         : timeRemaining.includes('h') 
-          ? 'bg-green-500 bg-opacity-20 text-green-400'
+          ? 'bg-green-500 bg-opacity-20 text-white-400'
           : timeRemaining.includes('m') && parseInt(timeRemaining.split('m')[0]) > 5
-            ? 'bg-yellow-500 bg-opacity-20 text-yellow-400'
-            : 'bg-red-500 bg-opacity-20 text-red-400'
+            ? 'bg-yellow-500 bg-opacity-20 text-white-400'
+            : 'bg-red-500 bg-opacity-20 text-white-400'
     }`}>
       ⏰ {timeRemaining}
     </div>
