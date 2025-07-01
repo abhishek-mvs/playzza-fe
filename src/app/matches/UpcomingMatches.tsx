@@ -19,7 +19,7 @@ export default function UpcomingMatches() {
 
   const fetchMatches = async () => {
     try {
-      const res = await fetch('http://localhost:8080/v1/upcoming-matches')
+      const res = await fetch('https://pm-backend-production.up.railway.app/v1/upcoming-matches')
       const data = await res.json()
       const matchList: MatchInfo[] = []
       data.typeMatches?.forEach((typeMatch: any) => {

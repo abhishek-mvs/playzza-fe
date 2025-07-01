@@ -17,7 +17,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
     try {
       setLoading(true)
       setError(null) // Clear any previous errors
-      const response = await fetch(`http://localhost:8080/v1/scorecard/${matchId}`)
+      const response = await fetch(`https://pm-backend-production.up.railway.app/v1/scorecard/${matchId}`)
       if (!response.ok) {
         throw new Error('Failed to fetch scorecard')
       }
