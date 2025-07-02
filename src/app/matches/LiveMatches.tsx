@@ -39,7 +39,7 @@ export default function LiveMatches() {
 
   return (
     <div className="glass rounded-2xl p-2">
-      <h2 className="text-2xl font-bold text-white mb-2">
+      <h2 className="text-lg font-bold text-white mb-1">
         <span className="mr-3">🔥</span>
         Live Matches
       </h2>

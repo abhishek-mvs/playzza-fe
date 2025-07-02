@@ -62,19 +62,7 @@ export default function MatchCard({ match }: MatchCardProps) {
               {match.matchFormat}
             </Badge>
           </div>
-          
-          {/* <div className="flex flex-wrap gap-1 mb-2">
-            <Badge variant="secondary" size="sm">
-              {match.matchFormat}
-            </Badge>
-            <Badge variant="secondary" size="sm">
-              {match.status}
-            </Badge>
-            <Badge variant="secondary" size="sm">
-              {match.state}
-            </Badge>
-          </div> */}
-          
+            
           <p className="text-sm text-gray-300 font-medium truncate">
             {match.team1.teamName}
           </p>

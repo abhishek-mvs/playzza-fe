@@ -2,17 +2,7 @@
 
 import MatchCard from '@/components/MatchCard'
 import { useEffect, useState } from 'react'
-
-type MatchInfo = {
-  matchId: number
-  matchDesc: string
-  matchFormat: string
-  state: string
-  status: string
-  team1: { teamName: string }
-  team2: { teamName: string }
-}
-
+import { MatchInfo } from '@/types/match'
 export default function UpcomingMatches() {
   const [matches, setMatches] = useState<MatchInfo[]>([])
   const [loading, setLoading] = useState(true)
@@ -48,7 +38,7 @@ export default function UpcomingMatches() {
 
   return (
     <div className="glass rounded-2xl p-2">
-      <h2 className="text-2xl font-bold text-white mb-2">
+      <h2 className="text-lg font-bold text-white mb-2">
         <span className="mr-3">📅</span>
         Upcoming Matches
       </h2>
