@@ -16,18 +16,7 @@ export default function MatchPage() {
 
   return (
     <div className="relative">
-      <div className="p-4 max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-4">
-          <Button 
-            onClick={handleBack}
-            variant="secondary"
-            size="sm"
-          >
-            ← Back
-          </Button>
-        </div>
-      </div>
-      <LiveContests />
+      <LiveContests onBack={handleBack} />
       <Scorecard matchId={matchId} />
     </div>
   )

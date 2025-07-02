@@ -7,7 +7,7 @@ import { CreateContest } from '../../../components/CreateContest'
 import { ContestCard } from '../../../components/ContestCard'
 import { Button } from '../../../components/ui/Button'
 
-export default function LiveContests() {
+export default function LiveContests({ onBack }: { onBack?: () => void }) {
   const params = useParams()
   const matchId = params.id as string
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -25,8 +25,20 @@ export default function LiveContests() {
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Live Contests</h1>
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <Button 
+              onClick={onBack}
+              variant="secondary"
+              size="sm"
+              className="px-2 py-1 text-xs"
+            >
+              ←
+            </Button>
+          )}
+          <h1 className="text-2xl font-bold text-white">Live Contests</h1>
+        </div>
         <Button
           onClick={() => setShowCreateForm(true)}
           variant="success"
