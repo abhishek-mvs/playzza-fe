@@ -155,38 +155,38 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
         </div>
 
         {/* Contest Details Section */}
-        <div className="mb-4 p-4 bg-blue-900/30 border border-blue-700/30 rounded-lg">
-          <div className="grid grid-cols-3 gap-4 text-sm">
+        <div className="mb-3 p-2 bg-blue-900/30 border border-blue-700/30 rounded-lg">
+          <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="text-center">
-              <div className="text-gray-400 mb-1">Odds Ratio</div>
+              <div className="text-gray-400 mb-0.5">Odds</div>
               <div className="text-yellow-400 font-semibold">{oddsDisplay}</div>
             </div>
             <div className="text-center">
-              <div className="text-gray-400 mb-1">To Join</div>
+              <div className="text-gray-400 mb-0.5">To Join</div>
               <div className="text-orange-400 font-semibold">{formatUSDC(joinAmount)} USDC</div>
             </div>
             <div className="text-center">
-              <div className="text-gray-400 mb-1">Profit</div>
+              <div className="text-gray-400 mb-0.5">Profit</div>
               <div className="text-green-400 font-semibold">{formatUSDC(potentialProfit)} USDC</div>
             </div>
           </div>
         </div>
+        
+        {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
+          <div className="mt-auto">
+            <Button
+              onClick={() => handleJoinContest(contestIndex, joinAmount)}
+              disabled={isJoinLoading || isApproving || joiningContestId === contestIndex}
+              variant="primary"
+              size="md"
+              loading={joiningContestId === contestIndex}
+              className="w-full"
+            >
+              {joiningContestId === contestIndex ? 'Joining...' : `Join Contest - ${formatUSDC(joinAmount)} USDC`}
+            </Button>
+          </div>
+        )}
       </div>
-
-      {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
-        <div className="mt-auto">
-          <Button
-            onClick={() => handleJoinContest(contestIndex, joinAmount)}
-            disabled={isJoinLoading || isApproving || joiningContestId === contestIndex}
-            variant="primary"
-            size="lg"
-            loading={joiningContestId === contestIndex}
-            className="w-full"
-          >
-            {joiningContestId === contestIndex ? 'Joining...' : `Join Contest - ${formatUSDC(joinAmount)} USDC`}
-          </Button>
-        </div>
-      )}
     </div>
   );
 }; 
