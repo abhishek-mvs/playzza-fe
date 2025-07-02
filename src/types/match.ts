@@ -1,6 +1,7 @@
 export type MatchInfo = {
   matchId: number
   matchDesc: string
+  seriesName: string
   matchFormat: string
   state: string
   status: string

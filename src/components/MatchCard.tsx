@@ -55,11 +55,16 @@ export default function MatchCard({ match }: MatchCardProps) {
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="text-base font-bold text-white mb-2 group-hover:text-blue-300 transition-colors duration-300 truncate">
-              {match.matchDesc}
-            </h3>
+            <div className="flex items-start justify-between mb-2">
+              <h4 className="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors duration-300 truncate flex-1 mr-2">
+                {match.matchDesc} <span className="text-gray-500">|</span> {match.seriesName}
+              </h4>
+              <Badge variant="secondary" size="sm" className="flex-shrink-0">
+                {match.matchFormat}
+              </Badge>
+            </div>
             
-            <div className="flex flex-wrap gap-1 mb-2">
+            {/* <div className="flex flex-wrap gap-1 mb-2">
               <Badge variant="secondary" size="sm">
                 {match.matchFormat}
               </Badge>
@@ -69,14 +74,25 @@ export default function MatchCard({ match }: MatchCardProps) {
               <Badge variant="secondary" size="sm">
                 {match.state}
               </Badge>
-            </div>
+            </div> */}
             
             <p className="text-sm text-gray-300 font-medium truncate">
-              {match.team1.teamName} <span className="text-gray-500">vs</span> {match.team2.teamName}
+              {match.team1.teamName}
             </p>
+            <div className="my-1">
+              <div className="w-12 h-px bg-gray-500"></div>
+            </div>
+            <p className="text-sm text-gray-300 font-medium truncate">
+             {match.team2.teamName}
+            </p>
+            <div className="mt-3">
+              <span className="inline-block px-2 py-1 text-xs font-semibold bg-blue-600/20 text-blue-300 rounded-md border border-blue-500/30 min-w-0 max-w-full truncate">
+                {match.status}
+              </span>
+            </div>
           </div>
           
-          <div className="ml-4 flex-shrink-0">
+          {/* <div className="ml-4 flex-shrink-0">
             {isLoading ? (
               <Loading size="sm" text="Loading stats..." />
             ) : stats ? (
@@ -95,7 +111,7 @@ export default function MatchCard({ match }: MatchCardProps) {
                 No contests yet
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       </CardContent>
     </Card>
