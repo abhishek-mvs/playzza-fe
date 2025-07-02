@@ -41,6 +41,7 @@ export default function Contests() {
               <p className="text-gray-400 mb-8 leading-relaxed">
                 Connect your MetaMask wallet to view and manage your prediction contests.
               </p>
+              <ConnectButton />
             </div>
           </div>
         )}

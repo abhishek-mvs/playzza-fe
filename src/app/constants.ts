@@ -3,8 +3,8 @@ import usdcERC20Abi from '../data/usdcERC20.json';
 
 // Contract addresses - you'll need to update these with your deployed contract addresses
 export const CONTRACT_ADDRESSES = {
-  PREDICTION_CONTEST: '0x1e00d5ce6fd3e3eab7b7d7af3d869dc96bb361af', // Replace with actual address
-  USDC: '0x63df13aaaea3c5ccd9085168f651da1f738af328', // Replace with actual USDC address
+  PREDICTION_CONTEST: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512', // Replace with actual address
+  USDC: '0x5fbdb2315678afecb367f032d93f642f64180aa3', // Replace with actual USDC address
 };
 
 export const ABIS = {

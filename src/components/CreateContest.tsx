@@ -73,7 +73,7 @@ export function CreateContest({
       const expiryValue = parseInt(contestExpiryValue) || 2;
       const expiryInMinutes = contestExpiryUnit === 'hours' ? expiryValue * 60 : expiryValue;
       const contestExpiry = now + BigInt(expiryInMinutes * 60); // Convert minutes to seconds
-      const settleTime = contestExpiry + BigInt(30 * 60); // 30 minutes from now
+      const settleTime = contestExpiry + BigInt(10 * 60); // 30 minutes from now
       // First approve tokens
       await approve(stakeInWei);
       // Then create contest with matchId and odds
@@ -213,7 +213,7 @@ export function CreateContest({
               placeholder="2"
               min={contestExpiryUnit === 'hours' ? "0.5" : "5"}
               max={contestExpiryUnit === 'hours' ? "24" : "1440"}
-              step={contestExpiryUnit === 'hours' ? "0.5" : "5"}
+              step={contestExpiryUnit === 'hours' ? "0.5" : "1"}
               required
             />
             <select
