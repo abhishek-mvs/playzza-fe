@@ -80,7 +80,9 @@ export default function Navbar() {
                 </div>
               </div>
             )}
-            <ConnectButton />
+            <div className="scale-80">
+              <ConnectButton />
+            </div>
           </div>
         </div>
         {/* Mobile Nav Links Dropdown */}
