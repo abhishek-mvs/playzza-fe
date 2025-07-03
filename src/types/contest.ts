@@ -1,4 +1,5 @@
 interface Contest {
+    id: string;
     creator: string;
     title: string;
     details: string;

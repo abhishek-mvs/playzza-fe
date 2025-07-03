@@ -1,17 +1,29 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { useContests } from '../../hooks/useContests';
+import { useRouter } from 'next/navigation';
+import { useActiveContests } from '../../hooks/useContests';
 import { filterLiveContests } from '@/utils/filters';
 import { ContestCard2 } from '../../components/ContestCard2';
 import { Contest } from '../../types/contest';
 
 export default function LiveContests() {
-  const { contests, isLoading, refetch } = useContests();
+  const router = useRouter();
+  const { contests, isLoading, refetch } = useActiveContests();
   const [liveContests, setLiveContests] = useState<Contest[]>([]);
-
+  
   useEffect(() => {
-    setLiveContests(filterLiveContests(contests));
+    setLiveContests(filterLiveContests(contests || []));
   }, [contests]);
+
+  const handleContestClick = (contest: Contest) => {
+    console.log("contest", contest);
+    // Create the same key used in the mapping
+    const contestId = contest.id;
+    console.log("contestId", contestId);
+    if (contestId !== undefined) {
+      router.push(`/contests/${contestId}`);
+    }
+  };
 
   return (
     <div className="glass rounded-2xl p-2">
@@ -38,7 +50,12 @@ export default function LiveContests() {
           <div className="flex gap-2 pb-2" style={{ minWidth: 'max-content' }}>
             {liveContests.map((contest, idx) => (
               <div key={idx} className="w-80 flex-shrink-0">
-                <ContestCard2 contest={contest} contestIndex={idx} onContestJoined={refetch} />
+                <div 
+                  onClick={() => handleContestClick(contest)}
+                  className="cursor-pointer"
+                >
+                  <ContestCard2 contest={contest} contestIndex={idx} onContestJoined={refetch} />
+                </div>
               </div>
             ))}
           </div>
