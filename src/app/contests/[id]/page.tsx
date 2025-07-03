@@ -8,67 +8,9 @@ import { useContestById } from '../../../hooks/useContests'
 import { useApproveToken } from '../../../hooks/useApproveToken'
 import { Button } from '../../../components/ui/Button'
 import Scorecard from '../../../components/Scorecard'
-import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds } from '@/utils/formatters'
+import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
 import { ConnectButton } from '../../../components/ConnectButton'
-
-// Utility function to format time remaining
-const formatTimeRemaining = (expiryTimestamp: bigint): string => {
-  const now = BigInt(Math.floor(Date.now() / 1000));
-  const timeRemaining = Number(expiryTimestamp - now);
-  
-  if (timeRemaining <= 0) {
-    return 'Expired';
-  }
-  
-  const hours = Math.floor(timeRemaining / 3600);
-  const minutes = Math.floor((timeRemaining % 3600) / 60);
-  const seconds = timeRemaining % 60;
-  
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  } else if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
-  } else {
-    return `${seconds}s`;
-  }
-};
-
-// Countdown component
-const CountdownTimer = ({ expiryTimestamp }: { expiryTimestamp: bigint }) => {
-  const [timeRemaining, setTimeRemaining] = useState(formatTimeRemaining(expiryTimestamp));
-  const [isExpired, setIsExpired] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = BigInt(Math.floor(Date.now() / 1000));
-      const remaining = Number(expiryTimestamp - now);
-      
-      if (remaining <= 0) {
-        setTimeRemaining('Expired');
-        setIsExpired(true);
-        clearInterval(timer);
-      } else {
-        setTimeRemaining(formatTimeRemaining(expiryTimestamp));
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [expiryTimestamp]);
-
-  return (
-    <div className={`text-lg font-medium px-3 py-2 rounded-full ${
-      isExpired 
-        ? 'bg-red-500 bg-opacity-20 text-red-400' 
-        : timeRemaining.includes('h') 
-          ? 'bg-green-500 bg-opacity-20 text-green-400'
-          : timeRemaining.includes('m') && parseInt(timeRemaining.split('m')[0]) > 5
-            ? 'bg-yellow-500 bg-opacity-20 text-yellow-400'
-            : 'bg-red-500 bg-opacity-20 text-red-400'
-    }`}>
-      ⏰ {timeRemaining}
-    </div>
-  );
-};
+import CountdownTimer from '../../../components/CountdownTimer'
 
 export default function ContestPage() {
   const params = useParams()
@@ -214,7 +156,7 @@ export default function ContestPage() {
           <div className="glass rounded-2xl p-8">
             <div className="flex justify-between items-start mb-6">
               <h2 className="text-2xl font-bold text-white">Contest #{contestId}</h2>
-              <CountdownTimer expiryTimestamp={contest.contestExpiry} />
+              <CountdownTimer expiryTimestamp={contest.contestExpiry} size="lg" />
             </div>
 
             {/* Contest Statement */}
@@ -327,16 +269,8 @@ export default function ContestPage() {
             )}
           </div>
 
-          {/* Scorecard Section */}
-          <div className="glass rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-white mb-6">Match Scorecard</h2>
-            <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
-              <div className="text-gray-400 text-sm mb-1">Match ID</div>
-              <div className="text-white font-medium">{contest.matchId}</div>
-            </div>
-            <div className="overflow-hidden rounded-lg">
-              <Scorecard matchId={contest.matchId} />
-            </div>
+          <div className="overflow-hidden rounded-lg">
+            <Scorecard matchId={contest.matchId} />
           </div>
         </div>
       </div>

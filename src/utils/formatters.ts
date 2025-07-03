@@ -34,3 +34,25 @@ export function formatOdds(odds: bigint): string {
         return `1:${inverse.toFixed(0)}`;
     }
 }
+
+export function formatTimeRemaining(expiryTimestamp: bigint): string {
+    const now = BigInt(Math.floor(Date.now() / 1000));
+    const timeRemaining = Number(expiryTimestamp - now);
+    
+    if (timeRemaining <= 0) {
+      return 'Expired';
+    }
+    
+    const hours = Math.floor(timeRemaining / 3600);
+    const minutes = Math.floor((timeRemaining % 3600) / 60);
+    const seconds = timeRemaining % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    } else {
+      return `${seconds}s`;
+    }
+  };
+  

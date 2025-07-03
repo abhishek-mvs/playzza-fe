@@ -5,66 +5,8 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { CONTRACT_ADDRESSES } from '../app/constants'
 import { useApproveToken } from '../hooks/useApproveToken'
 import { Button } from './ui/Button'
-import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds } from '@/utils/formatters'
-
-// Utility function to format time remaining
-const formatTimeRemaining = (expiryTimestamp: bigint): string => {
-  const now = BigInt(Math.floor(Date.now() / 1000));
-  const timeRemaining = Number(expiryTimestamp - now);
-  
-  if (timeRemaining <= 0) {
-    return 'Expired';
-  }
-  
-  const hours = Math.floor(timeRemaining / 3600);
-  const minutes = Math.floor((timeRemaining % 3600) / 60);
-  const seconds = timeRemaining % 60;
-  
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  } else if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
-  } else {
-    return `${seconds}s`;
-  }
-};
-
-// Countdown component
-const CountdownTimer = ({ expiryTimestamp }: { expiryTimestamp: bigint }) => {
-  const [timeRemaining, setTimeRemaining] = useState(formatTimeRemaining(expiryTimestamp));
-  const [isExpired, setIsExpired] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = BigInt(Math.floor(Date.now() / 1000));
-      const remaining = Number(expiryTimestamp - now);
-      
-      if (remaining <= 0) {
-        setTimeRemaining('Expired');
-        setIsExpired(true);
-        clearInterval(timer);
-      } else {
-        setTimeRemaining(formatTimeRemaining(expiryTimestamp));
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [expiryTimestamp]);
-
-  return (
-    <div className={`text-sm font-medium px-2 py-1 rounded-full ${
-      isExpired 
-        ? 'bg-red-500 bg-opacity-20 text-red-400' 
-        : timeRemaining.includes('h') 
-          ? 'bg-green-500 bg-opacity-20 text-white-400'
-          : timeRemaining.includes('m') && parseInt(timeRemaining.split('m')[0]) > 5
-            ? 'bg-yellow-500 bg-opacity-20 text-white-400'
-            : 'bg-red-500 bg-opacity-20 text-white-400'
-    }`}>
-      ⏰ {timeRemaining}
-    </div>
-  );
-};
+import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
+import CountdownTimer from './CountdownTimer'
 
 interface Contest {
   statement: string;
@@ -97,7 +39,7 @@ export const ContestCard2 = ({ contest, contestIndex, onContestJoined }: Contest
           <div className="text-lg font-bold text-green-400">
             {formatUSDC(contest.stake)} USDC
           </div>
-          <CountdownTimer expiryTimestamp={contest.contestExpiry} />
+          <CountdownTimer expiryTimestamp={contest.contestExpiry} size="sm" />
         </div>
         <div className="flex-1 mb-4">
           <h3 className="text-lg font-semibold text-blue-300 mb-2 line-clamp-2 break-words overflow-hidden">"{contest.statement}"</h3>
