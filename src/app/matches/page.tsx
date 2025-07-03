@@ -1,3 +1,4 @@
+import LiveContests from "./LiveContests";
 import LiveMatches from "./LiveMatches";
 import UpcomingMatches from "./UpcomingMatches";
 
@@ -11,6 +12,7 @@ export default function Matches() {
         <div className="space-y-4">
           <LiveMatches />
           <UpcomingMatches />
+          <LiveContests />
         </div>
       </div>
     </div>
