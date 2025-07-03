@@ -9,18 +9,12 @@ import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds } from '@/utils/formatters'
 import { ConnectButton } from './ConnectButton'
 import CountdownTimer from './CountdownTimer'
+import { useContestsByMatchId } from '../hooks/useContests'
+import type { Contest } from '@/types/contest'
+import { ContestCard2 } from './ContestCard2'
 
 interface ContestCard3Props {
-  contest: {
-    id: string
-    statement: string
-    creator: string
-    opponent: string
-    stake: bigint
-    odds: bigint
-    active: boolean
-    contestExpiry: bigint
-  }
+  contest: Contest
   onContestJoined?: () => void
 }
 
@@ -39,6 +33,11 @@ export default function ContestCard3({
   })
   
   const { approve, isApproving, isApproved } = useApproveToken()
+
+  // Fetch other active contests for this match
+  const { contests: otherContests, isLoading: isOtherLoading } = useContestsByMatchId(contest.matchId)
+  // Filter out the current contest
+  const filteredContests = (otherContests || []).filter(c => c.id !== contest.id)
 
   const handleBack = () => {
     router.back()
@@ -167,7 +166,11 @@ export default function ContestCard3({
             )}
           </Button>
         </div>
-        <CountdownTimer expiryTimestamp={contest.contestExpiry} size="md" />
+        {hasOpponent ? (
+          <CountdownTimer expiryTimestamp={contest.settleTime} size="md" showResults={hasOpponent} />
+        ) : (
+          <CountdownTimer expiryTimestamp={contest.contestExpiry} size="md" />
+        )}
       </div>
 
       {/* Contest Statement */}
@@ -227,28 +230,25 @@ export default function ContestCard3({
       </div>
 
       {/* Join Button */}
-      {!isConnected ? (
+      {hasOpponent ? (
+        <div className="text-center">
+          <Button variant="secondary" disabled>
+            Contest Full
+          </Button>
+        </div>
+      ) : !isConnected ? (
         <div className="text-center">
           <p className="text-gray-400 mb-4">Connect your wallet to join this contest</p>
           <ConnectButton />
         </div>
       ) : isCreator ? (
         <div className="text-center">
-          <p className="text-blue-400 mb-4">You created this contest</p>
           <Button variant="secondary" disabled>
             Cannot join your own contest
           </Button>
         </div>
-      ) : hasOpponent ? (
-        <div className="text-center">
-          <p className="text-yellow-400 mb-4">This contest already has an opponent</p>
-          <Button variant="secondary" disabled>
-            Contest Full
-          </Button>
-        </div>
       ) : !contest.active ? (
         <div className="text-center">
-          <p className="text-red-400 mb-4">This contest is no longer active</p>
           <Button variant="secondary" disabled>
             Contest Inactive
           </Button>
@@ -270,6 +270,31 @@ export default function ContestCard3({
           </Button>
         </div>
       )}
+
+      {/* Other Active Contests for this Match */}
+      <div className="mt-10">
+        <h4 className="text-lg font-semibold text-white mb-3">Other Active Contests for this Match</h4>
+        {isOtherLoading ? (
+          <div className="text-center py-4 text-gray-400">Loading other contests...</div>
+        ) : filteredContests.length === 0 ? (
+          <div className="text-center py-4 text-gray-400">No other active contests for this match.</div>
+        ) : (
+          <div className="overflow-x-auto scrollbar-hide py-2">
+            <div className="flex gap-2 pb-2" style={{ minWidth: 'max-content' }}>
+              {filteredContests.map((c, idx) => (
+                <div key={c.id} className="w-80 flex-shrink-0">
+                  <div 
+                    onClick={() => router.push(`/contests/${c.id}`)}
+                    className="cursor-pointer"
+                  >
+                    <ContestCard2 contest={c} contestIndex={idx} onContestJoined={onContestJoined || (() => {})} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 } 
