@@ -31,6 +31,7 @@ export default function ContestCard3({
   const router = useRouter()
   const { isConnected, address } = useAccount()
   const [joiningContest, setJoiningContest] = useState(false)
+  const [sharing, setSharing] = useState(false)
   
   const { writeContract: writeJoin, data: joinHash } = useWriteContract()
   const { isLoading: isJoinLoading, isSuccess: isJoinSuccess } = useWaitForTransactionReceipt({
@@ -41,6 +42,40 @@ export default function ContestCard3({
 
   const handleBack = () => {
     router.back()
+  }
+
+  const handleShare = async () => {
+    try {
+      setSharing(true)
+      
+      const shareUrl = `${window.location.origin}/contest/${contest.id}`
+      const shareText = `Check out this prediction contest: "${contest.statement}" - Stake: ${formatUSDC(contest.stake)} USDC, Odds: ${formatOdds(contest.odds)}`
+      
+      // Try to use Web Share API first
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Prediction Contest',
+          text: shareText,
+          url: shareUrl,
+        })
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`)
+        alert('Contest link copied to clipboard!')
+      }
+    } catch (error) {
+      console.error('Error sharing contest:', error)
+      // Final fallback - just copy URL
+      try {
+        await navigator.clipboard.writeText(`${window.location.origin}/contest/${contest.id}`)
+        alert('Contest link copied to clipboard!')
+      } catch (clipboardError) {
+        console.error('Error copying to clipboard:', clipboardError)
+        alert('Unable to share contest. Please copy the URL manually.')
+      }
+    } finally {
+      setSharing(false)
+    }
   }
 
   const handleJoinContest = async () => {
@@ -107,14 +142,31 @@ export default function ContestCard3({
   return (
     <div className="glass rounded-2xl p-8">
       <div className="flex justify-between items-start mb-6">
-        <Button 
-          onClick={handleBack}
-          variant="secondary"
-          size="sm"
-          className="px-3 py-2"
-        >
-          ← Back
-        </Button>
+        <div className="flex gap-3">
+          <Button 
+            onClick={handleBack}
+            variant="secondary"
+            size="sm"
+            className="px-3 py-2"
+          >
+            ← Back
+          </Button>
+          <Button 
+            onClick={handleShare}
+            variant="secondary"
+            size="sm"
+            className="px-3 py-2"
+            loading={sharing}
+            disabled={sharing}
+          >
+            {sharing ? 'Sharing...' : (
+              <>
+                <img src="/icons/share.png" alt="Share" className="w-4 h-4 mr-2 inline" />
+                Share
+              </>
+            )}
+          </Button>
+        </div>
         <CountdownTimer expiryTimestamp={contest.contestExpiry} size="md" />
       </div>
 
