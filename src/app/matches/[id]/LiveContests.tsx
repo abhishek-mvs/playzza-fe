@@ -26,7 +26,7 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
   return (
     <div className="p-4 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-2">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {onBack && (
             <Button 
               onClick={onBack}
@@ -37,12 +37,12 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
               ←
             </Button>
           )}
-          <h1 className="text-2xl font-bold text-white">Live Contests</h1>
+          <h1 className="text-xl font-bold text-white">Live Contests</h1>
         </div>
         <Button
           onClick={() => setShowCreateForm(true)}
           variant="success"
-          size="md"
+          size="sm"
         >
           Create Contest
         </Button>
