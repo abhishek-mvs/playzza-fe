@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useContests } from '../../hooks/useContests';
 import { filterLiveContests } from '@/utils/filters';
-import { ContestCard } from '../../components/ContestCard';
+import { ContestCard2 } from '../../components/ContestCard2';
 import { Contest } from '../../types/contest';
 
 export default function LiveContests() {
@@ -38,7 +38,7 @@ export default function LiveContests() {
           <div className="flex gap-2 pb-2" style={{ minWidth: 'max-content' }}>
             {liveContests.map((contest, idx) => (
               <div key={idx} className="w-80 flex-shrink-0">
-                <ContestCard contest={contest} contestIndex={idx} onContestJoined={refetch} />
+                <ContestCard2 contest={contest} contestIndex={idx} onContestJoined={refetch} />
               </div>
             ))}
           </div>
