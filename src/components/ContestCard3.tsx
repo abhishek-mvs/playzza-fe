@@ -89,13 +89,6 @@ export default function ContestCard3({
     }
   }
 
-  const handleApprove = async () => {
-    if (!contest) return
-    
-    const joinAmount = calculateJoinAmount(contest.stake, contest.odds)
-    await approve(joinAmount)
-  }
-
   useEffect(() => {
     if (isJoinSuccess) {
       setJoiningContest(false)
