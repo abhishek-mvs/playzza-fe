@@ -341,7 +341,7 @@ export default function ContestCard3({
   }
 
   return (
-    <div className="glass rounded-2xl p-8">
+    <div className="glass rounded-2xl p-8 h-full flex flex-col overflow-y-auto">
       <div className="flex justify-between items-start mb-6">
         <div className="flex gap-3">
           <Button 
@@ -374,91 +374,93 @@ export default function ContestCard3({
         </div>
       </div>
 
-      {/* Contest Statement */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-blue-300 mb-3">Prediction Statement</h3>
-        <div className="bg-blue-900/30 border border-blue-700/30 rounded-lg p-4">
-          <p className="text-white text-lg italic">"{contest.statement}"</p>
-        </div>
-      </div>
-
-      {/* Winner Information for Completed Contests */}
-      {renderWinnerInfo()}
-
-      {/* Contest Details */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <div className="text-gray-400 text-sm mb-1">Creator</div>
-          <div className="text-white font-medium">
-            {isCreator ? "You" : `${contest.creator.slice(0, 6)}...${contest.creator.slice(-4)}`}
+      <div className="flex-1">
+        {/* Contest Statement */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-blue-300 mb-3">Prediction Statement</h3>
+          <div className="bg-blue-900/30 border border-blue-700/30 rounded-lg p-4">
+            <p className="text-white text-lg italic">"{contest.statement}"</p>
           </div>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <div className="text-gray-400 text-sm mb-1">Opponent</div>
-          <div className="text-white font-medium">
-            {hasOpponent 
-              ? (isOpponent ? "You" : `${contest.opponent.slice(0, 6)}...${contest.opponent.slice(-4)}`)
-              : "None"
-            }
-          </div>
-        </div>
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <div className="text-gray-400 text-sm mb-1">Stake Amount</div>
-          <div className="text-green-400 font-bold text-lg">{formatUSDC(contest.stake)} USDC</div>
-        </div>
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <div className="text-gray-400 text-sm mb-1">Odds</div>
-          <div className="text-yellow-400 font-bold text-lg">{oddsDisplay}</div>
-        </div>
-      </div>
 
-      {/* Join Details - Only show for active contests */}
-      {isActive && !hasOpponent && (
-        <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700/30 rounded-lg p-4 mb-6">
-          <h4 className="text-lg font-semibold text-white mb-3">Join This Contest</h4>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-gray-400 text-sm mb-1">Required Stake</div>
-              <div className="text-orange-400 font-bold">{formatUSDC(joinAmount)} USDC</div>
-            </div>
-            <div>
-              <div className="text-gray-400 text-sm mb-1">Potential Profit</div>
-              <div className="text-green-400 font-bold">{formatUSDC(potentialProfit)} USDC</div>
-            </div>
-            <div>
-              <div className="text-gray-400 text-sm mb-1">Status</div>
-              <div className="text-green-400 font-bold">Active</div>
+        {/* Winner Information for Completed Contests */}
+        {renderWinnerInfo()}
+
+        {/* Contest Details */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-gray-800/50 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-1">Creator</div>
+            <div className="text-white font-medium">
+              {isCreator ? "You" : `${contest.creator.slice(0, 6)}...${contest.creator.slice(-4)}`}
             </div>
           </div>
+          <div className="bg-gray-800/50 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-1">Opponent</div>
+            <div className="text-white font-medium">
+              {hasOpponent 
+                ? (isOpponent ? "You" : `${contest.opponent.slice(0, 6)}...${contest.opponent.slice(-4)}`)
+                : "None"
+              }
+            </div>
+          </div>
+          <div className="bg-gray-800/50 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-1">Stake Amount</div>
+            <div className="text-green-400 font-bold text-lg">{formatUSDC(contest.stake)} USDC</div>
+          </div>
+          <div className="bg-gray-800/50 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-1">Odds</div>
+            <div className="text-yellow-400 font-bold text-lg">{oddsDisplay}</div>
+          </div>
         </div>
-      )}
 
-      {/* Action Buttons */}
-      {renderActionButtons()}
-
-      {/* Other Active Contests for this Match */}
-      <div className="mt-10">
-        <h4 className="text-lg font-semibold text-white mb-3">Other Active Contests for this Match</h4>
-        {isOtherLoading ? (
-          <div className="text-center py-4 text-gray-400">Loading other contests...</div>
-        ) : filteredContests.length === 0 ? (
-          <div className="text-center py-4 text-gray-400">No other active contests for this match.</div>
-        ) : (
-          <div className="overflow-x-auto scrollbar-hide py-2">
-            <div className="flex gap-2 pb-2" style={{ minWidth: 'max-content' }}>
-              {filteredContests.map((c, idx) => (
-                <div key={c.id} className="w-80 flex-shrink-0">
-                  <div 
-                    onClick={() => router.push(`/contests/${c.id}`)}
-                    className="cursor-pointer"
-                  >
-                    <ContestCard2 contest={c} contestIndex={idx} onContestJoined={onContestJoined || (() => {})} />
-                  </div>
-                </div>
-              ))}
+        {/* Join Details - Only show for active contests */}
+        {isActive && !hasOpponent && (
+          <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700/30 rounded-lg p-4 mb-6">
+            <h4 className="text-lg font-semibold text-white mb-3">Join This Contest</h4>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-gray-400 text-sm mb-1">Required Stake</div>
+                <div className="text-orange-400 font-bold">{formatUSDC(joinAmount)} USDC</div>
+              </div>
+              <div>
+                <div className="text-gray-400 text-sm mb-1">Potential Profit</div>
+                <div className="text-green-400 font-bold">{formatUSDC(potentialProfit)} USDC</div>
+              </div>
+              <div>
+                <div className="text-gray-400 text-sm mb-1">Status</div>
+                <div className="text-green-400 font-bold">Active</div>
+              </div>
             </div>
           </div>
         )}
+
+        {/* Action Buttons */}
+        {renderActionButtons()}
+
+        {/* Other Active Contests for this Match */}
+        <div className="mt-10">
+          <h4 className="text-lg font-semibold text-white mb-3">Other Active Contests for this Match</h4>
+          {isOtherLoading ? (
+            <div className="text-center py-4 text-gray-400">Loading other contests...</div>
+          ) : filteredContests.length === 0 ? (
+            <div className="text-center py-4 text-gray-400">No other active contests for this match.</div>
+          ) : (
+            <div className="overflow-x-auto scrollbar-hide py-2">
+              <div className="flex gap-2 pb-2" style={{ minWidth: 'max-content' }}>
+                {filteredContests.map((c, idx) => (
+                  <div key={c.id} className="w-80 flex-shrink-0">
+                    <div 
+                      onClick={() => router.push(`/contests/${c.id}`)}
+                      className="cursor-pointer"
+                    >
+                      <ContestCard2 contest={c} contestIndex={idx} onContestJoined={onContestJoined || (() => {})} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

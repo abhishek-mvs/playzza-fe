@@ -57,13 +57,17 @@ export default function ContestPage() {
       
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <ContestCard3
-            contest={contest}
-            onContestJoined={handleContestJoined}
-          />
+          <div className="h-[700px]">
+            <ContestCard3
+              contest={contest}
+              onContestJoined={handleContestJoined}
+            />
+          </div>
 
-          <div className="overflow-hidden rounded-lg">
-            <Scorecard matchId={contest.matchId} />
+          <div className="h-[700px] overflow-hidden rounded-lg glass">
+            <div className="h-full overflow-y-auto">
+              <Scorecard matchId={contest.matchId} />
+            </div>
           </div>
         </div>
       </div>

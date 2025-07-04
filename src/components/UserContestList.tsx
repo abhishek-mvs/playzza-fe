@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { formatUnits } from 'viem';
+import { useRouter } from 'next/navigation';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Contest } from '../types/contest';
 import { Button } from './ui/Button';
@@ -19,6 +20,20 @@ interface ContestListProps {
 type FilterType = 'active' | 'pending' | 'completed';
 
 export function ContestList({ contests, isLoading, onContestCancelled }: ContestListProps) {
+
+  const router = useRouter();
+
+  const handleContestClick = (contest: Contest) => {
+    console.log("contest", contest);
+    // Create the same key used in the mapping
+    const contestId = contest.id;
+    console.log("contestId", contestId);
+    if (contestId !== undefined) {
+      router.push(`/contests/${contestId}`);
+    }
+  };
+
+
   if (isLoading) {
     return (
       <div className="text-center py-12">
@@ -175,6 +190,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
           </div>
         ) : (
           filteredContests.map((contest) => (
+            <div onClick={() => handleContestClick(contest)}>
             <UserContestCard
               key={contest.id.toString()}
               contest={contest}
@@ -184,6 +200,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
               isCancelLoading={isCancelLoading}
               onCancel={handleCancelContest}
             />
+            </div>
           ))
         )}
       </div>
