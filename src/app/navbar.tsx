@@ -3,25 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { injected } from 'wagmi/connectors';
+import { useAccount } from 'wagmi';
 import { ConnectButton } from '../components/ConnectButton';
-import { Button } from '../components/ui/Button';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
-  const { connect, isPending } = useConnect();
-  const { disconnect } = useDisconnect();
-
-  const handleConnect = () => {
-    connect({ connector: injected() });
-  };
-
-  const handleDisconnect = () => {
-    disconnect();
-  };
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -82,42 +70,19 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Wallet Connect Button (always visible, not in menu) */}
+          {/* Wallet Connect Button */}
           <div className="flex items-center ml-2">
-            {isConnected ? (
-              <div className="flex items-center space-x-2">
-                <div className="hidden sm:block text-right">
-                  <div className="text-xs text-gray-400">Connected</div>
-                  <div className="text-sm font-medium text-white">
-                    {formatAddress(address!)}
-                  </div>
+            {isConnected && (
+              <div className="hidden sm:block text-right mr-3">
+                <div className="text-xs text-gray-400">Connected</div>
+                <div className="text-sm font-medium text-white">
+                  {formatAddress(address!)}
                 </div>
-                <Button
-                  onClick={handleDisconnect}
-                  variant="danger"
-                  size="sm"
-                >
-                  Disconnect
-                </Button>
               </div>
-            ) : (
-              <Button
-                onClick={handleConnect}
-                disabled={isPending}
-                variant="primary"
-                size="sm"
-                loading={isPending}
-              >
-                {isPending ? (
-                  'Connecting...'
-                ) : (
-                  <>
-                    <span>🔗</span>
-                    <span>Connect Wallet</span>
-                  </>
-                )}
-              </Button>
             )}
+            <div className="scale-80">
+              <ConnectButton />
+            </div>
           </div>
         </div>
         {/* Mobile Nav Links Dropdown */}

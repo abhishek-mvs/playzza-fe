@@ -65,10 +65,45 @@ export function useContestStatsByMatchId(matchId: string) {
     functionName: 'getContestStatsByMatchId',
     args: [matchId],
   });
-  console.log("stats", stats);
   return {
     stats: stats as ContestStats | null,
     isLoading,
     refetch,
   };
 }
+
+export function useContestById(contestId: string) {
+  const { data: contest, isLoading, refetch } = useReadContract({
+    address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
+    abi: ABIS.PREDICTION_CONTEST,
+    functionName: 'getContest',
+    args: [BigInt(contestId)],
+  });
+
+  return {
+    contest: contest as Contest | null,
+    isLoading,
+    refetch,
+  };
+}
+
+export function useActiveContests() {
+  const { data: contests, isLoading, refetch } = useReadContract({
+    address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
+    abi: ABIS.PREDICTION_CONTEST,
+    functionName: 'getActiveContests',
+  });
+
+  if (!contests) return {
+    contests: null,
+    isLoading,
+    refetch,
+  };
+
+  return {
+    contests: contests as Contest[] | null,
+    isLoading,
+    refetch,
+  };
+}
+

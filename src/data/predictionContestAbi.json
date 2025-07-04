@@ -147,19 +147,14 @@
     "name": "contests",
     "outputs": [
       {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
         "internalType": "address",
         "name": "creator",
         "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "title",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "details",
-        "type": "string"
       },
       {
         "internalType": "string",
@@ -225,6 +220,11 @@
         "internalType": "bool",
         "name": "active",
         "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "cancelled",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -232,16 +232,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "string",
-        "name": "title",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "details",
-        "type": "string"
-      },
       {
         "internalType": "string",
         "name": "stmt",
@@ -305,31 +295,20 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "matchId",
-        "type": "string"
-      }
-    ],
-    "name": "getActiveContestsByMatchId",
+    "inputs": [],
+    "name": "getActiveContests",
     "outputs": [
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -394,6 +373,112 @@
           {
             "internalType": "bool",
             "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "cancelled",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct PredictionContest.Contest[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "matchId",
+        "type": "string"
+      }
+    ],
+    "name": "getActiveContestsByMatchId",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "statement",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "matchId",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "stake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "odds",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "opponent",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "opponentStake",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "contestExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "settleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "createdAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "updatedAt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "settled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "verdict",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "cancelled",
             "type": "bool"
           }
         ],
@@ -418,19 +503,14 @@
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -495,6 +575,11 @@
           {
             "internalType": "bool",
             "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "cancelled",
             "type": "bool"
           }
         ],
@@ -568,19 +653,14 @@
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -645,6 +725,11 @@
           {
             "internalType": "bool",
             "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "cancelled",
             "type": "bool"
           }
         ],
@@ -669,19 +754,14 @@
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -747,11 +827,29 @@
             "internalType": "bool",
             "name": "active",
             "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "cancelled",
+            "type": "bool"
           }
         ],
         "internalType": "struct PredictionContest.Contest[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPendingContestIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -777,6 +875,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getSettlableContestIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -789,19 +900,14 @@
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -867,6 +973,11 @@
             "internalType": "bool",
             "name": "active",
             "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "cancelled",
+            "type": "bool"
           }
         ],
         "internalType": "struct PredictionContest.Contest[]",
@@ -886,6 +997,25 @@
       }
     ],
     "name": "isActiveContest",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "isPendingContest",
     "outputs": [
       {
         "internalType": "bool",
@@ -970,6 +1100,25 @@
   {
     "inputs": [],
     "name": "nextId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "pendingContestIds",
     "outputs": [
       {
         "internalType": "uint256",

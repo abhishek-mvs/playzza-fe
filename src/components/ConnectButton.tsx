@@ -23,7 +23,7 @@ export function ConnectButton() {
         icon="🔌"
         className="btn-hover-lift"
       >
-        Disconnect Wallet
+        Disconnect
       </Button>
     );
   }
@@ -35,7 +35,7 @@ export function ConnectButton() {
       icon="🔗"
       className="btn-hover-lift"
     >
-      {isPending ? 'Connecting...' : 'Connect MetaMask'}
+      {isPending ? 'Connecting...' : 'Connect'}
     </Button>
   );
 } 
