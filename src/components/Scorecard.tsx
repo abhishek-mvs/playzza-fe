@@ -17,7 +17,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
     try {
       setLoading(true)
       setError(null) // Clear any previous errors
-      const response = await fetch(`https://pm-backend-production.up.railway.app/v1/scorecard/${matchId}`)
+      const response = await fetch(`http://localhost:8080/v1/scorecard/${matchId}`)
       if (!response.ok) {
         throw new Error('Failed to fetch scorecard')
       }
@@ -45,29 +45,15 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   }, [matchId])
 
   const getTeamsPlaying = (data: ScorecardData): string => {
-    if (!data.scorecard) {
-      // Extract teams from the title when scorecard is null
-      const title = data.appIndex.seoTitle
-      const matchPart = title.split(' - ')[1]?.split(',')[0] || ''
-      return matchPart.replace(' vs ', ' and ')
-    }
-    
-    const teams = new Set<string>()
-    data.scorecard.forEach(innings => {
-      teams.add(innings.batTeamName)
-    })
-    return Array.from(teams).join(' and ')
+    // Always use team details from matchInfo
+    return `${data.matchInfo.team1.name} and ${data.matchInfo.team2.name}`
   }
 
   const getBowlingTeam = (battingTeam: string, data: ScorecardData): string => {
-    if (!data.scorecard) return 'Unknown'
-    
-    const teams = new Set<string>()
-    data.scorecard.forEach(innings => {
-      teams.add(innings.batTeamName)
-    })
-    const allTeams = Array.from(teams)
-    return allTeams.find(team => team !== battingTeam) || 'Unknown'
+    // Always use team details from matchInfo
+    return battingTeam === data.matchInfo.team1.name 
+      ? data.matchInfo.team2.name 
+      : data.matchInfo.team1.name
   }
 
   if (loading) {

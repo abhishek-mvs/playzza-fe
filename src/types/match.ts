@@ -9,6 +9,31 @@ export type MatchInfo = {
   team2: { teamName: string }
 } 
 
+export type MatchInfoDetailed = {
+  matchId: number
+  matchDescription: string
+  matchFormat: string
+  matchType: string
+  complete: boolean
+  domestic: boolean
+  matchStartTimestamp: number
+  matchCompleteTimestamp: number
+  dayNight: boolean
+  year: number
+  dayNumber: number
+  state: string
+  team1: {
+    id: number
+    name: string
+    shortName: string
+  }
+  team2: {
+    id: number
+    name: string
+    shortName: string
+  }
+}
+
 type Batsman = {
   id: number
   balls: number
@@ -65,4 +90,5 @@ export type ScorecardData = {
   scorecard: Innings[]
   isMatchComplete: boolean
   status: string
+  matchInfo: MatchInfoDetailed
 }

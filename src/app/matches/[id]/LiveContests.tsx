@@ -6,6 +6,7 @@ import { useContestsByMatchId } from '../../../hooks/useContests'
 import { CreateContest } from '../../../components/CreateContest'
 import { ContestCard } from '../../../components/ContestCard'
 import { Button } from '../../../components/ui/Button'
+import { MatchInfoDetailed } from '@/types/match'
 
 export default function LiveContests({ onBack }: { onBack?: () => void }) {
   const params = useParams()
@@ -22,6 +23,30 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
   const handleContestJoined = () => {
     refetch()
   }
+
+  
+  const [matchDetails, setMatchDetails] = useState<MatchInfoDetailed | null>(null)
+  const [matchLoading, setMatchLoading] = useState(true)
+
+  const fetchMatchDetails = async () => {
+    try {
+      const res = await fetch(`http://localhost:8080/v1/match/${matchId}`)
+      const data = await res.json()
+      console.log('data', data)
+      setMatchDetails(data)
+      setMatchLoading(false)
+    } catch (err) {
+      console.error('Failed to fetch match details', err)
+      setMatchLoading(false)
+    }
+  }
+
+  // Call once when component mounts
+  if (matchLoading && !matchDetails) {
+    fetchMatchDetails()
+  }
+
+  console.log(matchDetails)
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
@@ -90,7 +115,7 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
           <div className="glass rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-500 border-opacity-30">
             <div className="flex justify-between items-center p-4 border-b border-gray-500 border-opacity-30">
-              <h2 className="text-xl font-semibold text-white">Create Prediction Contest</h2>
+              <h3 className="text-xl font-semibold text-white"> Creating contest for Match ID: {matchId}</h3>
               <Button
                 onClick={() => setShowCreateForm(false)}
                 variant="ghost"
@@ -100,13 +125,15 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
                 ×
               </Button>
             </div>
-            
-            <div className="p-6">
-              <CreateContest 
-                onContestCreated={handleContestCreated}
-                matchId={matchId}
-              />
-            </div>
+            {matchDetails && (
+              <div className="p-6">
+                <CreateContest 
+                  onContestCreated={handleContestCreated}
+                  matchId={matchId}
+                  matchDetails={matchDetails}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

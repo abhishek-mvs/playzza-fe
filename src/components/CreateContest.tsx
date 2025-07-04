@@ -7,13 +7,16 @@ import { useApproveToken } from '../hooks/useApproveToken';
 import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Button } from './ui/Button';
 import { parseUSDC } from '@/utils/formatters';
+import { MatchInfoDetailed } from '@/types/match';
 
 export function CreateContest({ 
   onContestCreated, 
-  matchId 
+  matchId,
+  matchDetails
 }: { 
   onContestCreated: () => void;
   matchId: string;
+  matchDetails: MatchInfoDetailed;
 }) {
   const { address } = useAccount();
   const [statement, setStatement] = useState('');
@@ -73,7 +76,10 @@ export function CreateContest({
       const expiryValue = parseInt(contestExpiryValue) || 2;
       const expiryInMinutes = contestExpiryUnit === 'hours' ? expiryValue * 60 : expiryValue;
       const contestExpiry = now + BigInt(expiryInMinutes * 60); // Convert minutes to seconds
-      const settleTime = contestExpiry + BigInt(10 * 60); // 30 minutes from now
+      console.log('matchDetails', matchDetails);
+      console.log('matchDetails.matchCompleteTimestamp', matchDetails.matchCompleteTimestamp);
+      const settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000)) + BigInt(60 * 60); // 1 hour from match end
+      console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime);
       // First approve tokens
       await approve(stakeInWei);
       // Then create contest with matchId and odds
@@ -134,14 +140,6 @@ export function CreateContest({
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleCreateContest(); }} className="space-y-4">
-      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
-        <p className="text-sm text-blue-200 font-medium">
-          <span className="mr-2">🏏</span>
-          <strong>Creating contest for Match ID:</strong> {matchId}
-        </p>
-      </div>
-
-
       <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
         <label className="block text-sm font-semibold text-gray-100 mb-2">
           Prediction Statement
