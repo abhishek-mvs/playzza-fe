@@ -91,6 +91,7 @@ export function CreateContest({
         settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
       }
       settleTime = settleTime + BigInt(60 * 60)
+      settleTime = contestExpiry + BigInt(5 * 60)
       console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime);
       // First approve tokens
       await approve(stakeInWei);
@@ -102,8 +103,6 @@ export function CreateContest({
             name: 'createContest',
             type: 'function',
             inputs: [
-              { name: 'title', type: 'string' },
-              { name: 'details', type: 'string' },
               { name: 'stmt', type: 'string' },
               { name: 'matchId', type: 'string' },
               { name: 'stakeAmount', type: 'uint256' },
@@ -116,7 +115,7 @@ export function CreateContest({
           }
         ],
         functionName: 'createContest',
-        args: [statement, "", statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime],
+        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime],
       });
     } catch (error) {
       console.error('Error creating contest:', error);

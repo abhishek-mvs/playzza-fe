@@ -1,8 +1,6 @@
 interface Contest {
-    id: string;
+    id: bigint;
     creator: string;
-    title: string;
-    details: string;
     statement: string;
     matchId: string;
     stake: bigint;
@@ -16,6 +14,7 @@ interface Contest {
     settled: boolean;
     verdict: boolean;
     active: boolean;
+    cancelled: boolean;
   }
 
 interface ContestStats {

@@ -19,9 +19,10 @@ export default function CountdownTimer({ expiryTimestamp, size = 'md', showResul
       const timer = setInterval(() => {
         const now = BigInt(Math.floor(Date.now() / 1000));
         const remaining = Number(expiryTimestamp - now);
-        
-        if (remaining <= 0) {
-          setTimeRemaining('Expired');
+        console.log("remaining", remaining);
+        if (showResults && remaining <= 0) {
+
+          setTimeRemaining('Out Soon');
           setIsExpired(true);
           clearInterval(timer);
         } else {
@@ -38,23 +39,25 @@ export default function CountdownTimer({ expiryTimestamp, size = 'md', showResul
       lg: 'text-lg px-4 py-3'
     };
 
-    const displayText = showResults ? `Results in ${timeRemaining}` : timeRemaining;
-    const icon = showResults ? '🏆' : '⏰';
-  
-    return (
-      <div className={`font-medium rounded-full ${sizeClasses[size]} ${
-        isExpired 
-          ? 'bg-red-500 bg-opacity-20 text-red-400' 
-          : showResults
-            ? 'bg-purple-500 bg-opacity-20 text-purple-300'
+    if (showResults) {
+      return (
+        <div className={`font-medium rounded-full ${sizeClasses[size]} bg-purple-500 bg-opacity-20 text-purple-300`}>
+          🏆 {timeRemaining}
+        </div>
+      );
+    } else {
+      return (
+        <div className={`font-medium rounded-full ${sizeClasses[size]} ${
+          isExpired 
+            ? 'bg-red-500 bg-opacity-20 text-red-400' 
             : timeRemaining.includes('h') 
               ? 'bg-green-500 bg-opacity-20 text-white'
               : timeRemaining.includes('m') && parseInt(timeRemaining.split('m')[0]) > 5
                 ? 'bg-yellow-500 bg-opacity-20 text-white'
                 : 'bg-red-500 bg-opacity-20 text-white'
-      }`}>
-        {icon} {displayText}
-      </div>
-    );
+        }`}>
+          ⏰ {timeRemaining}
+        </div>
+      );
+    }
   };
-  

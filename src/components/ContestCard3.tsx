@@ -16,20 +16,28 @@ import { ContestCard2 } from './ContestCard2'
 interface ContestCard3Props {
   contest: Contest
   onContestJoined?: () => void
+  onContestCancelled?: () => void
 }
 
 export default function ContestCard3({
   contest,
-  onContestJoined
+  onContestJoined,
+  onContestCancelled
 }: ContestCard3Props) {
   const router = useRouter()
   const { isConnected, address } = useAccount()
   const [joiningContest, setJoiningContest] = useState(false)
+  const [cancellingContest, setCancellingContest] = useState(false)
   const [sharing, setSharing] = useState(false)
   
   const { writeContract: writeJoin, data: joinHash } = useWriteContract()
   const { isLoading: isJoinLoading, isSuccess: isJoinSuccess } = useWaitForTransactionReceipt({
     hash: joinHash,
+  })
+
+  const { writeContract: writeCancel, data: cancelHash } = useWriteContract()
+  const { isLoading: isCancelLoading, isSuccess: isCancelSuccess } = useWaitForTransactionReceipt({
+    hash: cancelHash,
   })
   
   const { approve, isApproving, isApproved } = useApproveToken()
@@ -38,6 +46,19 @@ export default function ContestCard3({
   const { contests: otherContests, isLoading: isOtherLoading } = useContestsByMatchId(contest.matchId)
   // Filter out the current contest
   const filteredContests = (otherContests || []).filter(c => c.id !== contest.id)
+
+  // Determine contest state
+  const now = BigInt(Math.floor(Date.now() / 1000))
+  const isExpired = contest.active && contest.contestExpiry < now
+  const isActive = contest.active && contest.contestExpiry >= now
+  const isPending = !contest.active && !contest.settled
+  const isCompleted = !contest.active && contest.settled && !contest.cancelled
+  const isCancelled = !contest.active && contest.settled && contest.cancelled
+
+  // User roles
+  const isCreator = contest.creator === address
+  const isOpponent = contest.opponent === address
+  const hasOpponent = contest.opponent !== '0x0000000000000000000000000000000000000000'
 
   const handleBack = () => {
     router.back()
@@ -74,6 +95,43 @@ export default function ContestCard3({
       }
     } finally {
       setSharing(false)
+    }
+  }
+
+  const handleCancelContest = async () => {
+    if (!address) {
+      alert('Please connect your wallet')
+      return
+    }
+
+    if (!isCreator) {
+      alert('Only the creator can cancel this contest')
+      return
+    }
+
+    try {
+      setCancellingContest(true)
+      
+      writeCancel({
+        address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
+        abi: [
+          {
+            name: 'cancelContest',
+            type: 'function',
+            inputs: [
+              { name: 'contestId', type: 'uint256' }
+            ],
+            outputs: [],
+            stateMutability: 'nonpayable'
+          }
+        ],
+        functionName: 'cancelContest',
+        args: [BigInt(contest.id)],
+      })
+    } catch (error) {
+      console.error('Error cancelling contest:', error)
+      alert('Error cancelling contest. Please try again.')
+      setCancellingContest(false)
     }
   }
 
@@ -131,12 +189,156 @@ export default function ContestCard3({
     }
   }, [isJoinSuccess, onContestJoined])
 
+  useEffect(() => {
+    if (isCancelSuccess) {
+      setCancellingContest(false)
+      alert('Successfully cancelled the contest!')
+      onContestCancelled?.()
+    }
+  }, [isCancelSuccess, onContestCancelled])
+
   // Calculate amounts for display
   const joinAmount = calculateJoinAmount(contest.stake, contest.odds)
   const potentialProfit = calculatePotentialProfit(contest.stake)
   const oddsDisplay = formatOdds(contest.odds)
-  const isCreator = contest.creator === address
-  const hasOpponent = contest.opponent !== '0x0000000000000000000000000000000000000000'
+
+  // Render status badge
+  const renderStatusBadge = () => {
+    if (isCancelled) {
+      return <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-3 py-1 rounded-full text-sm font-medium">Cancelled</div>
+    } else if (isCompleted) {
+      return <div className="bg-green-500/20 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-sm font-medium">Completed</div>
+    } else if (isExpired) {
+      return <div className="bg-orange-500/20 border border-orange-500/30 text-orange-400 px-3 py-1 rounded-full text-sm font-medium">Expired</div>
+    } else if (isPending) {
+      return <div className="bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium">Pending</div>
+    } else if (isActive) {
+      return <div className="bg-blue-500/20 border border-blue-500/30 text-blue-400 px-3 py-1 rounded-full text-sm font-medium">Active</div>
+    }
+    return null
+  }
+
+  // Render timer or status
+  const renderTimerOrStatus = () => {
+    if (isCancelled) {
+      return <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-3 py-1 rounded-full text-sm font-medium">Cancelled</div>
+    } else if (isCompleted) {
+      return <div className="bg-green-500/20 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-sm font-medium">Completed</div>
+    } else if (isExpired) {
+      return <div className="bg-orange-500/20 border border-orange-500/30 text-orange-400 px-3 py-1 rounded-full text-sm font-medium">Expired</div>
+    } else if (isPending) {
+      return <CountdownTimer expiryTimestamp={contest.settleTime} size="md" showResults={hasOpponent} />
+    } else if (isActive) {
+      return <CountdownTimer expiryTimestamp={contest.contestExpiry} size="md" />
+    }
+    return null
+  }
+
+  // Render winner information for completed contests
+  const renderWinnerInfo = () => {
+    if (!isCompleted) return null
+
+    const winner = contest.verdict ? contest.creator : contest.opponent
+    const isUserWinner = winner === address
+    const profitAmount = contest.verdict ? contest.stake : contest.opponentStake
+
+    return (
+      <div className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 border border-green-700/30 rounded-lg p-4 mb-6">
+        <h4 className="text-lg font-semibold text-white mb-3">🏆 Contest Results</h4>
+        <div className="grid grid-cols-2 gap-4 text-center">
+          <div>
+            <div className="text-gray-400 text-sm mb-1">Winner</div>
+            <div className="text-green-400 font-bold">
+              {isUserWinner ? "You" : `${winner.slice(0, 6)}...${winner.slice(-4)}`}
+            </div>
+          </div>
+          <div>
+            <div className="text-gray-400 text-sm mb-1">Profit Earned</div>
+            <div className="text-green-400 font-bold">{formatUSDC(profitAmount)} USDC</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Render action buttons based on contest state and user role
+  const renderActionButtons = () => {
+    if (isCancelled || isCompleted || isExpired) {
+      return (
+        <div className="text-center">
+          <Button variant="secondary" disabled>
+            {isCancelled ? 'Contest Cancelled' : isCompleted ? 'Contest Completed' : 'Contest Expired'}
+          </Button>
+        </div>
+      )
+    }
+
+    if (!isConnected) {
+      return (
+        <div className="text-center">
+          <p className="text-gray-400 mb-4">Connect your wallet to interact with this contest</p>
+          <ConnectButton />
+        </div>
+      )
+    }
+
+    if (isActive) {
+      if (isCreator) {
+        return (
+          <div className="space-y-3">
+            <Button 
+              onClick={handleCancelContest}
+              variant="danger"
+              size="lg"
+              className="w-full"
+              loading={cancellingContest || isCancelLoading}
+              disabled={cancellingContest || isCancelLoading}
+            >
+              {cancellingContest || isCancelLoading ? 'Cancelling Contest...' : 'Cancel Contest'}
+            </Button>
+          </div>
+        )
+      } else if (hasOpponent) {
+        return (
+          <div className="text-center">
+            <Button variant="secondary" disabled>
+              Contest Full
+            </Button>
+          </div>
+        )
+      } else {
+        return (
+          <div className="space-y-3">
+            <Button 
+              onClick={handleJoinContest}
+              variant="success"
+              size="lg"
+              className="w-full"
+              loading={joiningContest || isJoinLoading || isApproving}
+              disabled={joiningContest || isJoinLoading || isApproving}
+            >
+              {joiningContest || isJoinLoading || isApproving 
+                ? (isApproving ? 'Approving...' : 'Joining Contest...') 
+                : `Join Contest for ${formatUSDC(joinAmount)} USDC`
+              }
+            </Button>
+          </div>
+        )
+      }
+    }
+
+    if (isPending) {
+      return (
+        <div className="text-center">
+          <Button variant="secondary" disabled>
+            Contest Full - Waiting for Results
+          </Button>
+        </div>
+      )
+    }
+
+    return null
+  }
 
   return (
     <div className="glass rounded-2xl p-8">
@@ -166,11 +368,10 @@ export default function ContestCard3({
             )}
           </Button>
         </div>
-        {hasOpponent ? (
-          <CountdownTimer expiryTimestamp={contest.settleTime} size="md" showResults={hasOpponent} />
-        ) : (
-          <CountdownTimer expiryTimestamp={contest.contestExpiry} size="md" />
-        )}
+        <div className="flex items-center gap-3">
+          {/* {renderStatusBadge()} */}
+          {renderTimerOrStatus()}
+        </div>
       </div>
 
       {/* Contest Statement */}
@@ -180,6 +381,9 @@ export default function ContestCard3({
           <p className="text-white text-lg italic">"{contest.statement}"</p>
         </div>
       </div>
+
+      {/* Winner Information for Completed Contests */}
+      {renderWinnerInfo()}
 
       {/* Contest Details */}
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -193,7 +397,7 @@ export default function ContestCard3({
           <div className="text-gray-400 text-sm mb-1">Opponent</div>
           <div className="text-white font-medium">
             {hasOpponent 
-              ? (contest.opponent === address ? "You" : `${contest.opponent.slice(0, 6)}...${contest.opponent.slice(-4)}`)
+              ? (isOpponent ? "You" : `${contest.opponent.slice(0, 6)}...${contest.opponent.slice(-4)}`)
               : "None"
             }
           </div>
@@ -208,68 +412,29 @@ export default function ContestCard3({
         </div>
       </div>
 
-      {/* Join Details */}
-      <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700/30 rounded-lg p-4 mb-6">
-        <h4 className="text-lg font-semibold text-white mb-3">Join This Contest</h4>
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-gray-400 text-sm mb-1">Required Stake</div>
-            <div className="text-orange-400 font-bold">{formatUSDC(joinAmount)} USDC</div>
-          </div>
-          <div>
-            <div className="text-gray-400 text-sm mb-1">Potential Profit</div>
-            <div className="text-green-400 font-bold">{formatUSDC(potentialProfit)} USDC</div>
-          </div>
-          <div>
-            <div className="text-gray-400 text-sm mb-1">Status</div>
-            <div className={`font-bold ${contest.active ? 'text-green-400' : 'text-red-400'}`}>
-              {contest.active ? 'Active' : 'Inactive'}
+      {/* Join Details - Only show for active contests */}
+      {isActive && !hasOpponent && (
+        <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700/30 rounded-lg p-4 mb-6">
+          <h4 className="text-lg font-semibold text-white mb-3">Join This Contest</h4>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-gray-400 text-sm mb-1">Required Stake</div>
+              <div className="text-orange-400 font-bold">{formatUSDC(joinAmount)} USDC</div>
+            </div>
+            <div>
+              <div className="text-gray-400 text-sm mb-1">Potential Profit</div>
+              <div className="text-green-400 font-bold">{formatUSDC(potentialProfit)} USDC</div>
+            </div>
+            <div>
+              <div className="text-gray-400 text-sm mb-1">Status</div>
+              <div className="text-green-400 font-bold">Active</div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Join Button */}
-      {hasOpponent ? (
-        <div className="text-center">
-          <Button variant="secondary" disabled>
-            Contest Full
-          </Button>
-        </div>
-      ) : !isConnected ? (
-        <div className="text-center">
-          <p className="text-gray-400 mb-4">Connect your wallet to join this contest</p>
-          <ConnectButton />
-        </div>
-      ) : isCreator ? (
-        <div className="text-center">
-          <Button variant="secondary" disabled>
-            Cannot join your own contest
-          </Button>
-        </div>
-      ) : !contest.active ? (
-        <div className="text-center">
-          <Button variant="secondary" disabled>
-            Contest Inactive
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <Button 
-            onClick={handleJoinContest}
-            variant="success"
-            size="lg"
-            className="w-full"
-            loading={joiningContest || isJoinLoading || isApproving}
-            disabled={joiningContest || isJoinLoading || isApproving}
-          >
-            {joiningContest || isJoinLoading || isApproving 
-              ? (isApproving ? 'Approving...' : 'Joining Contest...') 
-              : `Join Contest for ${formatUSDC(joinAmount)} USDC`
-            }
-          </Button>
-        </div>
       )}
+
+      {/* Action Buttons */}
+      {renderActionButtons()}
 
       {/* Other Active Contests for this Match */}
       <div className="mt-10">

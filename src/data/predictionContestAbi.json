@@ -158,16 +158,6 @@
       },
       {
         "internalType": "string",
-        "name": "title",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "details",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
         "name": "statement",
         "type": "string"
       },
@@ -242,16 +232,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "string",
-        "name": "title",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "details",
-        "type": "string"
-      },
       {
         "internalType": "string",
         "name": "stmt",
@@ -329,16 +309,6 @@
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -443,16 +413,6 @@
           },
           {
             "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "statement",
             "type": "string"
           },
@@ -551,16 +511,6 @@
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -714,16 +664,6 @@
           },
           {
             "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "statement",
             "type": "string"
           },
@@ -822,16 +762,6 @@
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",
@@ -978,16 +908,6 @@
             "internalType": "address",
             "name": "creator",
             "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "details",
-            "type": "string"
           },
           {
             "internalType": "string",

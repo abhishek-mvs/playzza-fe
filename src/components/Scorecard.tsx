@@ -156,7 +156,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
       </div>
 
       {/* Innings */}
-      {scorecardData.scorecard.map((innings, index) => {
+      {scorecardData.scorecard.slice().reverse().map((innings, index) => {
         teamInningsCount[innings.batTeamName] = (teamInningsCount[innings.batTeamName] || 0) + 1
         const bowlingTeam = getBowlingTeam(innings.batTeamName, scorecardData)
 

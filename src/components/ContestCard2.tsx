@@ -7,15 +7,7 @@ import { useApproveToken } from '../hooks/useApproveToken'
 import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
 import CountdownTimer from './CountdownTimer'
-
-interface Contest {
-  statement: string;
-  creator: string;
-  stake: bigint;
-  odds: bigint;
-  contestExpiry: bigint;
-  opponent: string;
-}
+import { Contest } from '@/types/contest'
 
 interface ContestCardProps {
   contest: Contest;
