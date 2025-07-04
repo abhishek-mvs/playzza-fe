@@ -240,7 +240,7 @@ export default function ContestCard3({
 
     const winner = contest.verdict ? contest.creator : contest.opponent
     const isUserWinner = winner === address
-    const profitAmount = contest.verdict ? contest.stake : contest.opponentStake
+    const profitAmount = contest.verdict ? contest.opponentStake : contest.stake
 
     return (
       <div className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 border border-green-700/30 rounded-lg p-4 mb-6">

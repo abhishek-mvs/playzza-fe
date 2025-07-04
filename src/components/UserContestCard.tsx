@@ -57,7 +57,7 @@ const UserContestCard: React.FC<UserContestCardProps> = ({
     <div className="bg-gradient-to-br from-blue-950/80 to-purple-900/80 p-5 rounded-2xl border border-gray-700 border-opacity-40 shadow-xl flex flex-col min-h-[240px] hover:-translate-y-2 transition-transform duration-200 ease-in-out">
       <div className="flex justify-between items-start mb-2">
         <div className="text-lg font-bold text-green-400">
-          {formatUSDC(contest.stake)} USDC
+          {formatUSDC(profit)} USDC
         </div>
         {(activeFilter === 'active' || activeFilter === 'pending') && (
           <CountdownTimer 

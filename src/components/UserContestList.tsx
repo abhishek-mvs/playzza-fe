@@ -168,7 +168,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
           >
             <span>{filter.icon}</span>
             <span>{filter.label}</span>
-            <span className="bg-white bg-opacity-20 px-2 py-0.5 rounded-full text-xs">
+            <span className="ml-2 bg-blue-500 bg-opacity-30 text-blue-200 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-400 border-opacity-30">
               {getFilterCount(filter.key)}
             </span>
           </Button>

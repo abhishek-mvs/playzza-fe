@@ -69,18 +69,18 @@ export default function MatchCard({ match }: MatchCardProps) {
             <p className="text-sm text-gray-300 font-medium truncate">
               {match.matchInfo.team1.teamName}
             </p>
-            <div className="text-xs text-gray-400 flex flex-col items-end">
+            <div className="text-xs text-gray-400 flex items-center">
               {match.matchScore?.team1Score?.inngs1 && (
-                <div>
+                <span>
                   {match.matchScore.team1Score.inngs1.runs}/{match.matchScore.team1Score.inngs1.wickets}
-                  {match.matchScore.team1Score.inngs1.overs > 0 && ` (${match.matchScore.team1Score.inngs1.overs})`}
-                </div>
+                  {/* {match.matchScore.team1Score.inngs1.overs > 0 && ` (${match.matchScore.team1Score.inngs1.overs})`} */}
+                </span>
               )}
               {match.matchScore?.team1Score?.inngs2 && (
-                <div>
-                  {match.matchScore.team1Score.inngs2.runs}/{match.matchScore.team1Score.inngs2.wickets}
-                  {match.matchScore.team1Score.inngs2.overs > 0 && ` (${match.matchScore.team1Score.inngs2.overs})`}
-                </div>
+                <span className="ml-2">
+                  & {match.matchScore.team1Score.inngs2.runs}/{match.matchScore.team1Score.inngs2.wickets}
+                  {/* {match.matchScore.team1Score.inngs2.overs > 0 && ` (${match.matchScore.team1Score.inngs2.overs})`} */}
+                </span>
               )}
             </div>
           </div>
@@ -91,18 +91,18 @@ export default function MatchCard({ match }: MatchCardProps) {
             <p className="text-sm text-gray-300 font-medium truncate">
              {match.matchInfo.team2.teamName}
             </p>
-            <div className="text-xs text-gray-400 flex flex-col items-end">
+            <div className="text-xs text-gray-400 flex items-center">
               {match.matchScore?.team2Score?.inngs1 && (
-                <div>
+                <span>
                   {match.matchScore.team2Score.inngs1.runs}/{match.matchScore.team2Score.inngs1.wickets}
-                  {match.matchScore.team2Score.inngs1.overs > 0 && ` (${match.matchScore.team2Score.inngs1.overs})`}
-                </div>
+                  {/* {match.matchScore.team2Score.inngs1.overs > 0 && ` (${match.matchScore.team2Score.inngs1.overs})`} */}
+                </span>
               )}
               {match.matchScore?.team2Score?.inngs2 && (
-                <div>
-                  {match.matchScore.team2Score.inngs2.runs}/{match.matchScore.team2Score.inngs2.wickets}
-                  {match.matchScore.team2Score.inngs2.overs > 0 && ` (${match.matchScore.team2Score.inngs2.overs})`}
-                </div>
+                <span className="ml-2">
+                  & {match.matchScore.team2Score.inngs2.runs}/{match.matchScore.team2Score.inngs2.wickets}
+                  {/* {match.matchScore.team2Score.inngs2.overs > 0 && ` (${match.matchScore.team2Score.inngs2.overs})`} */}
+                </span>
               )}
             </div>
           </div>

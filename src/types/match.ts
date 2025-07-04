@@ -11,8 +11,8 @@ export type MatchInfo = {
   matchFormat: string
   state: string
   status: string
-  team1: { teamName: string }
-  team2: { teamName: string }
+  team1: { teamName: string, teamSName: string }
+  team2: { teamName: string, teamSName: string }
 } 
 
 export type InningsScore = {

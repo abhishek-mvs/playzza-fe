@@ -49,6 +49,15 @@ export default function Scorecard({ matchId }: ScorecardProps) {
     return `${data.matchInfo.team1.name} and ${data.matchInfo.team2.name}`
   }
 
+  const getTeamInningsCount = (data: ScorecardData): { [key: string]: number } => {
+    if (!data.scorecard) return {}
+    const inningsCount: { [key: string]: number } = {}
+    data.scorecard.forEach((innings) => {
+      inningsCount[innings.batTeamName] = (inningsCount[innings.batTeamName] || 0) + 1
+    })
+    return inningsCount
+  }
+
   const getBowlingTeam = (battingTeam: string, data: ScorecardData): string => {
     // Always use team details from matchInfo
     return battingTeam === data.matchInfo.team1.name 
@@ -89,7 +98,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   if (!scorecardData.scorecard) {
     const teams = getTeamsPlaying(scorecardData)
     return (
-      <div className="p-4 h-full">
+      <div className="p-4 h-full max-w-6xl mx-auto">
         {/* Match Header */}
         <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
           <div className="flex justify-between items-start mb-2">
@@ -132,7 +141,8 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   }
 
   const teams = getTeamsPlaying(scorecardData)
-  const teamInningsCount: { [key: string]: number } = {}
+  const teamInningsCount: { [key: string]: number } = getTeamInningsCount(scorecardData)
+
 
   return (
     <div className="p-4 h-full max-w-6xl mx-auto">
@@ -162,15 +172,15 @@ export default function Scorecard({ matchId }: ScorecardProps) {
 
       {/* Innings */}
       {scorecardData.scorecard.slice().reverse().map((innings, index) => {
-        teamInningsCount[innings.batTeamName] = (teamInningsCount[innings.batTeamName] || 0) + 1
         const bowlingTeam = getBowlingTeam(innings.batTeamName, scorecardData)
-
+        const inningsNumber = teamInningsCount[innings.batTeamName]
+        teamInningsCount[innings.batTeamName] = inningsNumber - 1
         return (
           <div key={innings.inningsId} className="mb-8 bg-gray-800/50 border border-gray-700/30 rounded-lg shadow-sm">
             {/* Innings Header */}
             <div className="bg-blue-900/30 border-b border-blue-700/30 p-4">
               <h2 className="text-lg font-bold text-blue-300">
-                {innings.batTeamName} INNINGS {teamInningsCount[innings.batTeamName]}
+                {innings.batTeamName} INNINGS {inningsNumber}
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm text-gray-300">
                 <div><strong>Batting:</strong> {innings.batTeamName}</div>
