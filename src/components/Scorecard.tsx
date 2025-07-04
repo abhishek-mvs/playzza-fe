@@ -1,6 +1,7 @@
 import { ScorecardData } from '@/types/match'
 import { useState, useEffect } from 'react'
 import { Button } from './ui/Button'
+import { getApiUrl } from '@/utils/api'
 
 interface ScorecardProps {
   matchId: string
@@ -17,7 +18,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
     try {
       setLoading(true)
       setError(null) // Clear any previous errors
-      const response = await fetch(`http://localhost:8080/v1/scorecard/${matchId}`)
+      const response = await fetch(getApiUrl(`/v1/scorecard/${matchId}`))
       if (!response.ok) {
         throw new Error('Failed to fetch scorecard')
       }
@@ -98,7 +99,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   if (!scorecardData.scorecard) {
     const teams = getTeamsPlaying(scorecardData)
     return (
-      <div className="p-4 h-full max-w-6xl mx-auto">
+      <div className="p-4 h-full max-w-8xl mx-auto">
         {/* Match Header */}
         <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
           <div className="flex justify-between items-start mb-2">
@@ -145,7 +146,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
 
 
   return (
-    <div className="p-4 h-full max-w-6xl mx-auto">
+    <div className="p-4 h-full max-w-8xl mx-auto">
       {/* Match Header */}
       <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
         <div className="flex justify-between items-start mb-2">

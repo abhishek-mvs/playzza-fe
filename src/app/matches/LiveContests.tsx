@@ -26,7 +26,7 @@ export default function LiveContests() {
   };
 
   return (
-    <div className="glass rounded-2xl p-2">
+    <div className="glass rounded-2xl p-2 max-w-8xl mx-auto">
       <h2 className="text-lg font-bold text-white mb-1">
         <span className="mr-3">⚡️</span>
         Live Contests

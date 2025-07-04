@@ -4,13 +4,15 @@ import MatchCard from '@/components/MatchCard'
 import { MatchInfo } from '@/types/match'
 import { useEffect, useState } from 'react'
 import { Match } from '@/types/match'
+import { getApiUrl } from '@/utils/api'
+
 export default function   UpcomingMatches() {
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchMatches = async () => {
     try {
-      const res = await fetch('http://localhost:8080/v1/upcoming-matches')
+      const res = await fetch(getApiUrl('/v1/upcoming-matches'))
       const data = await res.json()
       const matchList: Match[] = []
       data.typeMatches?.forEach((typeMatch: any) => {
@@ -38,7 +40,7 @@ export default function   UpcomingMatches() {
   }, [])
 
   return (
-    <div className="glass rounded-2xl p-2">
+    <div className="glass rounded-2xl p-2 max-w-8xl mx-auto">
       <h2 className="text-lg font-bold text-white mb-2">
         <span className="mr-3">📅</span>
         Upcoming Matches

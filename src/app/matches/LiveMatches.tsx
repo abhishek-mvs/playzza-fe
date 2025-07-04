@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import MatchCard from '../../components/MatchCard'
 import { MatchInfo, Match } from '../../types/match'
+import { getApiUrl } from '../../utils/api'
 
 export default function LiveMatches() {
   const [matches, setMatches] = useState<Match[]>([])
@@ -10,7 +11,7 @@ export default function LiveMatches() {
 
   const fetchMatches = async () => {
     try {
-      const res = await fetch('http://localhost:8080/v1/live-matches')
+      const res = await fetch(getApiUrl('/v1/live-matches'))
       const data = await res.json()
       const matchList: Match[] = []
       data.typeMatches?.forEach((typeMatch: any) => {
@@ -38,7 +39,7 @@ export default function LiveMatches() {
   }, [])
 
   return (
-    <div className="glass rounded-2xl p-2">
+    <div className="glass rounded-2xl p-2 max-w-8xl mx-auto">
       <h2 className="text-2xl font-bold text-white mb-2">
         <span className="mr-3">🔥</span>
         Live Matches

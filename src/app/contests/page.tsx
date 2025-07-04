@@ -19,7 +19,7 @@ export default function Contests() {
       
       <div className="container mx-auto px-4 py-12 relative z-10">
         {isConnected ? (
-          <div className="w-full max-w-4xl mx-auto gap-8">
+          <div className="w-full max-w-8xl mx-auto gap-8">
             {/* Contest List Section */}
             <div className="glass rounded-2xl p-8">
               <h2 className="text-3xl font-bold text-white mb-6 flex items-center">

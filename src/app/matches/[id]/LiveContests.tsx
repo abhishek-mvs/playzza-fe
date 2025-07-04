@@ -7,6 +7,7 @@ import { CreateContest } from '../../../components/CreateContest'
 import { ContestCard } from '../../../components/ContestCard'
 import { Button } from '../../../components/ui/Button'
 import { MatchInfoDetailed } from '@/types/match'
+import { getApiUrl } from '@/utils/api'
 
 export default function LiveContests({ onBack }: { onBack?: () => void }) {
   const params = useParams()
@@ -30,7 +31,7 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
 
   const fetchMatchDetails = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/v1/match/${matchId}`)
+      const res = await fetch(getApiUrl(`/v1/match/${matchId}`))
       const data = await res.json()
       console.log('data', data)
       setMatchDetails(data)
@@ -49,7 +50,7 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
   console.log(matchDetails)
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4 max-w-8xl mx-auto">
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-2">
           {onBack && (
