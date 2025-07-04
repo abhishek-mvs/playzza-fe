@@ -1,3 +1,9 @@
+export type Match = {
+  matchInfo: MatchInfo
+  matchScore: MatchScore
+}
+
+
 export type MatchInfo = {
   matchId: number
   matchDesc: string
@@ -8,6 +14,23 @@ export type MatchInfo = {
   team1: { teamName: string }
   team2: { teamName: string }
 } 
+
+export type InningsScore = {
+  inningsId: number
+  runs: number
+  wickets: number
+  overs: number
+}
+
+export type TeamScore = {
+  inngs1?: InningsScore
+  inngs2?: InningsScore
+}
+
+export type MatchScore = {
+  team1Score: TeamScore
+  team2Score: TeamScore
+}
 
 export type MatchInfoDetailed = {
   matchId: number
@@ -22,6 +45,9 @@ export type MatchInfoDetailed = {
   year: number
   dayNumber: number
   state: string
+  testDayNumber: number
+  testDayStartTimestamp: number
+  testDayEndTimestamp: number
   team1: {
     id: number
     name: string

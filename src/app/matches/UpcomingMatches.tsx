@@ -1,22 +1,23 @@
 'use client'
 
 import MatchCard from '@/components/MatchCard'
-import { useEffect, useState } from 'react'
 import { MatchInfo } from '@/types/match'
-export default function UpcomingMatches() {
-  const [matches, setMatches] = useState<MatchInfo[]>([])
+import { useEffect, useState } from 'react'
+import { Match } from '@/types/match'
+export default function   UpcomingMatches() {
+  const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchMatches = async () => {
     try {
       const res = await fetch('http://localhost:8080/v1/upcoming-matches')
       const data = await res.json()
-      const matchList: MatchInfo[] = []
+      const matchList: Match[] = []
       data.typeMatches?.forEach((typeMatch: any) => {
         typeMatch.seriesMatches?.forEach((seriesMatch: any) => {
           seriesMatch?.seriesAdWrapper?.matches?.forEach((match: any) => {
-            if (match?.matchInfo) {
-              matchList.push(match.matchInfo)
+            if (match) {
+              matchList.push(match)
             }
           })
         })
@@ -61,7 +62,7 @@ export default function UpcomingMatches() {
         <div className="overflow-x-auto scrollbar-hide py-2">
           <div className="flex gap-2 pb-2" style={{ minWidth: 'max-content' }}>
             {matches.map((match) => (
-              <div key={match.matchId} className="w-80 flex-shrink-0">
+              <div key={match.matchInfo.matchId} className="w-80 flex-shrink-0">
                 <MatchCard match={match} />
               </div>
             ))}
