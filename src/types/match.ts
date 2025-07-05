@@ -79,7 +79,8 @@ type Bowler = {
   runs: number
   economy: string
   name: string
-  balls: number
+  no_balls: number
+  wides: number
 }
 
 type Extra = {

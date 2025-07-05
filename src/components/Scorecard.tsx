@@ -97,7 +97,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   }
 
   // Handle case where scorecard is null (match hasn't started)
-  if (!scorecardData.scorecard) {
+  if (!scorecardData.scorecard || scorecardData.scorecard.length === 0) {
     const teams = getTeamsPlaying(scorecardData)
     return (
       <div className="p-4 h-full max-w-8xl mx-auto">
@@ -239,8 +239,10 @@ export default function Scorecard({ matchId }: ScorecardProps) {
                         <th className="border border-gray-600 px-2 py-1 text-center">Wickets</th>
                         <th className="border border-gray-600 px-2 py-1 text-center">Runs</th>
                         <th className="border border-gray-600 px-2 py-1 text-center">Maidens</th>
+                        <th className="border border-gray-600 px-2 py-1 text-center">No Balls</th>
+                        <th className="border border-gray-600 px-2 py-1 text-center">Wides</th>
                         <th className="border border-gray-600 px-2 py-1 text-center">Economy</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Balls</th>
+                        
                       </tr>
                     </thead>
                     <tbody>
@@ -251,8 +253,9 @@ export default function Scorecard({ matchId }: ScorecardProps) {
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wickets}</td>
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.runs}</td>
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.maidens}</td>
+                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.no_balls}</td>
+                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wides}</td>
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.economy}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.balls}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -112,22 +112,24 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
       )}
       </div>
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
-             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
-          <div className="glass rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-500 border-opacity-30">
-            <div className="flex justify-between items-center p-4 border-b border-gray-500 border-opacity-30">
-              <h3 className="text-xl font-semibold text-white"> Creating contest for Match ID: {matchId}</h3>
+        <div className="fixed inset-0 z-[9999] flex justify-center items-start bg-black/60 backdrop-blur-sm p-4">
+          <div className="relative glass rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col border border-gray-500 border-opacity-30 mt-20">
+            {/* Sticky Modal Header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-gray-900/90 border-b border-gray-700 rounded-t-2xl shadow-md">
+              <h3 className="text-xl font-bold text-white drop-shadow-sm">Creating contest for Match ID: {matchId}</h3>
               <Button
                 onClick={() => setShowCreateForm(false)}
                 variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white text-2xl font-bold"
+                size="lg"
+                className="text-gray-400 hover:text-white text-3xl font-extrabold px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                aria-label="Close"
               >
                 ×
               </Button>
             </div>
+            {/* Modal Content */}
             {matchDetails && (
-              <div className="p-6">
+              <div className="overflow-y-auto p-6">
                 <CreateContest 
                   onContestCreated={handleContestCreated}
                   matchId={matchId}
