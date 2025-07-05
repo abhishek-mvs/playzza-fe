@@ -102,6 +102,8 @@ type Innings = {
   runRate: number
   batTeamName: string
   batTeamSName: string
+  bowlTeamName: string
+  bowlTeamSName: string
   ballNbr: number
   rpb: number
 }

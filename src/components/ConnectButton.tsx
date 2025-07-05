@@ -189,6 +189,7 @@ export function NavbarConnectButton() {
       size="sm" 
       variant="compact"
       showBalance={false}
+      // showAvatar={false}
       className="!min-w-fit"
     />
   );

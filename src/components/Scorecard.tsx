@@ -174,7 +174,6 @@ export default function Scorecard({ matchId }: ScorecardProps) {
 
       {/* Innings */}
       {scorecardData.scorecard.slice().reverse().map((innings, index) => {
-        const bowlingTeam = getBowlingTeam(innings.batTeamName, scorecardData)
         const inningsNumber = teamInningsCount[innings.batTeamName]
         teamInningsCount[innings.batTeamName] = inningsNumber - 1
         return (
@@ -186,7 +185,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm text-gray-300">
                 <div><strong>Batting:</strong> {innings.batTeamName}</div>
-                <div><strong>Bowling:</strong> {bowlingTeam}</div>
+                <div><strong>Bowling:</strong> {innings.bowlTeamName}</div>
                 <div><strong>Score:</strong> {innings.score}/{innings.wickets} ({innings.overs} overs)</div>
                 <div><strong>Run Rate:</strong> {innings.runRate.toFixed(2)}</div>
               </div>
@@ -230,7 +229,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
             {/* Bowling Section */}
             {innings.bowler.length > 0 && (
               <div className="p-4 border-t border-gray-700/30">
-                <h3 className="text-md font-semibold mb-3 text-blue-300">BOWLING ({bowlingTeam})</h3>
+                <h3 className="text-md font-semibold mb-3 text-blue-300">BOWLING ({innings.bowlTeamName})</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse text-gray-300">
                     <thead>

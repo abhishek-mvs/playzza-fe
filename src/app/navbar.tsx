@@ -5,15 +5,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { NavbarConnectButton } from '../components/ConnectButton';
+import { useUSDCBalance } from '../hooks/useUSDCBalance';
+import { formatUSDC } from '../utils/formatters';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
-
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
+  const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address);
+  // console.log(usdcBalance);
+  // console.log(isBalanceLoading);
+  // console.log(address);
+  // console.log(isConnected);
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -74,9 +77,9 @@ export default function Navbar() {
           <div className="flex items-center ml-2">
             {isConnected && address && (
               <div className="hidden sm:block text-right mr-3">
-                <div className="text-xs text-gray-400">Connected</div>
-                <div className="text-sm font-medium text-white">
-                  {formatAddress(address!)}
+                <div className="text-xs text-gray-400">USDC Balance</div>
+                <div className="text-sm font-medium text-green-400">
+                  {isBalanceLoading ? 'Loading...' : `${formatUSDC(usdcBalance)} USDC`}
                 </div>
               </div>
             )}
