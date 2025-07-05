@@ -2,6 +2,7 @@ import { ScorecardData } from '@/types/match'
 import { useState, useEffect } from 'react'
 import { Button } from './ui/Button'
 import { getApiUrl } from '@/utils/api'
+import { formatScorecardSeoTitle } from '@/utils/formatters'
 
 interface ScorecardProps {
   matchId: string
@@ -103,7 +104,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
         {/* Match Header */}
         <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
           <div className="flex justify-between items-start mb-2">
-            <h1 className="text-xl font-bold text-white">{scorecardData.appIndex.seoTitle}</h1>
+            <h1 className="text-xl font-bold text-white">{formatScorecardSeoTitle(scorecardData.appIndex.seoTitle)}</h1>
             <Button 
               onClick={fetchScorecard}
               disabled={loading}
@@ -150,7 +151,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
       {/* Match Header */}
       <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
         <div className="flex justify-between items-start mb-2">
-          <h1 className="text-xl font-bold text-white">{scorecardData.appIndex.seoTitle}</h1>
+          <h1 className="text-xl font-bold text-white">{formatScorecardSeoTitle(scorecardData.appIndex.seoTitle)}</h1>
           <Button 
             onClick={fetchScorecard}
             disabled={loading}
