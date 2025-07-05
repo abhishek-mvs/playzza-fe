@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import '@rainbow-me/rainbowkit/styles.css';
 
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -299,38 +300,3 @@ body {
   transform: translateY(0) !important;
 }
 
-
-/* RainbowKit Modal Full Fix */
-[data-rk] [role="dialog"] {
-  position: fixed !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  z-index: 9999 !important;
-  overflow: hidden !important;
-  padding: 16px !important;
-  box-sizing: border-box;
-}
-
-/* Modal container */
-[data-rk] [role="dialog"] > div {
-  background: white !important;
-  color: black !important;
-  width: 100% !important;
-  max-width: 420px !important;
-  max-height: 90vh !important;
-  border-radius: 16px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important; /* ✅ Prevents horizontal white line */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
-  box-sizing: border-box;
-}
-
-/* Wallet icon sizing */
-[data-rk] img {
-  width: 40px !important;
-  height: 40px !important;
-  object-fit: contain !important;
-}
