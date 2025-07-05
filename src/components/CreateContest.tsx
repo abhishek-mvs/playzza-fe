@@ -8,6 +8,7 @@ import { CONTRACT_ADDRESSES } from '../app/constants';
 import { Button } from './ui/Button';
 import { parseUSDC } from '@/utils/formatters';
 import { MatchInfoDetailed } from '@/types/match';
+import { HeroConnectButton } from './ConnectButton';
 
 export function CreateContest({ 
   onContestCreated, 
@@ -18,7 +19,7 @@ export function CreateContest({
   matchId: string;
   matchDetails: MatchInfoDetailed;
 }) {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const [statement, setStatement] = useState('');
   const [stakeAmount, setStakeAmount] = useState('');
   const [oddsNumerator, setOddsNumerator] = useState('1');
@@ -294,27 +295,33 @@ export function CreateContest({
         </div>
       )}
 
-      <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
-        <Button
-          type="submit"
-          disabled={isContestLoading || isApproving}
-          variant="success"
-          size="lg"
-          loading={isContestLoading || isApproving}
-          className="w-full"
-        >
-          {isContestLoading ? (
-            'Creating Contest...'
-          ) : isApproving ? (
-            'Approving Tokens...'
-          ) : (
-            <>
-              <span>🏆</span>
-              <span>Create Contest</span>
-            </>
-          )}
-        </Button>
-      </div>
+      {isConnected ? (
+        <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
+          <Button
+            type="submit"
+            disabled={isContestLoading || isApproving}
+            variant="success"
+            size="lg"
+            loading={isContestLoading || isApproving}
+            className="w-full"
+          >
+            {isContestLoading ? (
+              'Creating Contest...'
+            ) : isApproving ? (
+              'Approving Tokens...'
+            ) : (
+              <>
+                <span>🏆</span>
+                <span>Create Contest</span>
+              </>
+            )}
+          </Button>
+        </div>
+      ) : (
+        <div className="flex justify-center p-4">
+          <HeroConnectButton />
+        </div>
+      )}
     </form>
   );
 } 

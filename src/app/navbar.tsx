@@ -13,10 +13,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
   const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address);
-  // console.log(usdcBalance);
-  // console.log(isBalanceLoading);
-  // console.log(address);
-  // console.log(isConnected);
 
   const isActive = (path: string) => {
     return pathname === path;

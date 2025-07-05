@@ -26,7 +26,11 @@ export default function Contests() {
                 <span className="mr-3">📋</span>
                 My Contests
               </h2>
-              <ContestList contests={contests as Contest[]} isLoading={isLoading} onContestCancelled={refetch} />
+              <ContestList 
+                contests={contests || []} 
+                isLoading={isLoading} 
+                onContestCancelled={refetch} 
+              />
             </div>
           </div>
         ) : (
