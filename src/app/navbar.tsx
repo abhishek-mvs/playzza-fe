@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import { ConnectButton } from '../components/ConnectButton';
+import { NavbarConnectButton } from '../components/ConnectButton';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -80,9 +80,7 @@ export default function Navbar() {
                 </div>
               </div>
             )}
-            <div className="scale-80">
-              <ConnectButton />
-            </div>
+            <NavbarConnectButton />
           </div>
         </div>
         {/* Mobile Nav Links Dropdown */}

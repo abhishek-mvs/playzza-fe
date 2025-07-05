@@ -261,3 +261,76 @@ body {
     font-size: 1.125rem;
   }
 }
+
+/* RainbowKit Customization */
+.rainbowkit-connect-button-wrapper {
+  /* Ensure proper sizing and positioning */
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Override RainbowKit default styles */
+.rainbowkit-connect-button-wrapper button {
+  font-family: inherit !important;
+  font-weight: inherit !important;
+}
+
+/* Ensure buttons don't get cut off */
+.rainbowkit-connect-button-wrapper button {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .rainbowkit-connect-button-wrapper button {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+}
+
+/* Animation for button interactions */
+.rainbowkit-connect-button-wrapper button:hover {
+  transform: translateY(-1px) !important;
+}
+
+.rainbowkit-connect-button-wrapper button:active {
+  transform: translateY(0) !important;
+}
+
+
+/* RainbowKit Modal Full Fix */
+[data-rk] [role="dialog"] {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  z-index: 9999 !important;
+  overflow: hidden !important;
+  padding: 16px !important;
+  box-sizing: border-box;
+}
+
+/* Modal container */
+[data-rk] [role="dialog"] > div {
+  background: white !important;
+  color: black !important;
+  width: 100% !important;
+  max-width: 420px !important;
+  max-height: 90vh !important;
+  border-radius: 16px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important; /* ✅ Prevents horizontal white line */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+  box-sizing: border-box;
+}
+
+/* Wallet icon sizing */
+[data-rk] img {
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: contain !important;
+}

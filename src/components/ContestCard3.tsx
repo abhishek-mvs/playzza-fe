@@ -7,7 +7,7 @@ import { CONTRACT_ADDRESSES } from '../app/constants'
 import { useApproveToken } from '../hooks/useApproveToken'
 import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds } from '@/utils/formatters'
-import { ConnectButton } from './ConnectButton'
+import { CardConnectButton } from './ConnectButton'
 import CountdownTimer from './CountdownTimer'
 import { useContestsByMatchId } from '../hooks/useContests'
 import type { Contest } from '@/types/contest'
@@ -277,7 +277,7 @@ export default function ContestCard3({
       return (
         <div className="text-center">
           <p className="text-gray-400 mb-4">Connect your wallet to interact with this contest</p>
-          <ConnectButton />
+          <CardConnectButton />
         </div>
       )
     }
