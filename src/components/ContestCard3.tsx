@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { CONTRACT_ADDRESSES } from '../app/constants'
 import { useApproveToken } from '../hooks/useApproveToken'
+import { useUSDCBalance } from '../hooks/useUSDCBalance'
 import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds } from '@/utils/formatters'
 import { CardConnectButton } from './ConnectButton'
@@ -41,6 +42,7 @@ export default function ContestCard3({
   })
   
   const { approve, isApproving, isApproved } = useApproveToken()
+  const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address)
 
   // Fetch other active contests for this match
   const { contests: otherContests, isLoading: isOtherLoading } = useContestsByMatchId(contest.matchId)
@@ -146,10 +148,16 @@ export default function ContestCard3({
       return
     }
 
+    const joinAmount = calculateJoinAmount(contest.stake, contest.odds)
+    
+    // Check if user has sufficient USDC balance
+    if (usdcBalance < joinAmount) {
+      alert(`Insufficient USDC balance. You need ${formatUSDC(joinAmount)} USDC but have ${formatUSDC(usdcBalance)} USDC.`)
+      return
+    }
+
     try {
       setJoiningContest(true)
-      
-      const joinAmount = calculateJoinAmount(contest.stake, contest.odds)
       
       // If not approved, approve first
       if (!isApproved) {
@@ -201,6 +209,9 @@ export default function ContestCard3({
   const joinAmount = calculateJoinAmount(contest.stake, contest.odds)
   const potentialProfit = calculatePotentialProfit(contest.stake)
   const oddsDisplay = formatOdds(contest.odds)
+  
+  // Check if user has sufficient balance
+  const hasSufficientBalance = usdcBalance >= joinAmount
 
   // Render status badge
   const renderStatusBadge = () => {
@@ -315,11 +326,12 @@ export default function ContestCard3({
               size="lg"
               className="w-full"
               loading={joiningContest || isJoinLoading || isApproving}
-              disabled={joiningContest || isJoinLoading || isApproving}
+              disabled={joiningContest || isJoinLoading || isApproving || !hasSufficientBalance || isBalanceLoading}
             >
               {joiningContest || isJoinLoading || isApproving 
                 ? (isApproving ? 'Approving...' : 'Joining Contest...') 
-                : `Join Contest for ${formatUSDC(joinAmount)} USDC`
+                : (address && !hasSufficientBalance) ? 'Insufficient Balance' :
+                `Join Contest for ${formatUSDC(joinAmount)} USDC`
               }
             </Button>
           </div>
@@ -431,6 +443,23 @@ export default function ContestCard3({
                 <div className="text-green-400 font-bold">Active</div>
               </div>
             </div>
+            
+            {/* Balance Check Section */}
+            {/* {address && !isBalanceLoading && (
+              <div className="mt-4 p-3 bg-gray-900/30 border border-gray-700/30 rounded-lg">
+                <div className="text-center">
+                  <div className="text-gray-400 text-sm mb-1">Your USDC Balance</div>
+                  <div className={`font-semibold text-lg ${hasSufficientBalance ? 'text-green-400' : 'text-red-400'}`}>
+                    {formatUSDC(usdcBalance)} USDC
+                  </div>
+                  {!hasSufficientBalance && (
+                    <div className="text-red-400 text-sm mt-1">
+                      Insufficient balance to join this contest
+                    </div>
+                  )}
+                </div>
+              </div>
+            )} */}
           </div>
         )}
 

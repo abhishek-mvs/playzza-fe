@@ -72,7 +72,7 @@ export default function Navbar() {
 
           {/* Wallet Connect Button */}
           <div className="flex items-center ml-2">
-            {isConnected && (
+            {isConnected && address && (
               <div className="hidden sm:block text-right mr-3">
                 <div className="text-xs text-gray-400">Connected</div>
                 <div className="text-sm font-medium text-white">
