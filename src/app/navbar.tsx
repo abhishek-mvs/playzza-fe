@@ -44,7 +44,7 @@ export default function Navbar() {
                     : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
                 }`}
               >
-                🎯 Prediction Market
+                Home
               </Link>
               <Link 
                 href="/matches" 
@@ -54,7 +54,7 @@ export default function Navbar() {
                     : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
                 }`}
               >
-                🏏 Matches
+                Matches
               </Link>
               <Link 
                 href="/contests" 
@@ -64,7 +64,7 @@ export default function Navbar() {
                     : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
                 }`}
               >
-                🏆 Contests
+                Contests
               </Link>
             </div>
           </div>
@@ -94,7 +94,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              🎯 Prediction Market
+              Home
             </Link>
             <Link 
               href="/matches" 
@@ -105,7 +105,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              🏏 Matches
+              Matches
             </Link>
             <Link 
               href="/contests" 
@@ -116,7 +116,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              🏆 Contests
+              Contests
             </Link>
           </div>
         )}

@@ -33,19 +33,11 @@ export default function Home() {
       <div className="container mx-auto px-4 py-12 relative z-10">
         {/* Enhanced Hero Section */}
         <div className="text-center mb-16">
-          <div className="mb-6">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6 shadow-2xl animate-pulse-glow">
-              <span className="text-4xl">🎯</span>
-            </div>
-          </div>
           <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
-            <span className="gradient-text">Prediction Market</span>
-            <br />
-            <span className="text-gray-300 text-4xl">DApp</span>
+            <span className="gradient-text">Pikka</span>
+            
           </h1>
-          <p className="text-xl text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
-            A decentralized prediction market built on Base blockchain where you can create and participate in binary prediction contests with real-time sports data.
-          </p>
+       
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
@@ -126,7 +118,7 @@ export default function Home() {
                   <span className="text-2xl font-bold text-white">3</span>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-4">Win Rewards</h3>
-                <p className="text-gray-400 leading-relaxed">Earn ETH rewards for correct predictions with instant payouts</p>
+                <p className="text-gray-400 leading-relaxed">Earn USDC rewards for correct predictions with instant payouts</p>
               </div>
             </div>
           </CardContent>

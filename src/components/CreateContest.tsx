@@ -311,7 +311,6 @@ export function CreateContest({
               'Approving Tokens...'
             ) : (
               <>
-                <span>🏆</span>
                 <span>Create Contest</span>
               </>
             )}
