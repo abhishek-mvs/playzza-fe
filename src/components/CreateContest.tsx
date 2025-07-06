@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useBalance } from 'wagmi';
 import { parseUnits } from 'viem';
 import { useApproveToken } from '../hooks/useApproveToken';
 import { CONTRACT_ADDRESSES } from '../app/constants';
@@ -33,6 +33,12 @@ export function CreateContest({
     hash: contestHash,
   });
 
+  // Get USDC balance
+  const { data: usdcBalance } = useBalance({
+    address,
+    token: CONTRACT_ADDRESSES.USDC as `0x${string}`,
+  });
+
   const { approve, isApproving, isApproved } = useApproveToken();
 
   // Calculate odds and potential profits
@@ -61,9 +67,22 @@ export function CreateContest({
     };
   }, [oddsNumerator, oddsDenominator, stakeAmount]);
 
+  // Check if user has sufficient balance
+  const hasInsufficientBalance = useMemo(() => {
+    if (!usdcBalance || !stakeAmount) return false;
+    const stakeInWei = parseUSDC(stakeAmount);
+    return stakeInWei > usdcBalance.value;
+  }, [usdcBalance, stakeAmount]);
+
   const handleCreateContest = async () => {
     if (!address || !statement || !stakeAmount || !matchId) {
       alert('Please fill in all fields');
+      return;
+    }
+
+    // Check balance before proceeding
+    if (hasInsufficientBalance) {
+      alert(`Insufficient USDC balance. You need ${stakeAmount} USDC but only have ${usdcBalance ? (Number(usdcBalance.formatted)).toFixed(2) : '0'} USDC.`);
       return;
     }
 
@@ -161,6 +180,7 @@ export function CreateContest({
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleCreateContest(); }} className="space-y-4">
+
       {/* Prediction Statement */}
       <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
         <label className="block text-sm font-semibold text-gray-100 mb-2">
@@ -208,12 +228,21 @@ export function CreateContest({
             type="number"
             value={stakeAmount}
             onChange={(e) => setStakeAmount(e.target.value)}
-            className="w-full px-2 sm:px-3 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-sm"
+            className={`w-full px-2 sm:px-3 py-2 bg-transparent border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-sm ${
+              hasInsufficientBalance 
+                ? 'border-red-500 focus:ring-red-500' 
+                : 'border-gray-700 focus:ring-blue-500'
+            }`}
             placeholder="10"
             min="0"
             step="0.01"
             required
           />
+          {hasInsufficientBalance && (
+            <p className="text-red-400 text-xs mt-1">
+              Insufficient balance
+            </p>
+          )}
         </div>
         <div className="p-2 sm:p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
           <label className="block text-xs sm:text-sm font-semibold text-gray-100 mb-1 sm:mb-2">
@@ -298,7 +327,7 @@ export function CreateContest({
         <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
           <Button
             type="submit"
-            disabled={isContestLoading || isApproving}
+            disabled={isContestLoading || isApproving || hasInsufficientBalance}
             variant="success"
             size="lg"
             loading={isContestLoading || isApproving}
@@ -308,6 +337,8 @@ export function CreateContest({
               'Creating Contest...'
             ) : isApproving ? (
               'Approving Tokens...'
+            ) : hasInsufficientBalance ? (
+              'Insufficient Balance'
             ) : (
               <>
                 <span>Create Contest</span>
