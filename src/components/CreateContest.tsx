@@ -92,7 +92,6 @@ export function CreateContest({
         settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
       }
       settleTime = settleTime + BigInt(60 * 60)
-      settleTime = contestExpiry + BigInt(5 * 60)
       console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime);
       // First approve tokens
       await approve(stakeInWei);

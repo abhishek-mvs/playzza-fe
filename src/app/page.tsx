@@ -34,7 +34,7 @@ export default function Home() {
         {/* Enhanced Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
-            <span className="gradient-text">Pikka</span>
+            <span className="gradient-text">Playzza</span>
             
           </h1>
        
