@@ -56,3 +56,9 @@ export function formatTimeRemaining(expiryTimestamp: bigint): string {
     }
   };
   
+export function formatScorecardSeoTitle(seoTitle: string): string {
+    // Split the seoTitle by '|' and take the first part
+    const parts = seoTitle.split('|');
+    return parts[0].trim();
+  }
+  

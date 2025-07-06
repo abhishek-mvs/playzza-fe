@@ -19,7 +19,6 @@ export default function CountdownTimer({ expiryTimestamp, size = 'md', showResul
       const timer = setInterval(() => {
         const now = BigInt(Math.floor(Date.now() / 1000));
         const remaining = Number(expiryTimestamp - now);
-        console.log("remaining", remaining);
         if (showResults && remaining <= 0) {
 
           setTimeRemaining('Out Soon');

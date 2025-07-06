@@ -2,6 +2,7 @@ import { ScorecardData } from '@/types/match'
 import { useState, useEffect } from 'react'
 import { Button } from './ui/Button'
 import { getApiUrl } from '@/utils/api'
+import { formatScorecardSeoTitle } from '@/utils/formatters'
 
 interface ScorecardProps {
   matchId: string
@@ -96,14 +97,14 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   }
 
   // Handle case where scorecard is null (match hasn't started)
-  if (!scorecardData.scorecard) {
+  if (!scorecardData.scorecard || scorecardData.scorecard.length === 0) {
     const teams = getTeamsPlaying(scorecardData)
     return (
       <div className="p-4 h-full max-w-8xl mx-auto">
         {/* Match Header */}
         <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
           <div className="flex justify-between items-start mb-2">
-            <h1 className="text-xl font-bold text-white">{scorecardData.appIndex.seoTitle}</h1>
+            <h1 className="text-xl font-bold text-white">{formatScorecardSeoTitle(scorecardData.appIndex.seoTitle)}</h1>
             <Button 
               onClick={fetchScorecard}
               disabled={loading}
@@ -150,7 +151,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
       {/* Match Header */}
       <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
         <div className="flex justify-between items-start mb-2">
-          <h1 className="text-xl font-bold text-white">{scorecardData.appIndex.seoTitle}</h1>
+          <h1 className="text-xl font-bold text-white">{formatScorecardSeoTitle(scorecardData.appIndex.seoTitle)}</h1>
           <Button 
             onClick={fetchScorecard}
             disabled={loading}
@@ -173,7 +174,6 @@ export default function Scorecard({ matchId }: ScorecardProps) {
 
       {/* Innings */}
       {scorecardData.scorecard.slice().reverse().map((innings, index) => {
-        const bowlingTeam = getBowlingTeam(innings.batTeamName, scorecardData)
         const inningsNumber = teamInningsCount[innings.batTeamName]
         teamInningsCount[innings.batTeamName] = inningsNumber - 1
         return (
@@ -185,7 +185,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm text-gray-300">
                 <div><strong>Batting:</strong> {innings.batTeamName}</div>
-                <div><strong>Bowling:</strong> {bowlingTeam}</div>
+                <div><strong>Bowling:</strong> {innings.bowlTeamName}</div>
                 <div><strong>Score:</strong> {innings.score}/{innings.wickets} ({innings.overs} overs)</div>
                 <div><strong>Run Rate:</strong> {innings.runRate.toFixed(2)}</div>
               </div>
@@ -229,7 +229,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
             {/* Bowling Section */}
             {innings.bowler.length > 0 && (
               <div className="p-4 border-t border-gray-700/30">
-                <h3 className="text-md font-semibold mb-3 text-blue-300">BOWLING ({bowlingTeam})</h3>
+                <h3 className="text-md font-semibold mb-3 text-blue-300">BOWLING ({innings.bowlTeamName})</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse text-gray-300">
                     <thead>
@@ -239,8 +239,10 @@ export default function Scorecard({ matchId }: ScorecardProps) {
                         <th className="border border-gray-600 px-2 py-1 text-center">Wickets</th>
                         <th className="border border-gray-600 px-2 py-1 text-center">Runs</th>
                         <th className="border border-gray-600 px-2 py-1 text-center">Maidens</th>
+                        <th className="border border-gray-600 px-2 py-1 text-center">No Balls</th>
+                        <th className="border border-gray-600 px-2 py-1 text-center">Wides</th>
                         <th className="border border-gray-600 px-2 py-1 text-center">Economy</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Balls</th>
+                        
                       </tr>
                     </thead>
                     <tbody>
@@ -251,8 +253,9 @@ export default function Scorecard({ matchId }: ScorecardProps) {
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wickets}</td>
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.runs}</td>
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.maidens}</td>
+                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.no_balls}</td>
+                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wides}</td>
                           <td className="border border-gray-600 px-2 py-1 text-center">{bowler.economy}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.balls}</td>
                         </tr>
                       ))}
                     </tbody>

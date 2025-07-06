@@ -20,32 +20,14 @@ interface ContestListProps {
 type FilterType = 'active' | 'pending' | 'completed';
 
 export function ContestList({ contests, isLoading, onContestCancelled }: ContestListProps) {
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ALL hooks must be called at the top level before any conditional returns
   const router = useRouter();
-
-  const handleContestClick = (contest: Contest) => {
-    console.log("contest", contest);
-    // Create the same key used in the mapping
-    const contestId = contest.id;
-    console.log("contestId", contestId);
-    if (contestId !== undefined) {
-      router.push(`/contests/${contestId}`);
-    }
-  };
-
-
-  if (isLoading) {
-    return (
-      <div className="text-center py-12">
-        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-        </div>
-        <p className="text-gray-400 text-lg">Loading contests...</p>
-      </div>
-    );
-  }
-  console.log("contests", contests);
-  console.log("isLoading", isLoading);
   const { address } = useAccount();
   const [cancellingContestId, setCancellingContestId] = useState<number | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('active');
@@ -54,6 +36,15 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
   const { isLoading: isCancelLoading, isSuccess: isCancelSuccess } = useWaitForTransactionReceipt({
     hash: cancelHash,
   });
+
+  const handleContestClick = (contest: Contest) => {
+    console.log("contest", contest);
+    const contestId = contest.id;
+    console.log("contestId", contestId);
+    if (contestId !== undefined) {
+      router.push(`/contests/${contestId}`);
+    }
+  };
 
   const handleCancelContest = async (contestId: bigint) => {
     if (!address) {
@@ -95,8 +86,8 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
     }
   }, [isCancelSuccess, onContestCancelled]);
 
-  // Filter contests based on active filter
-  const filteredContests = contests.filter((contest) => {
+  // Filter contests based on active filter - add null check
+  const filteredContests = contests?.filter((contest) => {
     switch (activeFilter) {
       case 'active':
         return contest.active === true;
@@ -107,10 +98,10 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
       default:
         return true;
     }
-  });
+  }) || [];
 
   const getFilterCount = (filterType: FilterType) => {
-    return contests.filter((contest) => {
+    return contests?.filter((contest) => {
       switch (filterType) {
         case 'active':
           return contest.active === true;
@@ -121,9 +112,25 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
         default:
           return false;
       }
-    }).length;
+    }).length || 0;
   };
 
+  console.log("contests", contests);
+  console.log("isLoading", isLoading);
+
+  // Don't render until mounted to prevent SSR issues
+  if (!mounted) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+        </div>
+        <p className="text-gray-400 text-lg">Initializing...</p>
+      </div>
+    );
+  }
+
+  // Now we can have conditional returns after all hooks are called
   if (isLoading) {
     return (
       <div className="text-center py-12">
@@ -190,9 +197,8 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
           </div>
         ) : (
           filteredContests.map((contest) => (
-            <div onClick={() => handleContestClick(contest)}>
+            <div key={contest.id.toString()} onClick={() => handleContestClick(contest)}>
             <UserContestCard
-              key={contest.id.toString()}
               contest={contest}
               userAddress={address}
               activeFilter={activeFilter}

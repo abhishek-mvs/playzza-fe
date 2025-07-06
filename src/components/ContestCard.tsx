@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { CONTRACT_ADDRESSES } from '../app/constants'
 import { useApproveToken } from '../hooks/useApproveToken'
+import { useUSDCBalance } from '../hooks/useUSDCBalance'
 import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
 import CountdownTimer from './CountdownTimer'
@@ -25,10 +26,17 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
   })
 
   const { approve, isApproving, isApproved } = useApproveToken()
+  const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address)
 
   const handleJoinContest = async (contestId: number, stakeAmount: bigint) => {
     if (!address) {
       alert('Please connect your wallet')
+      return
+    }
+
+    // Check if user has sufficient USDC balance
+    if (usdcBalance < stakeAmount) {
+      alert(`Insufficient USDC balance. You need ${formatUSDC(stakeAmount)} USDC but have ${formatUSDC(usdcBalance)} USDC.`)
       return
     }
 
@@ -72,6 +80,9 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
   const potentialProfit = calculatePotentialProfit(contest.stake);
   const oddsDisplay = formatOdds(contest.odds);
   
+  // Check if user has sufficient balance
+  const hasSufficientBalance = usdcBalance >= joinAmount;
+  
   return (
     <div className="bg-gradient-to-br from-blue-950/80 to-purple-900/80 p-6 rounded-2xl border border-gray-700 border-opacity-40 shadow-xl flex flex-col w-80 min-h-[320px]">
       <div className="flex flex-col flex-1">
@@ -105,18 +116,37 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
             </div>
           </div>
         </div>
+
+        {/* Balance Check Section */}
+        {/* {address && !isBalanceLoading && (
+          <div className="mb-3 p-2 bg-gray-900/30 border border-gray-700/30 rounded-lg">
+            <div className="text-xs text-center">
+              <div className="text-gray-400 mb-0.5">Your Balance</div>
+              <div className={`font-semibold ${hasSufficientBalance ? 'text-green-400' : 'text-red-400'}`}>
+                {formatUSDC(usdcBalance)} USDC
+              </div>
+              {!hasSufficientBalance && (
+                <div className="text-red-400 text-xs mt-1">
+                  Insufficient balance
+                </div>
+              )}
+            </div>
+          </div>
+        )} */}
         
         {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
           <div className="mt-auto">
             <Button
               onClick={() => handleJoinContest(contestIndex, joinAmount)}
-              disabled={isJoinLoading || isApproving || joiningContestId === contestIndex}
+              disabled={isJoinLoading || isApproving || joiningContestId === contestIndex || !hasSufficientBalance || isBalanceLoading}
               variant="primary"
               size="md"
               loading={joiningContestId === contestIndex}
               className="w-full"
             >
-              {joiningContestId === contestIndex ? 'Joining...' : `Join Contest - ${formatUSDC(joinAmount)} USDC`}
+              {joiningContestId === contestIndex ? 'Joining...' : 
+               (address && !hasSufficientBalance) ? 'Insufficient Balance' :
+               `Join Contest - ${formatUSDC(joinAmount)} USDC`}
             </Button>
           </div>
         )}

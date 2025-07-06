@@ -8,8 +8,10 @@ import Navbar from "./navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Prediction Market DApp",
-  description: "A decentralized prediction market built on Base",
+  title: "Playzza",
+  icons: {
+    icon: "/pizza.ico",
+  },
 };
 
 export default function RootLayout({

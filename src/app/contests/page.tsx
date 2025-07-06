@@ -3,7 +3,7 @@
 import { ContestList } from "@/components/UserContestList";
 import { useAccount } from "wagmi";
 import { useContests, useContestsByUser } from "@/hooks/useContests";
-import { ConnectButton } from "@/components/ConnectButton";
+import { HeroConnectButton } from "@/components/ConnectButton";
 import { Contest } from "@/types/contest";
 
 export default function Contests() {
@@ -26,7 +26,11 @@ export default function Contests() {
                 <span className="mr-3">📋</span>
                 My Contests
               </h2>
-              <ContestList contests={contests as Contest[]} isLoading={isLoading} onContestCancelled={refetch} />
+              <ContestList 
+                contests={contests || []} 
+                isLoading={isLoading} 
+                onContestCancelled={refetch} 
+              />
             </div>
           </div>
         ) : (
@@ -41,7 +45,7 @@ export default function Contests() {
               <p className="text-gray-400 mb-8 leading-relaxed">
                 Connect your MetaMask wallet to view and manage your prediction contests.
               </p>
-              <ConnectButton />
+              <HeroConnectButton />
             </div>
           </div>
         )}

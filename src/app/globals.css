@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import '@rainbow-me/rainbowkit/styles.css';
 
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -261,3 +262,41 @@ body {
     font-size: 1.125rem;
   }
 }
+
+/* RainbowKit Customization */
+.rainbowkit-connect-button-wrapper {
+  /* Ensure proper sizing and positioning */
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Override RainbowKit default styles */
+.rainbowkit-connect-button-wrapper button {
+  font-family: inherit !important;
+  font-weight: inherit !important;
+}
+
+/* Ensure buttons don't get cut off */
+.rainbowkit-connect-button-wrapper button {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .rainbowkit-connect-button-wrapper button {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+}
+
+/* Animation for button interactions */
+.rainbowkit-connect-button-wrapper button:hover {
+  transform: translateY(-1px) !important;
+}
+
+.rainbowkit-connect-button-wrapper button:active {
+  transform: translateY(0) !important;
+}
+

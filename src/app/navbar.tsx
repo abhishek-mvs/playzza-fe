@@ -4,16 +4,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import { ConnectButton } from '../components/ConnectButton';
+import { NavbarConnectButton } from '../components/ConnectButton';
+import { useUSDCBalance } from '../hooks/useUSDCBalance';
+import { formatUSDC } from '../utils/formatters';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
-
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
+  const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address);
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -45,7 +44,7 @@ export default function Navbar() {
                     : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
                 }`}
               >
-                🎯 Prediction Market
+                Home
               </Link>
               <Link 
                 href="/matches" 
@@ -55,7 +54,7 @@ export default function Navbar() {
                     : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
                 }`}
               >
-                🏏 Matches
+                Matches
               </Link>
               <Link 
                 href="/contests" 
@@ -65,24 +64,22 @@ export default function Navbar() {
                     : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
                 }`}
               >
-                🏆 Contests
+                Contests
               </Link>
             </div>
           </div>
 
           {/* Wallet Connect Button */}
           <div className="flex items-center ml-2">
-            {isConnected && (
+            {isConnected && address && (
               <div className="hidden sm:block text-right mr-3">
-                <div className="text-xs text-gray-400">Connected</div>
-                <div className="text-sm font-medium text-white">
-                  {formatAddress(address!)}
+                <div className="text-xs text-gray-400">USDC Balance</div>
+                <div className="text-sm font-medium text-green-400">
+                  {isBalanceLoading ? 'Loading...' : `${formatUSDC(usdcBalance)} USDC`}
                 </div>
               </div>
             )}
-            <div className="scale-80">
-              <ConnectButton />
-            </div>
+            <NavbarConnectButton />
           </div>
         </div>
         {/* Mobile Nav Links Dropdown */}
@@ -97,7 +94,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              🎯 Prediction Market
+              Home
             </Link>
             <Link 
               href="/matches" 
@@ -108,7 +105,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              🏏 Matches
+              Matches
             </Link>
             <Link 
               href="/contests" 
@@ -119,7 +116,7 @@ export default function Navbar() {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              🏆 Contests
+              Contests
             </Link>
           </div>
         )}
