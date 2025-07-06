@@ -71,12 +71,12 @@ export default function ContestCard3({
       setSharing(true)
       
       const shareUrl = `${window.location.origin}/contest/${contest.id}`
-      const shareText = `Check out this prediction contest: "${contest.statement}" - Stake: ${formatUSDC(contest.stake)} USDC, Odds: ${formatOdds(contest.odds)}`
+      const shareText = `Come join my playzza contest: "${contest.statement}" - Stake: ${formatUSDC(contest.stake)} USDC, Odds: ${formatOdds(contest.odds)}`
       
       // Try to use Web Share API first
       if (navigator.share) {
         await navigator.share({
-          title: 'Prediction Contest',
+          title: 'Playzza Contest',
           text: shareText,
           url: shareUrl,
         })
