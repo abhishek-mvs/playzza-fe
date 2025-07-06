@@ -33,10 +33,13 @@ export default function Home() {
       <div className="container mx-auto px-4 py-12 relative z-10">
         {/* Enhanced Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-6xl font-bold text-white mb-6 leading-tight flex items-center justify-center gap-4">
+            <img src="/pizza.png" alt="Pizza slice" className="inline-block w-14 h-14 align-middle" />
             <span className="gradient-text">Playzza</span>
-            
           </h1>
+          <p className="text-xl text-gray-300 mb-8 font-medium">
+            Pick your best piece
+          </p>
        
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
