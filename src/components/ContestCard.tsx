@@ -5,6 +5,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { CONTRACT_ADDRESSES } from '../app/constants'
 import { useApproveToken } from '../hooks/useApproveToken'
 import { useUSDCBalance } from '../hooks/useUSDCBalance'
+import { useJoinContest } from '../hooks/useJoinContest'
 import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
 import CountdownTimer from './CountdownTimer'
@@ -18,60 +19,21 @@ interface ContestCardProps {
 
 export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestCardProps) => {
   const { address } = useAccount()
-  const [joiningContestId, setJoiningContestId] = useState<number | null>(null)
-
-  const { writeContract: writeJoin, data: joinHash } = useWriteContract()
-  const { isLoading: isJoinLoading, isSuccess: isJoinSuccess } = useWaitForTransactionReceipt({
-    hash: joinHash,
-  })
-
-  const { approve, isApproving, isApproved } = useApproveToken()
-  const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address)
-
-  const handleJoinContest = async (contestId: number, stakeAmount: bigint) => {
-    if (!address) {
-      alert('Please connect your wallet')
-      return
-    }
-
-    // Check if user has sufficient USDC balance
-    if (usdcBalance < stakeAmount) {
-      alert(`Insufficient USDC balance. You need ${formatUSDC(stakeAmount)} USDC but have ${formatUSDC(usdcBalance)} USDC.`)
-      return
-    }
-
-    try {
-      setJoiningContestId(contestId)
-      await approve(stakeAmount)
-      
-      writeJoin({
-        address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
-        abi: [
-          {
-            name: 'joinContest',
-            type: 'function',
-            inputs: [
-              { name: 'id', type: 'uint256' },
-              { name: 'stakeAmount', type: 'uint256' }
-            ],
-            outputs: [],
-            stateMutability: 'nonpayable'
-          }
-        ],
-        functionName: 'joinContest',
-        args: [BigInt(contestId), stakeAmount],
-      })
-    } catch (error) {
-      console.error('Error joining contest:', error)
-      alert('Error joining contest. Please try again.')
-      setJoiningContestId(null)
-    }
-  }
+  
+  const { 
+    handleJoinContest, 
+    joiningContestId, 
+    joiningContest, 
+    isJoinLoading, 
+    isApproving, 
+    isJoinSuccess, 
+    usdcBalance, 
+    isBalanceLoading 
+  } = useJoinContest()
 
   useEffect(() => {
     if (isJoinSuccess) {
       onContestJoined()
-      setJoiningContestId(null)
     }
   }, [isJoinSuccess, onContestJoined])
 
@@ -137,14 +99,18 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
         {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
           <div className="mt-auto">
             <Button
-              onClick={() => handleJoinContest(contestIndex, joinAmount)}
+              onClick={() => handleJoinContest(contestIndex, contest.stake, contest.odds)}
               disabled={isJoinLoading || isApproving || joiningContestId === contestIndex || !hasSufficientBalance || isBalanceLoading}
               variant="primary"
               size="md"
               loading={joiningContestId === contestIndex}
               className="w-full"
             >
-              {joiningContestId === contestIndex ? 'Joining...' : 
+              {joiningContestId === contestIndex ? (
+                isApproving ? 'Signing Permit...' : 
+                isJoinLoading ? 'Joining Contest...' : 
+                'Processing...'
+              ) : 
                (address && !hasSufficientBalance) ? 'Insufficient Balance' :
                `Join Contest - ${formatUSDC(joinAmount)} USDC`}
             </Button>

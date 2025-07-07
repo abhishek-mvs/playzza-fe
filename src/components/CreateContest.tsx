@@ -101,16 +101,18 @@ export function CreateContest({
       console.log('matchDetails.matchCompleteTimestamp', matchDetails.matchCompleteTimestamp);
       // Settle time logic
       let settleTime: bigint;
+      let contestEndMetaData = 0n;
       if (matchDetails.matchFormat === 'TEST') {
         if (settleOption === 'endOfDay') {
           settleTime = BigInt(Math.floor(matchDetails.testDayEndTimestamp / 1000));
+          contestEndMetaData = 1n;
         } else {
           settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
         }
       } else {
         settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
       }
-      settleTime = settleTime + BigInt(60 * 60)
+      settleTime = contestExpiry + BigInt(2 * 60)
       console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime);
       // First approve tokens
       await approve(stakeInWei);
@@ -127,14 +129,15 @@ export function CreateContest({
               { name: 'stakeAmount', type: 'uint256' },
               { name: 'odds', type: 'uint256' },
               { name: 'contestExpiry', type: 'uint256' },
-              { name: 'settleTime', type: 'uint256' }
+              { name: 'settleTime', type: 'uint256' },
+              { name: 'contestEndMetaData', type: 'uint64' }
             ],
             outputs: [],
             stateMutability: 'nonpayable'
           }
         ],
         functionName: 'createContest',
-        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime],
+        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime, contestEndMetaData],
       });
     } catch (error) {
       console.error('Error creating contest:', error);
@@ -283,7 +286,7 @@ export function CreateContest({
               onChange={(e) => setContestExpiryValue(e.target.value)}
               className="flex-1 px-2 sm:px-3 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-sm"
               placeholder="4"
-              min={contestExpiryUnit === 'hours' ? "0.5" : "5"}
+              min={contestExpiryUnit === 'hours' ? "0.5" : "1"}
               max={contestExpiryUnit === 'hours' ? "120" : "7200"}
               step={contestExpiryUnit === 'hours' ? "0.5" : "1"}
               required

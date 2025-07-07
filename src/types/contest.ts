@@ -5,16 +5,18 @@ interface Contest {
     matchId: string;
     stake: bigint;
     odds: bigint;
-    opponent: string;
-    opponentStake: bigint;
     contestExpiry: bigint;
     settleTime: bigint;
+    contestEndMetaData: bigint;
+    opponent: string;
+    opponentStake: bigint;
     createdAt: bigint;
     updatedAt: bigint;
     settled: boolean;
     verdict: boolean;
     active: boolean;
     cancelled: boolean;
+    verdictReason: string;
   }
 
 interface ContestStats {

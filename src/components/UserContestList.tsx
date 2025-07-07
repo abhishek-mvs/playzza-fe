@@ -10,6 +10,7 @@ import { Button } from './ui/Button';
 import { formatUSDC, calculateJoinAmount } from '@/utils/formatters';
 import CountdownTimer from './CountdownTimer';
 import UserContestCard from './UserContestCard';
+import { useCancelContest } from '../hooks/useCancelContest';
 
 interface ContestListProps {
   contests: Contest[];
@@ -29,13 +30,14 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
   // ALL hooks must be called at the top level before any conditional returns
   const router = useRouter();
   const { address } = useAccount();
-  const [cancellingContestId, setCancellingContestId] = useState<number | null>(null);
+  const { 
+    handleCancelContest, 
+    cancellingContestId, 
+    cancellingContest, 
+    isCancelLoading, 
+    isCancelSuccess 
+  } = useCancelContest();
   const [activeFilter, setActiveFilter] = useState<FilterType>('active');
-
-  const { writeContract: writeCancel, data: cancelHash } = useWriteContract();
-  const { isLoading: isCancelLoading, isSuccess: isCancelSuccess } = useWaitForTransactionReceipt({
-    hash: cancelHash,
-  });
 
   const handleContestClick = (contest: Contest) => {
     console.log("contest", contest);
@@ -46,43 +48,9 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
     }
   };
 
-  const handleCancelContest = async (contestId: bigint) => {
-    if (!address) {
-      alert('Please connect your wallet');
-      return;
-    }
-
-    try {
-      console.log("contestId", contestId);
-      setCancellingContestId(Number(contestId));
-      
-      writeCancel({
-        address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
-        abi: [
-          {
-            name: 'cancelContest',
-            type: 'function',
-            inputs: [
-              { name: 'contestId', type: 'uint256' }
-            ],
-            outputs: [],
-            stateMutability: 'nonpayable'
-          }
-        ],
-        functionName: 'cancelContest',
-        args: [contestId],
-      });
-    } catch (error) {
-      console.error('Error cancelling contest:', error);
-      alert('Error cancelling contest. Please try again.');
-      setCancellingContestId(null);
-    }
-  };
-
   useEffect(() => {
     if (isCancelSuccess) {
       onContestCancelled();
-      setCancellingContestId(null);
     }
   }, [isCancelSuccess, onContestCancelled]);
 
@@ -202,9 +170,9 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
               contest={contest}
               userAddress={address}
               activeFilter={activeFilter}
-              isCancelling={cancellingContestId !== null && BigInt(cancellingContestId) === contest.id}
+              isCancelling={cancellingContestId === Number(contest.id)}
               isCancelLoading={isCancelLoading}
-              onCancel={handleCancelContest}
+              onCancel={() => handleCancelContest(contest.id)}
             />
             </div>
           ))

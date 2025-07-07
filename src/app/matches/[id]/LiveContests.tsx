@@ -99,11 +99,11 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
       ) : (
         <div className="overflow-x-auto scrollbar-hide py-1">
           <div className="flex gap-2 pb-1" style={{ minWidth: 'max-content' }}>
-            {contests.map((contest, index) => (
+              {contests.map((contest) => (
               <ContestCard
-                key={index}
+                key={contest.id}
                 contest={contest}
-                contestIndex={index}
+                contestIndex={Number(contest.id)}
                 onContestJoined={handleContestJoined}
               />
             ))}
