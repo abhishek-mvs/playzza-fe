@@ -9,6 +9,7 @@ import { Button } from './ui/Button';
 import { parseUSDC } from '@/utils/formatters';
 import { MatchInfoDetailed } from '@/types/match';
 import { HeroConnectButton } from './ConnectButton';
+import { getDayNumber } from '@/utils/utils';
 
 export function CreateContest({ 
   onContestCreated, 
@@ -110,8 +111,11 @@ export function CreateContest({
       } else {
         settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
       }
+
+      const dayNumber = getDayNumber(matchDetails, settleOption === 'endOfDay');
+      
       settleTime = settleTime + BigInt(60 * 60)
-      console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime);
+      console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime, 'Day number:', dayNumber);
       // First approve tokens
       await approve(stakeInWei);
       // Then create contest with matchId and odds
@@ -127,14 +131,15 @@ export function CreateContest({
               { name: 'stakeAmount', type: 'uint256' },
               { name: 'odds', type: 'uint256' },
               { name: 'contestExpiry', type: 'uint256' },
-              { name: 'settleTime', type: 'uint256' }
+              { name: 'settleTime', type: 'uint256' },
+              { name: 'dayNumber', type: 'uint64' }
             ],
             outputs: [],
             stateMutability: 'nonpayable'
           }
         ],
         functionName: 'createContest',
-        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime],
+        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime, BigInt(dayNumber)],
       });
     } catch (error) {
       console.error('Error creating contest:', error);
@@ -283,7 +288,7 @@ export function CreateContest({
               onChange={(e) => setContestExpiryValue(e.target.value)}
               className="flex-1 px-2 sm:px-3 py-2 bg-transparent border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-300 transition-all duration-300 text-sm"
               placeholder="4"
-              min={contestExpiryUnit === 'hours' ? "0.5" : "5"}
+              min={contestExpiryUnit === 'hours' ? "0.5" : "1"}
               max={contestExpiryUnit === 'hours' ? "120" : "7200"}
               step={contestExpiryUnit === 'hours' ? "0.5" : "1"}
               required

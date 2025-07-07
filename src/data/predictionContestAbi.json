@@ -177,6 +177,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint64",
+        "name": "dayNumber",
+        "type": "uint64"
+      },
+      {
         "internalType": "address",
         "name": "opponent",
         "type": "address"
@@ -225,6 +230,11 @@
         "internalType": "bool",
         "name": "cancelled",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "verdictReason",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -261,6 +271,11 @@
         "internalType": "uint256",
         "name": "settleTime",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint64",
+        "name": "dayNumber",
+        "type": "uint64"
       }
     ],
     "name": "createContest",
@@ -331,6 +346,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint64",
+            "name": "dayNumber",
+            "type": "uint64"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
@@ -379,6 +399,11 @@
             "internalType": "bool",
             "name": "cancelled",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "verdictReason",
+            "type": "string"
           }
         ],
         "internalType": "struct PredictionContest.Contest[]",
@@ -432,6 +457,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint64",
+            "name": "dayNumber",
+            "type": "uint64"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
@@ -480,6 +510,11 @@
             "internalType": "bool",
             "name": "cancelled",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "verdictReason",
+            "type": "string"
           }
         ],
         "internalType": "struct PredictionContest.Contest[]",
@@ -533,6 +568,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint64",
+            "name": "dayNumber",
+            "type": "uint64"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
@@ -581,6 +621,11 @@
             "internalType": "bool",
             "name": "cancelled",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "verdictReason",
+            "type": "string"
           }
         ],
         "internalType": "struct PredictionContest.Contest",
@@ -683,6 +728,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint64",
+            "name": "dayNumber",
+            "type": "uint64"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
@@ -731,6 +781,11 @@
             "internalType": "bool",
             "name": "cancelled",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "verdictReason",
+            "type": "string"
           }
         ],
         "internalType": "struct PredictionContest.Contest[]",
@@ -784,6 +839,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint64",
+            "name": "dayNumber",
+            "type": "uint64"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
@@ -832,11 +892,29 @@
             "internalType": "bool",
             "name": "cancelled",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "verdictReason",
+            "type": "string"
           }
         ],
         "internalType": "struct PredictionContest.Contest[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getExpiredContestsIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -930,6 +1008,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint64",
+            "name": "dayNumber",
+            "type": "uint64"
+          },
+          {
             "internalType": "address",
             "name": "opponent",
             "type": "address"
@@ -978,6 +1061,11 @@
             "internalType": "bool",
             "name": "cancelled",
             "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "verdictReason",
+            "type": "string"
           }
         ],
         "internalType": "struct PredictionContest.Contest[]",
@@ -1140,6 +1228,11 @@
         "internalType": "bool",
         "name": "verdict",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "reason",
+        "type": "string"
       }
     ],
     "name": "settle",

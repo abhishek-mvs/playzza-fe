@@ -1,11 +1,10 @@
 'use client'
 
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { CONTRACT_ADDRESSES } from '../app/constants'
-import { useApproveToken } from '../hooks/useApproveToken'
-import { useUSDCBalance } from '../hooks/useUSDCBalance'
+import { useJoinContest } from '../hooks/useJoinContest'
+import { useCancelContest } from '../hooks/useCancelContest'
 import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds } from '@/utils/formatters'
 import { CardConnectButton } from './ConnectButton'
@@ -13,6 +12,7 @@ import CountdownTimer from './CountdownTimer'
 import { useContestsByMatchId } from '../hooks/useContests'
 import type { Contest } from '@/types/contest'
 import { ContestCard2 } from './ContestCard2'
+import { getSettleTimeMsg } from '@/utils/utils'
 
 interface ContestCard3Props {
   contest: Contest
@@ -27,22 +27,26 @@ export default function ContestCard3({
 }: ContestCard3Props) {
   const router = useRouter()
   const { isConnected, address } = useAccount()
-  const [joiningContest, setJoiningContest] = useState(false)
-  const [cancellingContest, setCancellingContest] = useState(false)
   const [sharing, setSharing] = useState(false)
   
-  const { writeContract: writeJoin, data: joinHash } = useWriteContract()
-  const { isLoading: isJoinLoading, isSuccess: isJoinSuccess } = useWaitForTransactionReceipt({
-    hash: joinHash,
-  })
+  const { 
+    handleJoinContest, 
+    joiningContestId, 
+    joiningContest, 
+    isJoinLoading, 
+    isApproving, 
+    isJoinSuccess, 
+    usdcBalance, 
+    isBalanceLoading 
+  } = useJoinContest()
 
-  const { writeContract: writeCancel, data: cancelHash } = useWriteContract()
-  const { isLoading: isCancelLoading, isSuccess: isCancelSuccess } = useWaitForTransactionReceipt({
-    hash: cancelHash,
-  })
-  
-  const { approve, isApproving, isApproved } = useApproveToken()
-  const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address)
+  const { 
+    handleCancelContest, 
+    cancellingContestId, 
+    cancellingContest, 
+    isCancelLoading, 
+    isCancelSuccess 
+  } = useCancelContest()
 
   // Fetch other active contests for this match
   const { contests: otherContests, isLoading: isOtherLoading } = useContestsByMatchId(contest.matchId)
@@ -100,98 +104,8 @@ export default function ContestCard3({
     }
   }
 
-  const handleCancelContest = async () => {
-    if (!address) {
-      alert('Please connect your wallet')
-      return
-    }
-
-    if (!isCreator) {
-      alert('Only the creator can cancel this contest')
-      return
-    }
-
-    try {
-      setCancellingContest(true)
-      
-      writeCancel({
-        address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
-        abi: [
-          {
-            name: 'cancelContest',
-            type: 'function',
-            inputs: [
-              { name: 'contestId', type: 'uint256' }
-            ],
-            outputs: [],
-            stateMutability: 'nonpayable'
-          }
-        ],
-        functionName: 'cancelContest',
-        args: [BigInt(contest.id)],
-      })
-    } catch (error) {
-      console.error('Error cancelling contest:', error)
-      alert('Error cancelling contest. Please try again.')
-      setCancellingContest(false)
-    }
-  }
-
-  const handleJoinContest = async () => {
-    if (!address) {
-      alert('Please connect your wallet')
-      return
-    }
-
-    if (!contest) {
-      alert('Contest not found')
-      return
-    }
-
-    const joinAmount = calculateJoinAmount(contest.stake, contest.odds)
-    
-    // Check if user has sufficient USDC balance
-    if (usdcBalance < joinAmount) {
-      alert(`Insufficient USDC balance. You need ${formatUSDC(joinAmount)} USDC but have ${formatUSDC(usdcBalance)} USDC.`)
-      return
-    }
-
-    try {
-      setJoiningContest(true)
-      
-      // If not approved, approve first
-      if (!isApproved) {
-        await approve(joinAmount)
-      }
-      
-      // Then join the contest
-      writeJoin({
-        address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
-        abi: [
-          {
-            name: 'joinContest',
-            type: 'function',
-            inputs: [
-              { name: 'id', type: 'uint256' },
-              { name: 'stakeAmount', type: 'uint256' }
-            ],
-            outputs: [],
-            stateMutability: 'nonpayable'
-          }
-        ],
-        functionName: 'joinContest',
-        args: [BigInt(contest.id), joinAmount],
-      })
-    } catch (error) {
-      console.error('Error joining contest:', error)
-      alert('Error joining contest. Please try again.')
-      setJoiningContest(false)
-    }
-  }
-
   useEffect(() => {
     if (isJoinSuccess) {
-      setJoiningContest(false)
       alert('Successfully joined the contest!')
       onContestJoined?.()
     }
@@ -199,7 +113,6 @@ export default function ContestCard3({
 
   useEffect(() => {
     if (isCancelSuccess) {
-      setCancellingContest(false)
       alert('Successfully cancelled the contest!')
       onContestCancelled?.()
     }
@@ -287,7 +200,6 @@ export default function ContestCard3({
     if (!isConnected) {
       return (
         <div className="text-center">
-          <p className="text-gray-400 mb-4">Connect your wallet to interact with this contest</p>
           <CardConnectButton />
         </div>
       )
@@ -298,7 +210,7 @@ export default function ContestCard3({
         return (
           <div className="space-y-3">
             <Button 
-              onClick={handleCancelContest}
+              onClick={() => handleCancelContest(contest.id)}
               variant="danger"
               size="lg"
               className="w-full"
@@ -321,7 +233,7 @@ export default function ContestCard3({
         return (
           <div className="space-y-3">
             <Button 
-              onClick={handleJoinContest}
+              onClick={() => handleJoinContest(contest.id, contest.stake, contest.odds)}
               variant="success"
               size="lg"
               className="w-full"
@@ -329,7 +241,7 @@ export default function ContestCard3({
               disabled={joiningContest || isJoinLoading || isApproving || !hasSufficientBalance || isBalanceLoading}
             >
               {joiningContest || isJoinLoading || isApproving 
-                ? (isApproving ? 'Approving...' : 'Joining Contest...') 
+                ? (isApproving ? 'Signing Permit...' : 'Joining Contest...') 
                 : (address && !hasSufficientBalance) ? 'Insufficient Balance' :
                 `Join Contest for ${formatUSDC(joinAmount)} USDC`
               }
@@ -462,6 +374,13 @@ export default function ContestCard3({
             )} */}
           </div>
         )}
+
+         {/* Settle Time Info */}
+         <div className="bg-purple-900/20 border border-purple-700/30 rounded-lg p-2 mb-4">
+          <div className="text-center">
+            <div className="text-purple-300 font-medium text-sm">{getSettleTimeMsg(contest.dayNumber)}</div>
+          </div>
+        </div>
 
         {/* Action Buttons */}
         {renderActionButtons()}

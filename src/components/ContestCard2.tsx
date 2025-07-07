@@ -8,6 +8,7 @@ import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
 import CountdownTimer from './CountdownTimer'
 import { Contest } from '@/types/contest'
+import { getSettleTimeMsg } from '@/utils/utils'
 
 interface ContestCardProps {
   contest: Contest;
@@ -55,6 +56,13 @@ export const ContestCard2 = ({ contest, contestIndex, onContestJoined }: Contest
               <div className="text-gray-400 mb-0.5">Profit</div>
               <div className="text-green-400 font-semibold">{formatUSDC(potentialProfit)} USDC</div>
             </div>
+          </div>
+        </div>
+
+        {/* Settle Time Info */}
+        <div className="mb-3 p-2 bg-purple-900/20 border border-purple-700/30 rounded-lg">
+          <div className="text-center text-xs">
+            <div className="text-purple-300 font-medium">{getSettleTimeMsg(contest.dayNumber)}</div>
           </div>
         </div>
       </div>
