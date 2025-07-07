@@ -3,6 +3,7 @@ import { Button } from './ui/Button';
 import CountdownTimer from './CountdownTimer';
 import { formatUSDC, calculateJoinAmount } from '@/utils/formatters';
 import React from 'react';
+import { getSettleTimeMsg } from '@/utils/utils';
 
 type FilterType = 'active' | 'pending' | 'completed';
 
@@ -89,6 +90,14 @@ const UserContestCard: React.FC<UserContestCardProps> = ({
           </div>
           <div className="text-sm text-purple-200 bg-purple-900/40 rounded-lg px-3 py-1">
             Potential Profit: <span className="font-bold text-purple-400">{formatUSDC(profit)} USDC</span>
+          </div>
+        </div>
+      )}
+      {/* Settle Time Info */}
+      {(activeFilter === 'active' || activeFilter === 'pending') && (
+        <div className="mb-2 p-2 bg-purple-900/20 border border-purple-700/30 rounded-lg">
+          <div className="text-center text-xs">
+            <div className="text-purple-300 font-medium">{getSettleTimeMsg(contest.dayNumber)}</div>
           </div>
         </div>
       )}
