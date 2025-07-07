@@ -7,7 +7,7 @@ interface Contest {
     odds: bigint;
     contestExpiry: bigint;
     settleTime: bigint;
-    contestEndMetaData: bigint;
+    dayNumber: bigint;
     opponent: string;
     opponentStake: bigint;
     createdAt: bigint;

@@ -178,7 +178,7 @@
       },
       {
         "internalType": "uint64",
-        "name": "contestEndMetaData",
+        "name": "dayNumber",
         "type": "uint64"
       },
       {
@@ -274,7 +274,7 @@
       },
       {
         "internalType": "uint64",
-        "name": "contestEndMetaData",
+        "name": "dayNumber",
         "type": "uint64"
       }
     ],
@@ -347,7 +347,7 @@
           },
           {
             "internalType": "uint64",
-            "name": "contestEndMetaData",
+            "name": "dayNumber",
             "type": "uint64"
           },
           {
@@ -458,7 +458,7 @@
           },
           {
             "internalType": "uint64",
-            "name": "contestEndMetaData",
+            "name": "dayNumber",
             "type": "uint64"
           },
           {
@@ -569,7 +569,7 @@
           },
           {
             "internalType": "uint64",
-            "name": "contestEndMetaData",
+            "name": "dayNumber",
             "type": "uint64"
           },
           {
@@ -729,7 +729,7 @@
           },
           {
             "internalType": "uint64",
-            "name": "contestEndMetaData",
+            "name": "dayNumber",
             "type": "uint64"
           },
           {
@@ -840,7 +840,7 @@
           },
           {
             "internalType": "uint64",
-            "name": "contestEndMetaData",
+            "name": "dayNumber",
             "type": "uint64"
           },
           {
@@ -1009,7 +1009,7 @@
           },
           {
             "internalType": "uint64",
-            "name": "contestEndMetaData",
+            "name": "dayNumber",
             "type": "uint64"
           },
           {

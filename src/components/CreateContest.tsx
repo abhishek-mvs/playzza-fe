@@ -9,6 +9,7 @@ import { Button } from './ui/Button';
 import { parseUSDC } from '@/utils/formatters';
 import { MatchInfoDetailed } from '@/types/match';
 import { HeroConnectButton } from './ConnectButton';
+import { getDayNumber } from '@/utils/utils';
 
 export function CreateContest({ 
   onContestCreated, 
@@ -101,19 +102,20 @@ export function CreateContest({
       console.log('matchDetails.matchCompleteTimestamp', matchDetails.matchCompleteTimestamp);
       // Settle time logic
       let settleTime: bigint;
-      let contestEndMetaData = 0n;
       if (matchDetails.matchFormat === 'TEST') {
         if (settleOption === 'endOfDay') {
           settleTime = BigInt(Math.floor(matchDetails.testDayEndTimestamp / 1000));
-          contestEndMetaData = 1n;
         } else {
           settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
         }
       } else {
         settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
       }
-      settleTime = contestExpiry + BigInt(2 * 60)
-      console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime);
+
+      const dayNumber = getDayNumber(matchDetails, settleOption === 'endOfDay');
+      
+      settleTime = settleTime + BigInt(60 * 60)
+      console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime, 'Day number:', dayNumber);
       // First approve tokens
       await approve(stakeInWei);
       // Then create contest with matchId and odds
@@ -130,14 +132,14 @@ export function CreateContest({
               { name: 'odds', type: 'uint256' },
               { name: 'contestExpiry', type: 'uint256' },
               { name: 'settleTime', type: 'uint256' },
-              { name: 'contestEndMetaData', type: 'uint64' }
+              { name: 'dayNumber', type: 'uint64' }
             ],
             outputs: [],
             stateMutability: 'nonpayable'
           }
         ],
         functionName: 'createContest',
-        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime, contestEndMetaData],
+        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime, BigInt(dayNumber)],
       });
     } catch (error) {
       console.error('Error creating contest:', error);
