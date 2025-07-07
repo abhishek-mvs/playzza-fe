@@ -56,7 +56,7 @@ export function useApproveToken() {
       domain: {
         name: 'Playzza USDC',
         version: '1',
-        chainId: 31337n, // Base mainnet
+        chainId: 84532n, // Base mainnet
         verifyingContract: CONTRACT_ADDRESSES.USDC as `0x${string}`
       },
       types: {

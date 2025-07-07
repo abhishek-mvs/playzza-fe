@@ -10,9 +10,9 @@ const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '';
 export const config = getDefaultConfig({
   appName: 'chuno',
   projectId: projectId,
-  chains: [hardhat],
+  chains: [baseSepolia],
   transports: {
-    [hardhat.id]: http(),
+    [baseSepolia.id]: http(),
   },
   ssr: false, // Disable SSR to prevent hydration issues
 });
