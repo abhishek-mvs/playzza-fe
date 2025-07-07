@@ -12,6 +12,7 @@ import CountdownTimer from './CountdownTimer'
 import { useContestsByMatchId } from '../hooks/useContests'
 import type { Contest } from '@/types/contest'
 import { ContestCard2 } from './ContestCard2'
+import { getSettleTimeMsg } from '@/utils/utils'
 
 interface ContestCard3Props {
   contest: Contest
@@ -199,7 +200,6 @@ export default function ContestCard3({
     if (!isConnected) {
       return (
         <div className="text-center">
-          <p className="text-gray-400 mb-4">Connect your wallet to interact with this contest</p>
           <CardConnectButton />
         </div>
       )
@@ -374,6 +374,13 @@ export default function ContestCard3({
             )} */}
           </div>
         )}
+
+         {/* Settle Time Info */}
+         <div className="bg-purple-900/20 border border-purple-700/30 rounded-lg p-2 mb-4">
+          <div className="text-center">
+            <div className="text-purple-300 font-medium text-sm">{getSettleTimeMsg(contest.dayNumber)}</div>
+          </div>
+        </div>
 
         {/* Action Buttons */}
         {renderActionButtons()}

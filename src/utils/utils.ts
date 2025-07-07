@@ -9,7 +9,7 @@ export function getDayNumber(matchDetails: MatchInfoDetailed, endOfDay: boolean)
 
 export function getSettleTimeMsg(dayNumber: bigint) {
     if (dayNumber === 0n) {
-        return 'Result will be declared at the end of the Match';
+        return 'Result: End of Match';
     }
-    return `Result will be declared at the end of Day ${dayNumber}`;
+    return `Result: End of Day ${dayNumber}`;
 }
