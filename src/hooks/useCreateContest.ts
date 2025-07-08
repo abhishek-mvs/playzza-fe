@@ -194,13 +194,14 @@ export function useCreateContest() {
         } else {
           settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
         }
+        settleTime = settleTime + BigInt(90 * 60);
       } else {
         settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
+        settleTime = settleTime + BigInt(150 * 60);
       }
 
       const dayNumber = getDayNumber(matchDetails, settleOption === 'endOfDay');
       
-      settleTime = settleTime + BigInt(60 * 60);
       console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime, 'Day number:', dayNumber);
 
       // Store contest parameters for when approval succeeds
