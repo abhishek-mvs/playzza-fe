@@ -34,7 +34,7 @@ export default function ContestCard3({
     joiningContestId, 
     joiningContest, 
     isJoinLoading, 
-    isApproving, 
+    approving, 
     isJoinSuccess, 
     usdcBalance, 
     isBalanceLoading,

@@ -24,7 +24,7 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
     joiningContestId, 
     joiningContest, 
     isJoinLoading, 
-    isApproving, 
+    approving, 
     isJoinSuccess, 
     usdcBalance, 
     isBalanceLoading,
