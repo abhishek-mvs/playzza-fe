@@ -18,7 +18,6 @@ export function useApproveToken() {
   });
 
   const chainId = publicClient?.chain.id;
-  console.log("Chain ID:", chainId);
 
   // Reset approval state when transaction succeeds
   useEffect(() => {
