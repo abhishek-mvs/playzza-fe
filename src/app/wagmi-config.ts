@@ -12,7 +12,7 @@ export const config = getDefaultConfig({
   projectId: projectId,
   chains: [baseSepolia],
   transports: {
-    [baseSepolia.id]: http(),
+    [baseSepolia.id]: http('https://84532.rpc.thirdweb.com/2441cd0fdc137b6c6a373a58de2ee453'),
   },
   ssr: false, // Disable SSR to prevent hydration issues
 });
