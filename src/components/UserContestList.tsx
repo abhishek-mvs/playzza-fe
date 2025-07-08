@@ -35,7 +35,9 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
     cancellingContestId, 
     cancellingContest, 
     isCancelLoading, 
-    isCancelSuccess 
+    isCancelSuccess,
+    error: cancelError,
+    clearError: clearCancelError
   } = useCancelContest();
   const [activeFilter, setActiveFilter] = useState<FilterType>('active');
 
@@ -53,6 +55,13 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
       onContestCancelled();
     }
   }, [isCancelSuccess, onContestCancelled]);
+
+  // Handle cancel errors
+  useEffect(() => {
+    if (cancelError) {
+      console.error('Cancel contest error:', cancelError);
+    }
+  }, [cancelError]);
 
   // Filter contests based on active filter - add null check
   const filteredContests = contests?.filter((contest) => {
@@ -123,6 +132,37 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
 
   return (
     <div className="space-y-6">
+      {/* Error Display */}
+      {cancelError && (
+        <div className="bg-red-900/30 border border-red-700/30 rounded-lg p-4">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h4 className="text-red-400 font-semibold mb-2">Error Cancelling Contest</h4>
+              <p className="text-red-300 text-sm">{cancelError}</p>
+            </div>
+            <button
+              onClick={clearCancelError}
+              className="ml-4 text-red-400 hover:text-red-300 text-sm font-medium"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Success Message */}
+      {isCancelSuccess && (
+        <div className="bg-green-900/30 border border-green-700/30 rounded-lg p-4">
+          <div className="flex items-center">
+            <div className="text-green-400 mr-3">✓</div>
+            <div>
+              <h4 className="text-green-400 font-semibold">Contest Cancelled Successfully!</h4>
+              <p className="text-green-300 text-sm">Your stake has been returned to your wallet.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filter Tabs */}
       <div className="flex space-x-1 bg-gray-800 bg-opacity-50 p-1 rounded-lg">
         {[
@@ -171,7 +211,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
               userAddress={address}
               activeFilter={activeFilter}
               isCancelling={cancellingContestId === Number(contest.id)}
-              isCancelLoading={isCancelLoading}
+              isCancelLoading={cancellingContest}
               onCancel={() => handleCancelContest(contest.id)}
             />
             </div>

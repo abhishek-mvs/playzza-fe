@@ -21,8 +21,12 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
     refetch()
   }
 
-  const handleContestJoined = () => {
-    refetch()
+  const handleContestJoined = (contestId: string) => {
+    if (contestId) {
+      window.location.href = `/contests/${contestId}`
+    } else {
+      refetch()
+    }
   }
 
   
@@ -104,7 +108,7 @@ export default function LiveContests({ onBack }: { onBack?: () => void }) {
                 key={contest.id}
                 contest={contest}
                 contestIndex={Number(contest.id)}
-                onContestJoined={handleContestJoined}
+                onContestJoined={() => handleContestJoined(contest.id.toString())}
               />
             ))}
           </div>

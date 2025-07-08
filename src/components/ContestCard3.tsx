@@ -37,7 +37,10 @@ export default function ContestCard3({
     isApproving, 
     isJoinSuccess, 
     usdcBalance, 
-    isBalanceLoading 
+    isBalanceLoading,
+    error: joinError,
+    clearError: clearJoinError,
+    currentStep: joinCurrentStep
   } = useJoinContest()
 
   const { 
@@ -45,7 +48,9 @@ export default function ContestCard3({
     cancellingContestId, 
     cancellingContest, 
     isCancelLoading, 
-    isCancelSuccess 
+    isCancelSuccess,
+    error: cancelError,
+    clearError: clearCancelError
   } = useCancelContest()
 
   // Fetch other active contests for this match
@@ -113,10 +118,25 @@ export default function ContestCard3({
 
   useEffect(() => {
     if (isCancelSuccess) {
-      alert('Successfully cancelled the contest!')
+      // Use a more user-friendly notification instead of alert
+      console.log('Successfully cancelled the contest!')
       onContestCancelled?.()
     }
   }, [isCancelSuccess, onContestCancelled])
+
+  // Handle cancel errors
+  useEffect(() => {
+    if (cancelError) {
+      console.error('Cancel contest error:', cancelError)
+    }
+  }, [cancelError])
+
+  // Handle join errors
+  useEffect(() => {
+    if (joinError) {
+      console.error('Join contest error:', joinError)
+    }
+  }, [joinError])
 
   // Calculate amounts for display
   const joinAmount = calculateJoinAmount(contest.stake, contest.odds)
@@ -214,10 +234,10 @@ export default function ContestCard3({
               variant="danger"
               size="lg"
               className="w-full"
-              loading={cancellingContest || isCancelLoading}
-              disabled={cancellingContest || isCancelLoading}
+              loading={cancellingContest}
+              disabled={cancellingContest}
             >
-              {cancellingContest || isCancelLoading ? 'Cancelling Contest...' : 'Cancel Contest'}
+              {cancellingContest ? 'Cancelling Contest...' : 'Cancel Contest'}
             </Button>
           </div>
         )
@@ -237,11 +257,11 @@ export default function ContestCard3({
               variant="success"
               size="lg"
               className="w-full"
-              loading={joiningContest || isJoinLoading || isApproving}
-              disabled={joiningContest || isJoinLoading || isApproving || !hasSufficientBalance || isBalanceLoading}
+              loading={joiningContest}
+              disabled={joiningContest || !hasSufficientBalance || isBalanceLoading}
             >
-              {joiningContest || isJoinLoading || isApproving 
-                ? (isApproving ? 'Signing Permit...' : 'Joining Contest...') 
+              {joiningContest 
+                ? (joinCurrentStep === 'approving' ? 'Approving Tokens...' : 'Joining Contest...') 
                 : (address && !hasSufficientBalance) ? 'Insufficient Balance' :
                 `Join Contest for ${formatUSDC(joinAmount)} USDC`
               }
@@ -355,23 +375,6 @@ export default function ContestCard3({
                 <div className="text-green-400 font-bold">Active</div>
               </div>
             </div>
-            
-            {/* Balance Check Section */}
-            {/* {address && !isBalanceLoading && (
-              <div className="mt-4 p-3 bg-gray-900/30 border border-gray-700/30 rounded-lg">
-                <div className="text-center">
-                  <div className="text-gray-400 text-sm mb-1">Your USDC Balance</div>
-                  <div className={`font-semibold text-lg ${hasSufficientBalance ? 'text-green-400' : 'text-red-400'}`}>
-                    {formatUSDC(usdcBalance)} USDC
-                  </div>
-                  {!hasSufficientBalance && (
-                    <div className="text-red-400 text-sm mt-1">
-                      Insufficient balance to join this contest
-                    </div>
-                  )}
-                </div>
-              </div>
-            )} */}
           </div>
         )}
 
@@ -384,6 +387,53 @@ export default function ContestCard3({
 
         {/* Action Buttons */}
         {renderActionButtons()}
+
+        {/* Error Display */}
+        {cancelError && (
+          <div className="mt-4 bg-red-900/30 border border-red-700/30 rounded-lg p-4">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h4 className="text-red-400 font-semibold mb-2">Error Cancelling Contest</h4>
+              </div>
+              <button
+                onClick={clearCancelError}
+                className="ml-4 text-red-400 hover:text-red-300 text-sm font-medium"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Join Error Display */}
+        {joinError && (
+          <div className="mt-4 bg-red-900/30 border border-red-700/30 rounded-lg p-4">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h4 className="text-red-400 font-semibold mb-2">Error Joining Contest</h4>
+              </div>
+              <button
+                onClick={clearJoinError}
+                className="ml-4 text-red-400 hover:text-red-300 text-sm font-medium"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Success Message */}
+        {isCancelSuccess && (
+          <div className="mt-4 bg-green-900/30 border border-green-700/30 rounded-lg p-4">
+            <div className="flex items-center">
+              <div className="text-green-400 mr-3">✓</div>
+              <div>
+                <h4 className="text-green-400 font-semibold">Contest Cancelled Successfully!</h4>
+                <p className="text-green-300 text-sm">Your stake has been returned to your wallet.</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Other Active Contests for this Match */}
         <div className="mt-10">
