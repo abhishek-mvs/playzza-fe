@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { CONTRACT_ADDRESSES } from '../app/constants'
-import { useApproveToken } from '../hooks/useApproveToken'
-import { useUSDCBalance } from '../hooks/useUSDCBalance'
+import { useAccount } from 'wagmi'
+
 import { useJoinContest } from '../hooks/useJoinContest'
 import { Button } from './ui/Button'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
@@ -29,7 +27,10 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
     isApproving, 
     isJoinSuccess, 
     usdcBalance, 
-    isBalanceLoading 
+    isBalanceLoading,
+    error: joinError,
+    clearError: clearJoinError,
+    currentStep: joinCurrentStep
   } = useJoinContest()
 
   useEffect(() => {
@@ -87,37 +88,35 @@ export const ContestCard = ({ contest, contestIndex, onContestJoined }: ContestC
           </div>
         </div>
 
-        {/* Balance Check Section */}
-        {/* {address && !isBalanceLoading && (
-          <div className="mb-3 p-2 bg-gray-900/30 border border-gray-700/30 rounded-lg">
-            <div className="text-xs text-center">
-              <div className="text-gray-400 mb-0.5">Your Balance</div>
-              <div className={`font-semibold ${hasSufficientBalance ? 'text-green-400' : 'text-red-400'}`}>
-                {formatUSDC(usdcBalance)} USDC
+        {/* Error Display */}
+        {joinError && (
+          <div className="mb-3 bg-red-900/30 border border-red-700/30 rounded-lg p-2">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-red-300 text-xs">{joinError}</p>
               </div>
-              {!hasSufficientBalance && (
-                <div className="text-red-400 text-xs mt-1">
-                  Insufficient balance
-                </div>
-              )}
+              <button
+                onClick={clearJoinError}
+                className="ml-2 text-red-400 hover:text-red-300 text-xs font-medium"
+              >
+                ✕
+              </button>
             </div>
           </div>
-        )} */}
+        )}
         
         {contest.creator !== address && contest.opponent === '0x0000000000000000000000000000000000000000' && (
           <div className="mt-auto">
             <Button
-              onClick={() => handleJoinContest(contestIndex, contest.stake, contest.odds)}
-              disabled={isJoinLoading || isApproving || joiningContestId === contestIndex || !hasSufficientBalance || isBalanceLoading}
+              onClick={() => handleJoinContest(contest.id, contest.stake, contest.odds)}
+              disabled={joiningContest || !hasSufficientBalance || isBalanceLoading}
               variant="primary"
               size="md"
-              loading={joiningContestId === contestIndex}
+              loading={joiningContest}
               className="w-full"
             >
-              {joiningContestId === contestIndex ? (
-                isApproving ? 'Signing Permit...' : 
-                isJoinLoading ? 'Joining Contest...' : 
-                'Processing...'
+              {joiningContest ? (
+                joinCurrentStep === 'approving' ? 'Approving Tokens...' : 'Joining Contest...'
               ) : 
                (address && !hasSufficientBalance) ? 'Insufficient Balance' :
                `Join Contest - ${formatUSDC(joinAmount)} USDC`}

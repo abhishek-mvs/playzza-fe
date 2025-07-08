@@ -10,11 +10,16 @@ export function useApproveToken() {
   const publicClient = usePublicClient();
   const [isApproved, setIsApproved] = useState(false);
   const [approvalAmount, setApprovalAmount] = useState<bigint>(0n);
+  const [localIsApproving, setLocalIsApproving] = useState(false);
+  const [permitReady, setPermitReady] = useState(false);
   
-  const { writeContract: writePermit, data: permitHash } = useWriteContract();
-  const { isLoading: isApproving, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({
+  const { writeContract: writePermit, data: permitHash, isPending: isWritePending } = useWriteContract();
+  const { isLoading: isTransactionLoading, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({
     hash: permitHash,
   });
+
+  // Combine local approving state with transaction loading state
+  const isApproving = localIsApproving || isWritePending || isTransactionLoading;
 
   // Check current allowance
   const { data: currentAllowance, refetch: refetchAllowance } = useReadContract({
@@ -28,10 +33,21 @@ export function useApproveToken() {
   useEffect(() => {
     if (isApproveSuccess) {
       setIsApproved(true);
+      setLocalIsApproving(false);
+      setPermitReady(false);
       refetchAllowance(); // Refresh allowance after approval
       console.log("Permit transaction confirmed");
     }
   }, [isApproveSuccess, refetchAllowance]);
+
+  // Reset local approving state if transaction fails or is rejected
+  useEffect(() => {
+    if (!isWritePending && !isTransactionLoading && localIsApproving && !isApproveSuccess) {
+      // If we were locally approving but the transaction is no longer pending and not successful, it likely failed
+      setLocalIsApproving(false);
+      setPermitReady(false);
+    }
+  }, [isWritePending, isTransactionLoading, localIsApproving, isApproveSuccess]);
 
   const generatePermitSignature = async (
     owner: `0x${string}`,
@@ -56,7 +72,7 @@ export function useApproveToken() {
       domain: {
         name: 'Playzza USDC',
         version: '1',
-        chainId: 84532n, // Base mainnet
+        chainId: 31337n, // Base mainnet
         verifyingContract: CONTRACT_ADDRESSES.USDC as `0x${string}`
       },
       types: {
@@ -95,6 +111,8 @@ export function useApproveToken() {
       console.log("Starting permit for amount:", amount.toString());
       setApprovalAmount(amount);
       setIsApproved(false); // Reset approval state
+      setLocalIsApproving(true); // Set local approving state immediately
+      setPermitReady(false); // Reset permit ready state
       
       // Set deadline to 1 hour from now
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600); // 1 hour from now
@@ -123,10 +141,15 @@ export function useApproveToken() {
         ],
       });
       
+      // Set permit ready to true after the transaction is submitted
+      setPermitReady(true);
+      
       // Note: We don't set isApproved here - it will be set when transaction is confirmed
     } catch (error) {
       console.error('Error permitting tokens:', error);
       setIsApproved(false);
+      setLocalIsApproving(false);
+      setPermitReady(false);
       throw error;
     }
   };
@@ -139,9 +162,11 @@ export function useApproveToken() {
     approve,
     isApproving,
     isApproved,
+    isApproveSuccess,
     approvalAmount,
     currentAllowance: currentAllowance as bigint || 0n,
     checkAllowance,
     refetchAllowance,
+    permitReady,
   };
 } 

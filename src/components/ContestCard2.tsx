@@ -1,10 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { CONTRACT_ADDRESSES } from '../app/constants'
-import { useApproveToken } from '../hooks/useApproveToken'
-import { Button } from './ui/Button'
+import { useAccount } from 'wagmi'
 import { formatUSDC, calculateJoinAmount, calculatePotentialProfit, formatOdds, formatTimeRemaining } from '@/utils/formatters'
 import CountdownTimer from './CountdownTimer'
 import { Contest } from '@/types/contest'

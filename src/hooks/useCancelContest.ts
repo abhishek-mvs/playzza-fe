@@ -8,9 +8,10 @@ export function useCancelContest() {
   const { address } = useAccount();
   const [cancellingContestId, setCancellingContestId] = useState<number | null>(null);
   const [cancellingContest, setCancellingContest] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { writeContract: writeCancel, data: cancelHash } = useWriteContract();
-  const { isLoading: isCancelLoading, isSuccess: isCancelSuccess } = useWaitForTransactionReceipt({
+  const { writeContract: writeCancel, data: cancelHash, isPending: isWritePending, error: writeError } = useWriteContract();
+  const { isLoading: isCancelLoading, isSuccess: isCancelSuccess, isError: isCancelError, error: transactionError } = useWaitForTransactionReceipt({
     hash: cancelHash,
   });
 
@@ -19,20 +20,52 @@ export function useCancelContest() {
     if (isCancelSuccess) {
       setCancellingContestId(null);
       setCancellingContest(false);
+      setError(null);
       console.log("Cancel contest transaction confirmed");
     }
   }, [isCancelSuccess]);
 
+  // Handle transaction errors
+  useEffect(() => {
+    if (isCancelError && transactionError) {
+      setCancellingContestId(null);
+      setCancellingContest(false);
+      setError(`Transaction failed: ${transactionError.message}`);
+      console.error('Transaction error:', transactionError);
+    }
+  }, [isCancelError, transactionError]);
+
+  // Handle write contract errors (user rejection, etc.)
+  useEffect(() => {
+    if (writeError) {
+      setCancellingContestId(null);
+      setCancellingContest(false);
+      setError(`Failed to submit transaction: ${writeError.message}`);
+      console.error('Write contract error:', writeError);
+    }
+  }, [writeError]);
+
+  // Update cancelling state based on transaction status
+  useEffect(() => {
+    if (isWritePending || isCancelLoading) {
+      setCancellingContest(true);
+    } else if (isCancelSuccess || isCancelError || writeError) {
+      setCancellingContest(false);
+    }
+  }, [isWritePending, isCancelLoading, isCancelSuccess, isCancelError, writeError]);
+
   const handleCancelContest = async (contestId: number | bigint) => {
     if (!address) {
-      alert('Please connect your wallet');
+      setError('Please connect your wallet');
       return;
     }
 
+    // Clear any previous errors
+    setError(null);
+    
     try {
       console.log("Cancelling contest:", contestId);
       setCancellingContestId(Number(contestId));
-      setCancellingContest(true);
       
       writeCancel({
         address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
@@ -52,10 +85,14 @@ export function useCancelContest() {
       });
     } catch (error) {
       console.error('Error cancelling contest:', error);
-      alert('Error cancelling contest. Please try again.');
+      setError('Error cancelling contest. Please try again.');
       setCancellingContestId(null);
       setCancellingContest(false);
     }
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   return {
@@ -64,5 +101,7 @@ export function useCancelContest() {
     cancellingContest,
     isCancelLoading,
     isCancelSuccess,
+    error,
+    clearError,
   };
 } 

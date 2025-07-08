@@ -1,15 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useBalance } from 'wagmi';
-import { parseUnits } from 'viem';
-import { useApproveToken } from '../hooks/useApproveToken';
-import { CONTRACT_ADDRESSES } from '../app/constants';
+import { useState, useMemo, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { useCreateContest } from '../hooks/useCreateContest';
 import { Button } from './ui/Button';
-import { parseUSDC } from '@/utils/formatters';
 import { MatchInfoDetailed } from '@/types/match';
 import { HeroConnectButton } from './ConnectButton';
-import { getDayNumber } from '@/utils/utils';
 
 export function CreateContest({ 
   onContestCreated, 
@@ -20,7 +16,7 @@ export function CreateContest({
   matchId: string;
   matchDetails: MatchInfoDetailed;
 }) {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const [statement, setStatement] = useState('');
   const [stakeAmount, setStakeAmount] = useState('');
   const [oddsNumerator, setOddsNumerator] = useState('1');
@@ -29,18 +25,24 @@ export function CreateContest({
   const [contestExpiryUnit, setContestExpiryUnit] = useState('hours');
   const [settleOption, setSettleOption] = useState('endOfMatch');
 
-  const { writeContract: writeContest, data: contestHash } = useWriteContract();
-  const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useWaitForTransactionReceipt({
-    hash: contestHash,
-  });
+  const { 
+    handleCreateContest, 
+    creatingContest, 
+    isContestLoading, 
+    isApproving, 
+    isContestSuccess, 
+    usdcBalance,
+    error: createError,
+    clearError: clearCreateError,
+    currentStep
+  } = useCreateContest();
 
-  // Get USDC balance
-  const { data: usdcBalance } = useBalance({
-    address,
-    token: CONTRACT_ADDRESSES.USDC as `0x${string}`,
-  });
-
-  const { approve, isApproving, isApproved } = useApproveToken();
+  // Handle contest creation success
+  useEffect(() => {
+    if (isContestSuccess) {
+      onContestCreated();
+    }
+  }, [isContestSuccess, onContestCreated]);
 
   // Calculate odds and potential profits
   const { odds, creatorProfit, contestantStake, totalPot } = useMemo(() => {
@@ -71,107 +73,23 @@ export function CreateContest({
   // Check if user has sufficient balance
   const hasInsufficientBalance = useMemo(() => {
     if (!usdcBalance || !stakeAmount) return false;
-    const stakeInWei = parseUSDC(stakeAmount);
-    return stakeInWei > usdcBalance.value;
+    const stakeInWei = parseFloat(stakeAmount) * 1e6; // Convert to USDC units (6 decimals)
+    return stakeInWei > Number(usdcBalance.value);
   }, [usdcBalance, stakeAmount]);
 
-  const handleCreateContest = async () => {
-    if (!address || !statement || !stakeAmount || !matchId) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    // Check balance before proceeding
-    if (hasInsufficientBalance) {
-      alert(`Insufficient USDC balance. You need ${stakeAmount} USDC but only have ${usdcBalance ? (Number(usdcBalance.formatted)).toFixed(2) : '0'} USDC.`);
-      return;
-    }
-
-    const stakeInWei = parseUSDC(stakeAmount);
-    console.log("Odds:", odds.toString())
-    const oddsInWei = parseUnits(odds.toString(), 0);
-    
-
-    try {
-      console.log('Creating contest with stake:', stakeInWei, 'and odds:', oddsInWei);
-      const now = BigInt(Math.floor(Date.now() / 1000));
-      const expiryValue = parseInt(contestExpiryValue) || 2;
-      const expiryInMinutes = contestExpiryUnit === 'hours' ? expiryValue * 60 : expiryValue;
-      const contestExpiry = now + BigInt(expiryInMinutes * 60); // Convert minutes to seconds
-      console.log('matchDetails', matchDetails);
-      console.log('matchDetails.matchCompleteTimestamp', matchDetails.matchCompleteTimestamp);
-      // Settle time logic
-      let settleTime: bigint;
-      if (matchDetails.matchFormat === 'TEST') {
-        if (settleOption === 'endOfDay') {
-          settleTime = BigInt(Math.floor(matchDetails.testDayEndTimestamp / 1000));
-        } else {
-          settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
-        }
-      } else {
-        settleTime = BigInt(Math.floor(matchDetails.matchCompleteTimestamp / 1000));
-      }
-
-      const dayNumber = getDayNumber(matchDetails, settleOption === 'endOfDay');
-      
-      settleTime = settleTime + BigInt(60 * 60)
-      console.log('Contest expiry:', contestExpiry, 'Settle time:', settleTime, 'Day number:', dayNumber);
-      // First approve tokens
-      await approve(stakeInWei);
-      // Then create contest with matchId and odds
-      writeContest({
-        address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
-        abi: [
-          {
-            name: 'createContest',
-            type: 'function',
-            inputs: [
-              { name: 'stmt', type: 'string' },
-              { name: 'matchId', type: 'string' },
-              { name: 'stakeAmount', type: 'uint256' },
-              { name: 'odds', type: 'uint256' },
-              { name: 'contestExpiry', type: 'uint256' },
-              { name: 'settleTime', type: 'uint256' },
-              { name: 'dayNumber', type: 'uint64' }
-            ],
-            outputs: [],
-            stateMutability: 'nonpayable'
-          }
-        ],
-        functionName: 'createContest',
-        args: [statement, matchId, stakeInWei, oddsInWei, contestExpiry, settleTime, BigInt(dayNumber)],
-      });
-    } catch (error) {
-      console.error('Error creating contest:', error);
-      alert('Error creating contest. Please try again.');
-    }
+  const handleSubmit = async () => {
+    await handleCreateContest({
+      statement,
+      matchId,
+      stakeAmount,
+      oddsNumerator,
+      oddsDenominator,
+      contestExpiryValue,
+      contestExpiryUnit,
+      settleOption,
+      matchDetails
+    });
   };
-
-  if (isContestSuccess) {
-    onContestCreated();
-    return (
-      <div className="text-center p-8">
-        <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-2xl">✅</span>
-        </div>
-        <div className="text-green-400 font-bold text-xl mb-4">Contest created successfully!</div>
-        <Button
-          onClick={() => {
-            setStatement('');
-            setStakeAmount('');
-            setOddsNumerator('1');
-            setOddsDenominator('1');
-            setContestExpiryValue('2');
-            setContestExpiryUnit('hours');
-          }}
-          variant="primary"
-          size="lg"
-        >
-          Create Another Contest
-        </Button>
-      </div>
-    );
-  }
 
   if (matchDetails.state === 'complete') {
     return (
@@ -183,8 +101,52 @@ export function CreateContest({
     );
   }
 
+  if (isContestSuccess) {
+    return (
+      <div className="text-center p-8">
+        <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-2xl">✅</span>
+        </div>
+        <div className="text-green-400 font-bold text-xl mb-4">Contest created successfully!</div>
+        <p className="text-gray-300 mb-6">Your contest is now live and ready for opponents to join.</p>
+        <Button
+          onClick={() => {
+            setStatement('');
+            setStakeAmount('');
+            setOddsNumerator('1');
+            setOddsDenominator('1');
+            setContestExpiryValue('4');
+            setContestExpiryUnit('hours');
+            setSettleOption('endOfMatch');
+          }}
+          variant="primary"
+          size="lg"
+        >
+          Create Another Contest
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={(e) => { e.preventDefault(); handleCreateContest(); }} className="space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-4">
+      {/* Error Display */}
+      {createError && (
+        <div className="bg-red-900/30 border border-red-700/30 rounded-lg p-4">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h4 className="text-red-400 font-semibold mb-2">Error Creating Contest</h4>
+              <p className="text-red-300 text-sm">{createError}</p>
+            </div>
+            <button
+              onClick={clearCreateError}
+              className="ml-4 text-red-400 hover:text-red-300 text-sm font-medium"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Prediction Statement */}
       <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
@@ -332,16 +294,14 @@ export function CreateContest({
         <div className="p-4 rounded-xl border border-gray-700/60 bg-gray-900/70 backdrop-blur">
           <Button
             type="submit"
-            disabled={isContestLoading || isApproving || hasInsufficientBalance}
+            disabled={creatingContest || hasInsufficientBalance}
             variant="success"
             size="lg"
-            loading={isContestLoading || isApproving}
+            loading={creatingContest}
             className="w-full"
           >
-            {isContestLoading ? (
-              'Creating Contest...'
-            ) : isApproving ? (
-              'Approving Tokens...'
+            {creatingContest ? (
+              currentStep === 'approving' ? 'Approving Tokens...' : 'Creating Contest...'
             ) : hasInsufficientBalance ? (
               'Insufficient Balance'
             ) : (
