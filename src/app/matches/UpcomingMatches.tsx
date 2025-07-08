@@ -41,8 +41,8 @@ export default function   UpcomingMatches() {
 
   return (
     <div className="glass rounded-2xl p-2 max-w-8xl mx-auto">
-      <h2 className="text-lg font-bold text-white mb-2">
-        <span className="mr-3">📅</span>
+      <h2 className="text-lg font-bold text-white mb-2 flex items-center">
+        <img src="/icons/upcomingMatches.png" alt="Live" className="w-6 h-6 mr-1" />
         Upcoming Matches
       </h2>
       

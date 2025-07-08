@@ -23,7 +23,7 @@ export default function Contests() {
             {/* Contest List Section */}
             <div className="glass rounded-2xl p-8">
               <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
-                <span className="mr-3">📋</span>
+                <img src="/icons/stackBoxes.png" alt="Contests" className="w-7 h-7 mr-1" />
                 My Contests
               </h2>
               <ContestList 

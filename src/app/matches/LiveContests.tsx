@@ -27,8 +27,8 @@ export default function LiveContests() {
 
   return (
     <div className="glass rounded-2xl p-2 max-w-8xl mx-auto">
-      <h2 className="text-lg font-bold text-white mb-1">
-        <span className="mr-3">⚡️</span>
+      <h2 className="text-lg font-bold text-white mb-1 flex items-center">
+        <img src="/icons/liveContests.png" alt="Live" className="w-6 h-6 mr-1" />
         Live Contests
       </h2>
       {isLoading ? (
@@ -41,7 +41,7 @@ export default function LiveContests() {
       ) : liveContests.length === 0 ? (
         <div className="text-center py-4">
           <div className="w-16 h-16 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🎲</span>
+            <img src="/icons/emptyBox.png" alt="Empty" className="w-8 h-8" />
           </div>
           <p className="text-gray-400 text-lg">No live contests available at the moment.</p>
         </div>
