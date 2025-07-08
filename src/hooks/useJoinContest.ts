@@ -20,7 +20,7 @@ export function useJoinContest() {
     hash: joinHash,
   });
 
-  const { approve, isApproving, isApproved, isApproveSuccess, approvalAmount, checkAllowance, permitReady } = useApproveToken();
+  const { approve, approving, isApproveSuccess, approvalAmount, error: approvalError } = useApproveToken();
   const { balance: usdcBalance, isLoading: isBalanceLoading } = useUSDCBalance(address);
 
   // Reset states when join transaction succeeds
@@ -41,7 +41,7 @@ export function useJoinContest() {
       setJoiningContestId(null);
       setJoiningContest(false);
       setCurrentStep('idle');
-      setError(`Join contest failed: ${transactionError.message}`);
+      setError(`Join contest failed`);
       setPendingJoinParams(null);
       console.error('Join contest error:', transactionError);
     }
@@ -53,12 +53,26 @@ export function useJoinContest() {
       setJoiningContestId(null);
       setJoiningContest(false);
       setCurrentStep('idle');
-      setError(`Failed to submit join contest: ${writeError.message}`);
+      setError(`Failed to submit join contest`);
       setPendingJoinParams(null);
       console.error('Write contract error:', writeError);
     }
   }, [writeError]);
 
+  // Update joining state based on transaction status
+  useEffect(() => {
+    if (isWritePending || isJoinLoading) {
+      setJoiningContest(true);
+      setCurrentStep('joining');
+    } else if (isJoinSuccess || isJoinError || writeError) {
+      setJoiningContest(false);
+      if (isJoinSuccess) {
+        setCurrentStep('idle');
+      }
+    }
+  }, [isWritePending, isJoinLoading, isJoinSuccess, isJoinError, writeError]);
+
+  
   // Handle approval success and proceed to join contest
   useEffect(() => {
     if (isApproveSuccess && joiningContest && currentStep === 'approving' && pendingJoinParams) {
@@ -88,38 +102,20 @@ export function useJoinContest() {
 
   // Handle approval errors
   useEffect(() => {
-    // Only check for approval errors if we have an approval amount and we're in the approving step
+    // Check for approval errors if we have an approval amount and we're in the approving step
     if (approvalAmount > 0n && joiningContest && currentStep === 'approving') {
-      // Wait longer before considering it a failure to give user time to approve in MetaMask
-      const timeoutId = setTimeout(() => {
-        // Check if we're still in approving state but not loading and not successful
-        // Also check that the permit is ready (transaction has been submitted)
-        if (!isApproving && !isApproveSuccess && joiningContest && currentStep === 'approving' && permitReady) {
-          setJoiningContestId(null);
-          setJoiningContest(false);
-          setCurrentStep('idle');
-          setError('Token approval failed. Please try again.');
-          setPendingJoinParams(null);
-          console.error('Approval failed or was rejected');
-        }
-      }, 5000); // Wait 5 seconds before considering it a failure
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isApproving, isApproveSuccess, approvalAmount, joiningContest, currentStep, permitReady]);
-
-  // Update joining state based on transaction status
-  useEffect(() => {
-    if (isWritePending || isJoinLoading) {
-      setJoiningContest(true);
-      setCurrentStep('joining');
-    } else if (isJoinSuccess || isJoinError || writeError) {
-      setJoiningContest(false);
-      if (isJoinSuccess) {
+      // If approval failed (not approving, not successful, and there's an error), handle the error
+      if (!approving && !isApproveSuccess && approvalError) {
+        setJoiningContestId(null);
+        setJoiningContest(false);
         setCurrentStep('idle');
+        setError(`Token approval failed: ${approvalError}`);
+        setPendingJoinParams(null);
+        console.error('Approval failed:', approvalError);
       }
     }
-  }, [isWritePending, isJoinLoading, isJoinSuccess, isJoinError, writeError]);
+  }, [approving, isApproveSuccess, approvalAmount, approvalError, joiningContest, currentStep]);
+
 
   const handleJoinContest = async (contestId: number | bigint, stake: bigint, odds: bigint) => {
     if (!address) {
@@ -151,39 +147,12 @@ export function useJoinContest() {
       };
       setPendingJoinParams(joinParams);
       
-      // Step 1: Check if approval is needed
-      const hasSufficientAllowance = checkAllowance(joinAmount);
-      
-      if (!hasSufficientAllowance) {
-        // Step 2: Approve tokens (this will wait for confirmation)
-        console.log('Starting permit process...');
-        await approve(joinAmount);
-        console.log('Permit submitted, waiting for confirmation...');
-        // The join contest will be triggered automatically when approval succeeds
-        // via the useEffect that watches isApproveSuccess
-      } else {
-        console.log('Sufficient allowance exists, proceeding with join...');
-        setCurrentStep('joining');
-        
-        // Execute join transaction immediately
-        writeJoin({
-          address: CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`,
-          abi: [
-            {
-              name: 'joinContest',
-              type: 'function',
-              inputs: [
-                { name: 'id', type: 'uint256' },
-                { name: 'stakeAmount', type: 'uint256' }
-              ],
-              outputs: [],
-              stateMutability: 'nonpayable'
-            }
-          ],
-          functionName: 'joinContest',
-          args: [BigInt(contestId), joinAmount],
-        });
-      }
+      // Always call permit - it will handle allowance internally
+      console.log('Starting permit process...');
+      await approve(joinAmount);
+      console.log('Permit submitted, waiting for confirmation...');
+      // The join contest will be triggered automatically when approval succeeds
+      // via the useEffect that watches isApproveSuccess
     } catch (error) {
       console.error('Error in join contest process:', error);
       setError('Error joining contest. Please try again.');
@@ -203,7 +172,7 @@ export function useJoinContest() {
     joiningContestId,
     joiningContest,
     isJoinLoading,
-    isApproving,
+    approving,
     isJoinSuccess,
     usdcBalance,
     isBalanceLoading,

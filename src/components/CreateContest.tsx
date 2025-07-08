@@ -29,7 +29,7 @@ export function CreateContest({
     handleCreateContest, 
     creatingContest, 
     isContestLoading, 
-    isApproving, 
+    approving, 
     isContestSuccess, 
     usdcBalance,
     error: createError,

@@ -8,48 +8,53 @@ export function useApproveToken() {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
-  const [isApproved, setIsApproved] = useState(false);
   const [approvalAmount, setApprovalAmount] = useState<bigint>(0n);
-  const [localIsApproving, setLocalIsApproving] = useState(false);
-  const [permitReady, setPermitReady] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  const { writeContract: writePermit, data: permitHash, isPending: isWritePending } = useWriteContract();
-  const { isLoading: isTransactionLoading, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({
+  const { writeContract: writePermit, data: permitHash, isPending: isWritePending, error: writeError } = useWriteContract();
+  const { isLoading: isTransactionLoading, isSuccess: isApproveSuccess, isError: isApproveError, error: transactionError } = useWaitForTransactionReceipt({
     hash: permitHash,
   });
 
   const chainId = publicClient?.chain.id;
   console.log("Chain ID:", chainId);
-  // Combine local approving state with transaction loading state
-  const isApproving = localIsApproving || isWritePending || isTransactionLoading;
-
-  // Check current allowance
-  const { data: currentAllowance, refetch: refetchAllowance } = useReadContract({
-    address: CONTRACT_ADDRESSES.USDC as `0x${string}`,
-    abi: ABIS.USDC,
-    functionName: 'allowance',
-    args: [address as `0x${string}`, CONTRACT_ADDRESSES.PREDICTION_CONTEST as `0x${string}`],
-  });
 
   // Reset approval state when transaction succeeds
   useEffect(() => {
     if (isApproveSuccess) {
-      setIsApproved(true);
-      setLocalIsApproving(false);
-      setPermitReady(false);
-      refetchAllowance(); // Refresh allowance after approval
+      setApproving(false);
+      setError(null);
       console.log("Permit transaction confirmed");
     }
-  }, [isApproveSuccess, refetchAllowance]);
+  }, [isApproveSuccess]);
 
-  // Reset local approving state if transaction fails or is rejected
+  // Handle transaction errors
   useEffect(() => {
-    if (!isWritePending && !isTransactionLoading && localIsApproving && !isApproveSuccess) {
-      // If we were locally approving but the transaction is no longer pending and not successful, it likely failed
-      setLocalIsApproving(false);
-      setPermitReady(false);
+    if (isApproveError && transactionError) {
+      setApproving(false);
+      setError(`Transaction failed: ${transactionError.message}`);
+      console.error('Transaction error:', transactionError);
     }
-  }, [isWritePending, isTransactionLoading, localIsApproving, isApproveSuccess]);
+  }, [isApproveError, transactionError]);
+
+  // Handle write contract errors (user rejection, etc.)
+  useEffect(() => {
+    if (writeError) {
+      setApproving(false);
+      setError(`Failed to submit transaction: ${writeError.message}`);
+      console.error('Write contract error:', writeError);
+    }
+  }, [writeError]);
+
+  // Update approving state based on transaction status
+  useEffect(() => {
+    if (isWritePending || isTransactionLoading) {
+      setApproving(true);
+    } else if (isApproveSuccess || isApproveError || writeError) {
+      setApproving(false);
+    }
+  }, [isWritePending, isTransactionLoading, isApproveSuccess, isApproveError, writeError]);
 
   const generatePermitSignature = async (
     owner: `0x${string}`,
@@ -109,12 +114,12 @@ export function useApproveToken() {
       throw new Error('No wallet address or client available');
     }
 
+    // Clear any previous errors
+    setError(null);
+
     try {
       console.log("Starting permit for amount:", amount.toString());
       setApprovalAmount(amount);
-      setIsApproved(false); // Reset approval state
-      setLocalIsApproving(true); // Set local approving state immediately
-      setPermitReady(false); // Reset permit ready state
       
       // Set deadline to 1 hour from now
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600); // 1 hour from now
@@ -143,32 +148,25 @@ export function useApproveToken() {
         ],
       });
       
-      // Set permit ready to true after the transaction is submitted
-      setPermitReady(true);
-      
-      // Note: We don't set isApproved here - it will be set when transaction is confirmed
+      // Note: isApproveSuccess will be set when transaction is confirmed
     } catch (error) {
       console.error('Error permitting tokens:', error);
-      setIsApproved(false);
-      setLocalIsApproving(false);
-      setPermitReady(false);
+      setApproving(false);
+      setError('Error permitting tokens. Please try again.');
       throw error;
     }
   };
 
-  const checkAllowance = (requiredAmount: bigint): boolean => {
-    return (currentAllowance as bigint || 0n) >= requiredAmount;
+  const clearError = () => {
+    setError(null);
   };
 
   return {
     approve,
-    isApproving,
-    isApproved,
+    approving,
     isApproveSuccess,
     approvalAmount,
-    currentAllowance: currentAllowance as bigint || 0n,
-    checkAllowance,
-    refetchAllowance,
-    permitReady,
+    error,
+    clearError,
   };
 } 

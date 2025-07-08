@@ -39,7 +39,7 @@ export function useCreateContest() {
     token: CONTRACT_ADDRESSES.USDC as `0x${string}`,
   });
 
-  const { approve, isApproving, isApproved, isApproveSuccess, approvalAmount, permitReady } = useApproveToken();
+  const { approve, approving, isApproveSuccess, approvalAmount, error: approvalError } = useApproveToken();
 
   // Reset states when contest creation succeeds
   useEffect(() => {
@@ -74,6 +74,19 @@ export function useCreateContest() {
     }
   }, [writeError]);
 
+  // Update creating state based on transaction status
+  useEffect(() => {
+    if (isWritePending || isContestLoading) {
+      setCreatingContest(true);
+      setCurrentStep('creating');
+    } else if (isContestSuccess || isContestError || writeError) {
+      setCreatingContest(false);
+      if (isContestSuccess) {
+        setCurrentStep('idle');
+      }
+    }
+  }, [isWritePending, isContestLoading, isContestSuccess, isContestError, writeError]);
+  
   // Handle approval success and proceed to create contest
   useEffect(() => {
     if (isApproveSuccess && creatingContest && currentStep === 'approving' && pendingContestParams) {
@@ -108,37 +121,20 @@ export function useCreateContest() {
 
   // Handle approval errors
   useEffect(() => {
-    // Only check for approval errors if we have an approval amount and we're in the approving step
+    // Check for approval errors if we have an approval amount and we're in the approving step
     if (approvalAmount > 0n && creatingContest && currentStep === 'approving') {
-      // Wait longer before considering it a failure to give user time to approve in MetaMask
-      const timeoutId = setTimeout(() => {
-        // Check if we're still in approving state but not loading and not successful
-        // Also check that the permit is ready (transaction has been submitted)
-        if (!isApproving && !isApproveSuccess && creatingContest && currentStep === 'approving' && permitReady) {
-          setCreatingContest(false);
-          setCurrentStep('idle');
-          setError('Token approval failed. Please try again.');
-          setPendingContestParams(null);
-          console.error('Approval failed or was rejected');
-        }
-      }, 5000); // Wait 5 seconds before considering it a failure
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isApproving, isApproveSuccess, approvalAmount, creatingContest, currentStep, permitReady]);
-
-  // Update creating state based on transaction status
-  useEffect(() => {
-    if (isWritePending || isContestLoading) {
-      setCreatingContest(true);
-      setCurrentStep('creating');
-    } else if (isContestSuccess || isContestError || writeError) {
-      setCreatingContest(false);
-      if (isContestSuccess) {
+      // If approval failed (not approving, not successful, and there's an error), handle the error
+      if (!approving && !isApproveSuccess && approvalError) {
+        setCreatingContest(false);
         setCurrentStep('idle');
+        setError(`Token approval failed`);
+        setPendingContestParams(null);
+        console.error('Approval failed:', approvalError);
       }
     }
-  }, [isWritePending, isContestLoading, isContestSuccess, isContestError, writeError]);
+  }, [approving, isApproveSuccess, approvalAmount, approvalError, creatingContest, currentStep]);
+
+  
 
   const handleCreateContest = async (params: CreateContestParams) => {
     const {
@@ -242,7 +238,7 @@ export function useCreateContest() {
     handleCreateContest,
     creatingContest,
     isContestLoading,
-    isApproving,
+    approving,
     isContestSuccess,
     usdcBalance,
     error,
