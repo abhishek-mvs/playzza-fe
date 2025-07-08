@@ -123,7 +123,7 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
     return (
       <div className="text-center py-12">
         <div className="w-16 h-16 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <span className="text-2xl">📝</span>
+          <img src="/icons/emptyBox.png" alt="Empty" className="w-8 h-8" />
         </div>
         <p className="text-gray-400 text-lg">No contests available. Create one to get started!</p>
       </div>
@@ -166,9 +166,9 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
       {/* Filter Tabs */}
       <div className="flex space-x-1 bg-gray-800 bg-opacity-50 p-1 rounded-lg">
         {[
-          { key: 'active' as FilterType, label: 'Active', icon: '🟢' },
-          { key: 'pending' as FilterType, label: 'Pending', icon: '🟡' },
-          { key: 'completed' as FilterType, label: 'Completed', icon: '✅' }
+          { key: 'active' as FilterType, label: 'Active' },
+          { key: 'pending' as FilterType, label: 'Pending' },
+          { key: 'completed' as FilterType, label: 'Completed' }
         ].map((filter) => (
           <Button
             key={filter.key}
@@ -181,7 +181,6 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
                 : ''
             }`}
           >
-            <span>{filter.icon}</span>
             <span>{filter.label}</span>
             <span className="ml-2 bg-blue-500 bg-opacity-30 text-blue-200 px-2 py-0.5 rounded-full text-xs font-medium border border-blue-400 border-opacity-30">
               {getFilterCount(filter.key)}

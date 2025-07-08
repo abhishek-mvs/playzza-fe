@@ -40,11 +40,10 @@ export default function LiveMatches() {
 
   return (
     <div className="glass rounded-2xl p-2 max-w-8xl mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-2">
-        <span className="mr-3">🔥</span>
+      <h2 className="text-lg font-bold text-white mb-2 flex items-center">
+        <img src="/icons/liveMatches.png" alt="Live" className="w-6 h-6 mr-1" />
         Live Matches
       </h2>
-      
       {loading ? (
         <div className="text-center py-4">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-full mb-4">
