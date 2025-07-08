@@ -57,7 +57,7 @@ export function useCreateContest() {
     if (isContestError && transactionError) {
       setCreatingContest(false);
       setCurrentStep('idle');
-      setError(`Contest creation failed: ${transactionError.message}`);
+      setError('Contest creation failed');
       setPendingContestParams(null);
       console.error('Contest creation error:', transactionError);
     }
@@ -68,7 +68,7 @@ export function useCreateContest() {
     if (writeError) {
       setCreatingContest(false);
       setCurrentStep('idle');
-      setError(`Failed to submit contest creation: ${writeError.message}`);
+      setError('Failed to submit contest creation');
       setPendingContestParams(null);
       console.error('Write contract error:', writeError);
     }

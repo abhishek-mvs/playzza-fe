@@ -394,7 +394,6 @@ export default function ContestCard3({
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <h4 className="text-red-400 font-semibold mb-2">Error Cancelling Contest</h4>
-                <p className="text-red-300 text-sm">{cancelError}</p>
               </div>
               <button
                 onClick={clearCancelError}
@@ -412,7 +411,6 @@ export default function ContestCard3({
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <h4 className="text-red-400 font-semibold mb-2">Error Joining Contest</h4>
-                <p className="text-red-300 text-sm">{joinError}</p>
               </div>
               <button
                 onClick={clearJoinError}
