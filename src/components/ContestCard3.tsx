@@ -111,6 +111,7 @@ export default function ContestCard3({
 
   useEffect(() => {
     if (isJoinSuccess) {
+      console.log('Successfully joined the contest!')
       alert('Successfully joined the contest!')
       onContestJoined?.()
     }

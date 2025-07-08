@@ -32,7 +32,7 @@ export function useApproveToken() {
   useEffect(() => {
     if (isApproveError && transactionError) {
       setApproving(false);
-      setError(`Transaction failed: ${transactionError.message}`);
+      setError(`Transaction failed`);
       console.error('Transaction error:', transactionError);
     }
   }, [isApproveError, transactionError]);
@@ -41,7 +41,7 @@ export function useApproveToken() {
   useEffect(() => {
     if (writeError) {
       setApproving(false);
-      setError(`Failed to submit transaction: ${writeError.message}`);
+      setError(`Failed to submit transaction`);
       console.error('Write contract error:', writeError);
     }
   }, [writeError]);

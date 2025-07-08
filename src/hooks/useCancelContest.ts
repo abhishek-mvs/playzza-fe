@@ -30,7 +30,7 @@ export function useCancelContest() {
     if (isCancelError && transactionError) {
       setCancellingContestId(null);
       setCancellingContest(false);
-      setError(`Transaction failed: ${transactionError.message}`);
+      setError(`Transaction failed`);
       console.error('Transaction error:', transactionError);
     }
   }, [isCancelError, transactionError]);
@@ -40,7 +40,7 @@ export function useCancelContest() {
     if (writeError) {
       setCancellingContestId(null);
       setCancellingContest(false);
-      setError(`Failed to submit transaction: ${writeError.message}`);
+      setError(`Failed to submit transaction`);
       console.error('Write contract error:', writeError);
     }
   }, [writeError]);
