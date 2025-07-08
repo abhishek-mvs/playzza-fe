@@ -109,7 +109,7 @@ export function useJoinContest() {
         setJoiningContestId(null);
         setJoiningContest(false);
         setCurrentStep('idle');
-        setError(`Token approval failed: ${approvalError}`);
+        setError(`Token approval failed`);
         setPendingJoinParams(null);
         console.error('Approval failed:', approvalError);
       }

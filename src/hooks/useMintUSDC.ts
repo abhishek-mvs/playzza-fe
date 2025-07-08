@@ -60,7 +60,7 @@ export function useMintUSDC() {
   useEffect(() => {
     if (isMintError && transactionError) {
       setMinting(false);
-      setError(`Mint failed: ${transactionError.message}`);
+      setError(`Mint failed`);
       console.error('Mint transaction error:', transactionError);
     }
   }, [isMintError, transactionError]);
@@ -69,7 +69,7 @@ export function useMintUSDC() {
   useEffect(() => {
     if (writeError) {
       setMinting(false);
-      setError(`Failed to submit mint transaction: ${writeError.message}`);
+      setError(`Failed to submit mint transaction`);
       console.error('Write contract error:', writeError);
     }
   }, [writeError]);
