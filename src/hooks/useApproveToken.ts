@@ -18,6 +18,8 @@ export function useApproveToken() {
     hash: permitHash,
   });
 
+  const chainId = publicClient?.chain.id;
+  console.log("Chain ID:", chainId);
   // Combine local approving state with transaction loading state
   const isApproving = localIsApproving || isWritePending || isTransactionLoading;
 
@@ -72,7 +74,7 @@ export function useApproveToken() {
       domain: {
         name: 'Playzza USDC',
         version: '1',
-        chainId: 31337n, // Base mainnet
+        chainId: chainId, // Base mainnet
         verifyingContract: CONTRACT_ADDRESSES.USDC as `0x${string}`
       },
       types: {
