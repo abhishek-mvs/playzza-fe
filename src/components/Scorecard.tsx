@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { Button } from './ui/Button'
 import { getApiUrl } from '@/utils/api'
 import { formatScorecardSeoTitle } from '@/utils/formatters'
+import Squads from './Squads'
 
 interface ScorecardProps {
   matchId: string
@@ -13,6 +14,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [activeTab, setActiveTab] = useState<'scorecard' | 'squads'>('scorecard')
 
   const fetchScorecard = async () => {
     console.log('fetching scorecard')
@@ -66,6 +68,8 @@ export default function Scorecard({ matchId }: ScorecardProps) {
       ? data.matchInfo.team2.name 
       : data.matchInfo.team1.name
   }
+
+  const matchStarted = !!(scorecardData?.scorecard && scorecardData.scorecard.length > 0)
 
   if (loading) {
     return (
@@ -126,7 +130,7 @@ export default function Scorecard({ matchId }: ScorecardProps) {
         </div>
 
         {/* Match Not Started Message */}
-        <div className="bg-yellow-900/30 border border-yellow-700/30 rounded-lg p-6 text-center">
+        <div className="bg-yellow-900/30 border border-yellow-700/30 rounded-lg p-6 text-center mb-6">
           <div className="text-yellow-300">
             <h2 className="text-lg font-semibold mb-2">Match Not Started Yet</h2>
             <p className="text-sm">
@@ -138,7 +142,10 @@ export default function Scorecard({ matchId }: ScorecardProps) {
             </p>
           </div>
         </div>
+        {/* Squads Section */}
+        <Squads matchInfo={scorecardData.matchInfo} matchStarted={false} />
       </div>
+      
     )
   }
 
@@ -148,10 +155,10 @@ export default function Scorecard({ matchId }: ScorecardProps) {
 
   return (
     <div className="p-4 h-full max-w-8xl mx-auto">
-      {/* Match Header */}
-      <div className="bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-6">
-        <div className="flex justify-between items-start mb-2">
-          <h1 className="text-xl font-bold text-white">{formatScorecardSeoTitle(scorecardData.appIndex.seoTitle)}</h1>
+      {/* Match Header with Tabs */}
+      <div className="relative bg-gray-800/50 border border-gray-700/30 p-4 rounded-lg mb-4">
+        {/* Refresh Button Top Right */}
+        <div className="absolute top-4 right-4">
           <Button 
             onClick={fetchScorecard}
             disabled={loading}
@@ -162,125 +169,151 @@ export default function Scorecard({ matchId }: ScorecardProps) {
             {loading ? 'Refreshing...' : 'Refresh'}
           </Button>
         </div>
-        <p className="text-gray-300 mb-1"><strong>Teams Playing:</strong> {teams}</p>
-        <p className="text-gray-300 mb-1"><strong>Match Status:</strong> {scorecardData.status}</p>
-        <p className="text-gray-300 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</p>
-        {lastUpdated && (
-          <p className="text-gray-400 text-sm mt-2">
-            <strong>Last Updated:</strong> {lastUpdated.toLocaleTimeString()} (Auto-refreshes every 5 minutes)
-          </p>
-        )}
+        {/* Title and Info */}
+        <div className="flex-1">
+          <h1 className="text-xl font-bold text-white mb-2 md:mb-0">{formatScorecardSeoTitle(scorecardData.appIndex.seoTitle)}</h1>
+          <div className="text-gray-300 mb-1"><strong>Teams Playing:</strong> {teams}</div>
+          <div className="text-gray-300 mb-1"><strong>Match Status:</strong> {scorecardData.status}</div>
+          <div className="text-gray-300 mb-1"><strong>Match Complete:</strong> {scorecardData.isMatchComplete ? 'Yes' : 'No'}</div>
+          {lastUpdated && (
+            <div className="text-gray-400 text-sm mt-1">
+              <strong>Last Updated:</strong> {lastUpdated.toLocaleTimeString()} (Auto-refreshes every 5 minutes)
+            </div>
+          )}
+        </div>
+        {/* Tabs below info */}
+        <div className="flex justify-start mt-6">
+          <div className="flex gap-1 border-b border-gray-700 w-full md:w-auto">
+            <button
+              className={`px-4 py-2 font-semibold focus:outline-none transition-colors duration-150 border-b-2 ${activeTab === 'scorecard' ? 'border-blue-500 text-blue-300' : 'border-transparent text-gray-300 hover:text-blue-200'}`}
+              onClick={() => setActiveTab('scorecard')}
+            >
+              Scorecard
+            </button>
+            <button
+              className={`px-4 py-2 font-semibold focus:outline-none transition-colors duration-150 border-b-2 ${activeTab === 'squads' ? 'border-blue-500 text-blue-300' : 'border-transparent text-gray-300 hover:text-blue-200'}`}
+              onClick={() => setActiveTab('squads')}
+            >
+              Squads
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Innings */}
-      {scorecardData.scorecard.slice().reverse().map((innings, index) => {
-        const inningsNumber = teamInningsCount[innings.batTeamName]
-        teamInningsCount[innings.batTeamName] = inningsNumber - 1
-        return (
-          <div key={innings.inningsId} className="mb-8 bg-gray-800/50 border border-gray-700/30 rounded-lg shadow-sm">
-            {/* Innings Header */}
-            <div className="bg-blue-900/30 border-b border-blue-700/30 p-4">
-              <h2 className="text-lg font-bold text-blue-300">
-                {innings.batTeamName} INNINGS {inningsNumber}
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm text-gray-300">
-                <div><strong>Batting:</strong> {innings.batTeamName}</div>
-                <div><strong>Bowling:</strong> {innings.bowlTeamName}</div>
-                <div><strong>Score:</strong> {innings.score}/{innings.wickets} ({innings.overs} overs)</div>
-                <div><strong>Run Rate:</strong> {innings.runRate.toFixed(2)}</div>
+      {/* Main Content: Show either Innings or Squads */}
+      {activeTab === 'scorecard' ? (
+        <>
+        {scorecardData.scorecard.slice().reverse().map((innings, index) => {
+          const inningsNumber = teamInningsCount[innings.batTeamName]
+          teamInningsCount[innings.batTeamName] = inningsNumber - 1
+          return (
+            <div key={innings.inningsId} className="mb-8 bg-gray-800/50 border border-gray-700/30 rounded-lg shadow-sm">
+              {/* Innings Header */}
+              <div className="bg-blue-900/30 border-b border-blue-700/30 p-4">
+                <h2 className="text-lg font-bold text-blue-300">
+                  {innings.batTeamName} INNINGS {inningsNumber}
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-sm text-gray-300">
+                  <div><strong>Batting:</strong> {innings.batTeamName}</div>
+                  <div><strong>Bowling:</strong> {innings.bowlTeamName}</div>
+                  <div><strong>Score:</strong> {innings.score}/{innings.wickets} ({innings.overs} overs)</div>
+                  <div><strong>Run Rate:</strong> {innings.runRate.toFixed(2)}</div>
+                </div>
               </div>
+
+              {/* Batting Section */}
+              {innings.batsman.length > 0 && (
+                <div className="p-4">
+                  <h3 className="text-md font-semibold mb-3 text-blue-300">BATTING ({innings.batTeamName})</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border-collapse text-gray-300">
+                      <thead>
+                        <tr className="bg-gray-700/50 text-gray-200">
+                          <th className="border border-gray-600 px-2 py-1 text-left">Name</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Runs</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Balls</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">4s</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">6s</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">SR</th>
+                          <th className="border border-gray-600 px-2 py-1 text-left">Out Decision</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {innings.batsman.map((batsman, i) => (
+                          <tr key={batsman.id} className={"hover:bg-gray-700/30 " + (i % 2 === 0 ? "bg-gray-800/30" : "bg-gray-700/20") + " text-gray-300"}>
+                            <td className="border border-gray-600 px-2 py-1 font-medium">{batsman.name}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{batsman.runs}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{batsman.balls}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{batsman.fours}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{batsman.sixes}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{batsman.strkRate}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-sm">{batsman.outDec || 'not out'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Bowling Section */}
+              {innings.bowler.length > 0 && (
+                <div className="p-4 border-t border-gray-700/30">
+                  <h3 className="text-md font-semibold mb-3 text-blue-300">BOWLING ({innings.bowlTeamName})</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border-collapse text-gray-300">
+                      <thead>
+                        <tr className="bg-gray-700/50 text-gray-200">
+                          <th className="border border-gray-600 px-2 py-1 text-left">Name</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Overs</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Wickets</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Runs</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Maidens</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">No Balls</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Wides</th>
+                          <th className="border border-gray-600 px-2 py-1 text-center">Economy</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {innings.bowler.map((bowler, i) => (
+                          <tr key={bowler.id} className={"hover:bg-gray-700/30 " + (i % 2 === 0 ? "bg-gray-800/30" : "bg-gray-700/20") + " text-gray-300"}>
+                            <td className="border border-gray-600 px-2 py-1 font-medium">{bowler.name}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{bowler.overs}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wickets}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{bowler.runs}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{bowler.maidens}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{bowler.no_balls}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wides}</td>
+                            <td className="border border-gray-600 px-2 py-1 text-center">{bowler.economy}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Extras Section */}
+              {innings.extra.total > 0 && (
+                <div className="p-4 border-t border-gray-700/30 bg-gray-700/20">
+                  <h4 className="text-sm font-semibold mb-2 text-blue-300">EXTRAS</h4>
+                  <div className="text-sm text-gray-300">
+                    Byes: {innings.extra.byes}, Leg Byes: {innings.extra.legByes}, 
+                    Wides: {innings.extra.wides}, No Balls: {innings.extra.noBalls}, 
+                    Penalty: {innings.extra.penalty}
+                  </div>
+                  <div className="text-sm font-medium mt-1 text-gray-300">
+                    Total Extras: {innings.extra.total}
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Batting Section */}
-            {innings.batsman.length > 0 && (
-              <div className="p-4">
-                <h3 className="text-md font-semibold mb-3 text-blue-300">BATTING ({innings.batTeamName})</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse text-gray-300">
-                    <thead>
-                      <tr className="bg-gray-700/50 text-gray-200">
-                        <th className="border border-gray-600 px-2 py-1 text-left">Name</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Runs</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Balls</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">4s</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">6s</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">SR</th>
-                        <th className="border border-gray-600 px-2 py-1 text-left">Out Decision</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {innings.batsman.map((batsman, i) => (
-                        <tr key={batsman.id} className={"hover:bg-gray-700/30 " + (i % 2 === 0 ? "bg-gray-800/30" : "bg-gray-700/20") + " text-gray-300"}>
-                          <td className="border border-gray-600 px-2 py-1 font-medium">{batsman.name}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{batsman.runs}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{batsman.balls}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{batsman.fours}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{batsman.sixes}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{batsman.strkRate}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-sm">{batsman.outDec || 'not out'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Bowling Section */}
-            {innings.bowler.length > 0 && (
-              <div className="p-4 border-t border-gray-700/30">
-                <h3 className="text-md font-semibold mb-3 text-blue-300">BOWLING ({innings.bowlTeamName})</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse text-gray-300">
-                    <thead>
-                      <tr className="bg-gray-700/50 text-gray-200">
-                        <th className="border border-gray-600 px-2 py-1 text-left">Name</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Overs</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Wickets</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Runs</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Maidens</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">No Balls</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Wides</th>
-                        <th className="border border-gray-600 px-2 py-1 text-center">Economy</th>
-                        
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {innings.bowler.map((bowler, i) => (
-                        <tr key={bowler.id} className={"hover:bg-gray-700/30 " + (i % 2 === 0 ? "bg-gray-800/30" : "bg-gray-700/20") + " text-gray-300"}>
-                          <td className="border border-gray-600 px-2 py-1 font-medium">{bowler.name}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.overs}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wickets}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.runs}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.maidens}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.no_balls}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.wides}</td>
-                          <td className="border border-gray-600 px-2 py-1 text-center">{bowler.economy}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Extras Section */}
-            {innings.extra.total > 0 && (
-              <div className="p-4 border-t border-gray-700/30 bg-gray-700/20">
-                <h4 className="text-sm font-semibold mb-2 text-blue-300">EXTRAS</h4>
-                <div className="text-sm text-gray-300">
-                  Byes: {innings.extra.byes}, Leg Byes: {innings.extra.legByes}, 
-                  Wides: {innings.extra.wides}, No Balls: {innings.extra.noBalls}, 
-                  Penalty: {innings.extra.penalty}
-                </div>
-                <div className="text-sm font-medium mt-1 text-gray-300">
-                  Total Extras: {innings.extra.total}
-                </div>
-              </div>
-            )}
-          </div>
-        )
-      })}
+          )
+        })}
+        </>
+      ) : (
+        <Squads matchInfo={scorecardData.matchInfo} matchStarted={matchStarted} />
+      )}
     </div>
   )
 } 

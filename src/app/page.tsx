@@ -20,6 +20,10 @@ export default function Home() {
     }
   };
 
+  const handleGetFunds = () => {
+    router.push('/needFunds');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 relative overflow-hidden">
       {/* Enhanced Background Pattern */}
@@ -49,6 +53,15 @@ export default function Home() {
               onClick={handleGetStarted}
             >
               Get Started
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="lg"
+              icon="💰"
+              className="btn-hover-lift"
+              onClick={handleGetFunds}
+            >
+              Get Funds
             </Button>
             <Button 
               variant="ghost" 

@@ -51,13 +51,26 @@ export type MatchInfoDetailed = {
   team1: {
     id: number
     name: string
-    shortName: string
+    shortName: string,
+    playerDetails: Players[]
   }
   team2: {
     id: number
     name: string
     shortName: string
+    playerDetails: Players[]
   }
+}
+
+type Players = {
+  id: number
+  name: string
+  fullName: string
+  captain: boolean
+  role: string
+  keeper: boolean
+  substitute: boolean
+  isSupportStaff: boolean
 }
 
 type Batsman = {

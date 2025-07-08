@@ -66,6 +66,16 @@ export default function Navbar() {
               >
                 Contests
               </Link>
+              <Link 
+                href="/needFunds" 
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                  isActive('/needFunds') 
+                    ? 'bg-purple-500 bg-opacity-10 text-white' 
+                    : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
+                }`}
+              >
+                Need Funds?
+              </Link>
             </div>
           </div>
 
@@ -117,6 +127,17 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Contests
+            </Link>
+            <Link 
+              href="/needFunds" 
+              className={`px-4 py-2 rounded-md text-base font-medium transition-all duration-300 ${
+                isActive('/needFunds') 
+                  ? 'bg-purple-500 bg-opacity-10 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Get Funds
             </Link>
           </div>
         )}
