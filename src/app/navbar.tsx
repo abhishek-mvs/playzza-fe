@@ -74,7 +74,7 @@ export default function Navbar() {
                     : 'text-gray-300 hover:text-white hover:bg-purple-500 hover:bg-opacity-10'
                 }`}
               >
-                Get Funds
+                Need Funds?
               </Link>
             </div>
           </div>

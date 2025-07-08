@@ -45,7 +45,9 @@ export default function NeedFundsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-start justify-center pt-20">
         <div className="text-center">
-          <div className="text-6xl mb-6">💰</div>
+          <div className="mb-6">
+            <img src="/icons/funds.png" alt="Funds" className="w-16 h-16 mx-auto" />
+          </div>
           <h1 className="text-3xl font-bold text-white mb-4">Get USDC Tokens</h1>
           <p className="text-gray-300 mb-8">Connect your wallet to mint USDC tokens</p>
           <HeroConnectButton />
@@ -58,7 +60,9 @@ export default function NeedFundsPage() {
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-start justify-center pt-20">
       <Card variant="glass" className="w-full max-w-md">
         <CardContent className="p-8 text-center">
-          <div className="text-5xl mb-6">💰</div>
+          <div className="mb-6">
+            <img src="/icons/funds.png" alt="Funds" className="w-16 h-16 mx-auto" />
+          </div>
           <h1 className="text-2xl font-bold text-white mb-6">Get USDC Tokens</h1>
           
           {/* Current Balance */}
@@ -103,13 +107,13 @@ export default function NeedFundsPage() {
             onClick={handleMint}
             disabled={minting || (mintStatus && !mintStatus.canMintNow)}
             className="w-full"
-            icon={minting ? "⏳" : "💰"}
+            // icon={minting ? "⏳" : "💰"}
           >
-            {minting ? 'Minting...' : 'Mint 250 USDC'}
+            {minting ? 'Minting...' : 'Get 250 USDC'}
           </Button>
 
           <p className="text-xs text-gray-500 mt-4">
-            Mint 250 USDC tokens for testing. Cooldown applies between mints.
+            Get 250 USDC tokens for testing. Cooldown applies between mints.
           </p>
         </CardContent>
       </Card>
