@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { CONTRACT_ADDRESSES } from '../app/constants';
+import posthog from '../../instrumentation-client';
 
 export function useCancelContest() {
   const { address } = useAccount();
@@ -22,6 +23,10 @@ export function useCancelContest() {
       setCancellingContest(false);
       setError(null);
       console.log("Cancel contest transaction confirmed");
+      posthog.capture('contest_cancelled', {
+        address,
+        contestId: cancellingContestId,
+      });
     }
   }, [isCancelSuccess]);
 
@@ -32,6 +37,11 @@ export function useCancelContest() {
       setCancellingContest(false);
       setError(`Transaction failed`);
       console.error('Transaction error:', transactionError);
+      posthog.capture('contest_cancel_failed', {
+        address,
+        contestId: cancellingContestId,
+        error: transactionError?.message || 'unknown',
+      });
     }
   }, [isCancelError, transactionError]);
 
@@ -42,6 +52,11 @@ export function useCancelContest() {
       setCancellingContest(false);
       setError(`Failed to submit transaction`);
       console.error('Write contract error:', writeError);
+      posthog.capture('contest_cancel_failed', {
+        address,
+        contestId: cancellingContestId,
+        error: writeError?.message || 'unknown',
+      });
     }
   }, [writeError]);
 
