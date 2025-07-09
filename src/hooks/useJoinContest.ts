@@ -6,6 +6,7 @@ import { CONTRACT_ADDRESSES } from '../app/constants';
 import { useApproveToken } from './useApproveToken';
 import { useUSDCBalance } from './useUSDCBalance';
 import { formatUSDC, calculateJoinAmount } from '@/utils/formatters';
+import posthog from '../../instrumentation-client';
 
 export function useJoinContest() {
   const { address } = useAccount();
@@ -32,6 +33,10 @@ export function useJoinContest() {
       setError(null);
       setPendingJoinParams(null);
       console.log("Join contest transaction confirmed");
+      posthog.capture('contest_joined', {
+        address,
+        ...pendingJoinParams,
+      });
     }
   }, [isJoinSuccess]);
 
@@ -44,6 +49,11 @@ export function useJoinContest() {
       setError(`Join contest failed`);
       setPendingJoinParams(null);
       console.error('Join contest error:', transactionError);
+      posthog.capture('contest_join_failed', {
+        address,
+        error: transactionError?.message || 'unknown',
+        ...pendingJoinParams,
+      });
     }
   }, [isJoinError, transactionError]);
 
@@ -56,6 +66,11 @@ export function useJoinContest() {
       setError(`Failed to submit join contest`);
       setPendingJoinParams(null);
       console.error('Write contract error:', writeError);
+      posthog.capture('contest_join_failed', {
+        address,
+        error: writeError?.message || 'unknown',
+        ...pendingJoinParams,
+      });
     }
   }, [writeError]);
 
@@ -112,6 +127,13 @@ export function useJoinContest() {
         setError(`Token approval failed`);
         setPendingJoinParams(null);
         console.error('Approval failed:', approvalError);
+        posthog.capture('token_approval_failed', {
+          address,
+          amount: approvalAmount,
+          context: 'join_contest',
+          contestId: pendingJoinParams?.contestId,
+          error: approvalError,
+        });
       }
     }
   }, [approving, isApproveSuccess, approvalAmount, approvalError, joiningContest, currentStep]);
@@ -139,7 +161,14 @@ export function useJoinContest() {
       setJoiningContestId(Number(contestId));
       setJoiningContest(true);
       setCurrentStep('approving');
-      
+
+      posthog.capture('token_approval_started', {
+        address,
+        amount: joinAmount,
+        context: 'join_contest',
+        contestId,
+      });
+
       // Store join parameters for when approval succeeds
       const joinParams = {
         contestId,
@@ -160,6 +189,13 @@ export function useJoinContest() {
       setJoiningContest(false);
       setCurrentStep('idle');
       setPendingJoinParams(null);
+      posthog.capture('token_approval_failed', {
+        address,
+        amount: pendingJoinParams?.joinAmount,
+        context: 'join_contest',
+        contestId: pendingJoinParams?.contestId,
+        error: (error as Error)?.message || String(error) || 'unknown',
+      });
     }
   };
 

@@ -8,6 +8,7 @@ import { CONTRACT_ADDRESSES } from '../app/constants';
 import { parseUSDC } from '@/utils/formatters';
 import { MatchInfoDetailed } from '@/types/match';
 import { getDayNumber } from '@/utils/utils';
+import posthog from '../../instrumentation-client';
 
 interface CreateContestParams {
   statement: string;
@@ -49,6 +50,10 @@ export function useCreateContest() {
       setError(null);
       setPendingContestParams(null);
       console.log("Contest creation transaction confirmed");
+      posthog.capture('contest_created', {
+        address,
+        ...pendingContestParams,
+      });
     }
   }, [isContestSuccess]);
 
@@ -60,6 +65,11 @@ export function useCreateContest() {
       setError('Contest creation failed');
       setPendingContestParams(null);
       console.error('Contest creation error:', transactionError);
+      posthog.capture('contest_create_failed', {
+        address,
+        error: transactionError?.message || 'unknown',
+        ...pendingContestParams,
+      });
     }
   }, [isContestError, transactionError]);
 
@@ -71,6 +81,11 @@ export function useCreateContest() {
       setError('Failed to submit contest creation');
       setPendingContestParams(null);
       console.error('Write contract error:', writeError);
+      posthog.capture('contest_create_failed', {
+        address,
+        error: writeError?.message || 'unknown',
+        ...pendingContestParams,
+      });
     }
   }, [writeError]);
 
@@ -130,6 +145,13 @@ export function useCreateContest() {
         setError(`Token approval failed`);
         setPendingContestParams(null);
         console.error('Approval failed:', approvalError);
+        posthog.capture('token_approval_failed', {
+          address,
+          amount: approvalAmount,
+          context: 'create_contest',
+          matchId: pendingContestParams?.matchId,
+          error: approvalError,
+        });
       }
     }
   }, [approving, isApproveSuccess, approvalAmount, approvalError, creatingContest, currentStep]);
@@ -181,6 +203,13 @@ export function useCreateContest() {
       setCreatingContest(true);
       setCurrentStep('approving');
 
+      posthog.capture('token_approval_started', {
+        address,
+        amount: stakeInWei,
+        context: 'create_contest',
+        matchId,
+      });
+
       const now = BigInt(Math.floor(Date.now() / 1000));
       const expiryValue = parseInt(contestExpiryValue) || 2;
       const expiryInMinutes = contestExpiryUnit === 'hours' ? expiryValue * 60 : expiryValue;
@@ -228,6 +257,13 @@ export function useCreateContest() {
       setCreatingContest(false);
       setCurrentStep('idle');
       setPendingContestParams(null);
+      posthog.capture('token_approval_failed', {
+        address,
+        amount: pendingContestParams?.stakeInWei,
+        context: 'create_contest',
+        matchId: pendingContestParams?.matchId,
+        error: (error as Error)?.message || String(error) || 'unknown',
+      });
     }
   };
 
