@@ -2,15 +2,12 @@
 
 import { ContestList } from "@/components/UserContestList";
 import { useAccount } from "wagmi";
-import { useContests, useContestsByUser } from "@/hooks/useContests";
+import { useContestsByUser } from "@/hooks/useContests";
 import { HeroConnectButton } from "@/components/ConnectButton";
-import { Contest } from "@/types/contest";
 
 export default function Contests() {
   const { isConnected, address } = useAccount();
-  console.log(address);
   const { contests: contests, isLoading, refetch } = useContestsByUser(address || "");
-  console.log(contests);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 relative overflow-hidden">
