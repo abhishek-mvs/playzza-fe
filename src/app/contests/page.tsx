@@ -1,11 +1,61 @@
 "use client";
 
-import { ContestList } from "@/components/UserContestList";
+import dynamic from 'next/dynamic';
+import React from 'react';
 import { useAccount } from "wagmi";
 import { useContestsByUser } from "@/hooks/useContests";
-import { HeroConnectButton } from "@/components/ConnectButton";
+
+// Dynamically import components that use wagmi to prevent SSR issues
+const ContestList = dynamic(() => import("@/components/UserContestList").then(mod => ({ default: mod.ContestList })), {
+  ssr: false,
+  loading: () => (
+    <div className="text-center py-12">
+      <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+      </div>
+      <p className="text-gray-400 text-lg">Loading...</p>
+    </div>
+  )
+});
+
+const HeroConnectButton = dynamic(() => import("@/components/ConnectButton").then(mod => ({ default: mod.HeroConnectButton })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg animate-pulse"></div>
+  )
+});
+
+// Client-side only wrapper component
+const ClientOnlyWrapper = ({ children }: { children: React.ReactNode }) => {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+        </div>
+        <p className="text-gray-400 text-lg">Initializing...</p>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
 
 export default function Contests() {
+  return (
+    <ClientOnlyWrapper>
+      <ContestsContent />
+    </ClientOnlyWrapper>
+  );
+}
+
+function ContestsContent() {
   const { isConnected, address } = useAccount();
   const { contests: contests, isLoading, refetch } = useContestsByUser(address || "");
 

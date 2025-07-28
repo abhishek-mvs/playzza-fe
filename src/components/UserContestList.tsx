@@ -21,12 +21,6 @@ interface ContestListProps {
 type FilterType = 'active' | 'pending' | 'completed';
 
 export function ContestList({ contests, isLoading, onContestCancelled }: ContestListProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // ALL hooks must be called at the top level before any conditional returns
   const router = useRouter();
   const { address } = useAccount();
@@ -94,18 +88,6 @@ export function ContestList({ contests, isLoading, onContestCancelled }: Contest
 
   console.log("contests", contests);
   console.log("isLoading", isLoading);
-
-  // Don't render until mounted to prevent SSR issues
-  if (!mounted) {
-    return (
-      <div className="text-center py-12">
-        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-        </div>
-        <p className="text-gray-400 text-lg">Initializing...</p>
-      </div>
-    );
-  }
 
   // Now we can have conditional returns after all hooks are called
   if (isLoading) {
