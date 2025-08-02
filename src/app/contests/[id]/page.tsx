@@ -57,14 +57,30 @@ export default function ContestPage() {
       
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="h-[700px]">
+          <div
+            className=""
+            style={{
+              height: "calc(100vh - 6rem)", // adjust 6rem as needed for header/footer
+              minHeight: "400px",
+              maxHeight: "900px",
+            }}
+          >
             <ContestCard3
               contest={contest}
               onContestJoined={handleContestJoined}
             />
           </div>
 
-          <div className="h-[700px] overflow-hidden rounded-lg glass">
+          <div
+            className="overflow-hidden rounded-lg glass"
+            style={{
+              height: "calc(100vh - 6rem)", // adjust 6rem as needed for header/footer
+              minHeight: "400px",
+              maxHeight: "900px",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <div className="h-full overflow-y-auto">
               <Scorecard matchId={contest.matchId} />
             </div>
