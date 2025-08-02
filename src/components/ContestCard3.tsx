@@ -211,6 +211,12 @@ export default function ContestCard3({
     if (isCancelled || isCompleted || isExpired) {
       return (
         <div className="text-center">
+          {isCompleted && contest.verdictReason && (
+            <div className="mb-4 bg-indigo-900/20 border border-indigo-700/30 rounded-lg p-3 text-left w-full">
+              <span className="font-semibold text-indigo-300">Verdict Reason: </span>
+              <span className="text-gray-200">{contest.verdictReason}</span>
+            </div>
+          )}
           <Button variant="secondary" disabled>
             {isCancelled ? 'Contest Cancelled' : isCompleted ? 'Contest Completed' : 'Contest Expired'}
           </Button>
